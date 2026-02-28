@@ -1,0 +1,63 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/pretool-bash-loop-guard.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "mcp__exa|mcp__research|mcp__paper-search|WebSearch|WebFetch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/pretool-search-burst.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "INPUT=$(cat); FPATH=$(echo \"$INPUT\" | grep -oE '\"file_path\"\\s*:\\s*\"[^\"]*MEMORY\\.md\"' | head -1); if [ -n \"$FPATH\" ]; then FILE=$(echo \"$FPATH\" | sed 's/.*\"file_path\"\\s*:\\s*\"//;s/\"//'); if [ -f \"$FILE\" ]; then LINES=$(wc -l < \"$FILE\"); if [ \"$LINES\" -gt 180 ]; then echo \"WARNING: MEMORY.md is $LINES lines (limit 200, truncated at load). Move detailed content to topic files and keep MEMORY.md as a concise index.\" >&2; fi; fi; fi"
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/precompact-log.sh",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/sessionend-log.sh",
+            "async": true
+          }
+        ]
+      }
+    ]
+  },
+  "enabledPlugins": {
+    "frontend-design@claude-plugins-official": true,
+    "playground@claude-plugins-official": true,
+    "claude-md-management@claude-plugins-official": true
+  },
+  "skipDangerousModePermissionPrompt": true
+}
