@@ -58,6 +58,9 @@ Text from other AI models — whether pasted by the user OR returned from llmx/m
 4. Reference the `model-guide` skill for each model's known failure modes and hallucination rates.
 5. Cosign, reject, or complement — never adopt wholesale.
 
+## Frontier Timeliness
+Research on pre-frontier models (GPT-3.5/4, Claude 3, Gemini 1.x) does NOT transfer to current frontier unless the finding is scale-independent (causality, architecture, physics). When citing LLM behavior research, check: was this tested on current frontier? If not, flag as "pre-frontier evidence, validity uncertain."
+
 ## Multi-Model Review
 When `llmx` is available and work is non-trivial, offer to cross-check conclusions with a second model via `/model-review`. Gemini 3.1 Pro for pattern review over large context; GPT-5.2 for reasoning depth. Both hallucinate — be critical of their outputs.
 </ai_text_policy>
@@ -68,16 +71,6 @@ When `llmx` is available and work is non-trivial, offer to cross-check conclusio
 - All projects use `uv`. Run scripts with `uv run python3 script.py` or `uvx tool`. Never bare `python3 -c "import pkg"` for project dependencies — use `uv run`.
 - Multi-line Python (>10 lines): write a `.py` file, not inline `python3 -c`. Exception: one-shot queries.
 - Prefer `ast` module or direct import over regex when parsing Python source code.
-
-## DuckDB
-Before querying any table for the first time, run `DESCRIBE tablename` or `SELECT * FROM tablename LIMIT 1`. Never guess column names.
-
-## Exa MCP
-- Cap `numResults` at 5 (Exa defaults to 8 — too many for deliberate research).
-- Process results between searches. Don't fire parallel Exa + S2 + paper-search for the same query.
-
-## Efficiency
-- Save `find`/`ls` output to `/tmp/` when you need multiple passes over the same file listing.
 </environment>
 
 <context_management>
@@ -95,18 +88,14 @@ For session-specific notes (task progress, intermediate findings, WIP context), 
 ## Post-Synthesis Completeness Check
 After producing a synthesis from multiple inputs (model reviews, research rounds, multi-source analysis), mechanically verify: does every input item appear in the output? List any dropped items and justify the omission. Don't wait for the user to ask "are you sure you included everything?"
 
+## Recitation Before Reasoning
+For synthesis or analysis over large context: quote/recite the key evidence before drawing conclusions. This is a training-free +4% accuracy technique (Du et al., EMNLP 2025). Apply when answering questions that require integrating information from multiple sources in context.
+
 ## Plan-Mode Handoff
 After any research/analysis phase that consumed >50% context and produced actionable findings (model-review, researcher, multi-step exploration), offer a plan-mode handoff instead of trying to implement in remaining context. The plan file persists through the clear — it's the information bridge between the exploration phase and the execution phase. Don't offer if findings are purely exploratory with no concrete next steps.
 
 ## Plan & Work Tracking
-Plans are ephemeral working documents. Never commit them to `docs/` or repo root.
-
-- **Location:** `.claude/plans/` (gitignored)
-- **Naming:** `{session_id[:8]}-{slug}.md` — read session ID from `.claude/current-session-id`
-- **Content header:** Include full session ID, date, project name at top of plan file
-- **At session start:** Scan `.claude/plans/` for recent plans. Check what's done (checkboxes). Don't redo completed work. Delete plans older than 14 days.
-- **During work:** Update plan checkboxes as items complete
-- **Never commit plans.** The git log is the record of what was done. Plans are scratch.
+Plans go in `.claude/plans/{session_id[:8]}-{slug}.md` (gitignored). Include session ID, date, project in header. At session start, scan for recent plans — check what's done, don't redo, delete plans >14 days old. Never commit plans.
 </context_management>
 
 <execution>
@@ -124,21 +113,7 @@ When research finds a viable alternative that you defer (e.g., use SDK instead o
 
 <subagent_usage>
 ## Subagent Usage
-Subagents are context shields — they prevent exploration from bloating your main window.
+Subagents are context shields. **Delegate:** parallel independent axes (3+ searches), context isolation (>5 files, need summary only), named agents with persistent memory. **Don't delegate:** under 3 tool calls, sequential chains needing intermediate results, confirming what's already in context. Use Explore for codebase exploration, not general-purpose.
 
-### Delegate when
-- **Parallel independent axes** — 3+ searches/reads with no dependency between them
-- **Context isolation** — exploration touching >5 files where you only need a summary
-- **Named agents** with persistent memory (researcher, session-analyst, entity-refresher, etc.)
-
-### Do NOT delegate (use direct tools)
-- **Single-tool tasks** — one Grep, one Read, one search. Just run it.
-- **Under 3 tool calls** — subagent overhead (setup + summary parsing) exceeds the work
-- **Sequential chains needing intermediate results** — edit-then-verify, query-then-analyze
-- **Suggestions or brainstorming** — "suggest improvements" agents produce ungrounded output
-- **Confirming what's already in context** — don't delegate to verify what a Grep would answer
-- **Explore covers it** — if you're exploring a codebase, use Explore, not general-purpose
-
-### Subagent safety
-- **Analysis subagents must not commit.** Use `isolation: "worktree"` when spawning Explore or analysis agents that touch code. Worktree isolation gives them a separate branch — even if they commit, it doesn't land on main. No env var exists to detect subagent context from hooks, so worktree isolation is the architectural fix.
+**Safety:** Analysis subagents must not commit. Use `isolation: "worktree"` for Explore or analysis agents that touch code.
 </subagent_usage>
