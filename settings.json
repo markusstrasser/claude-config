@@ -1,5 +1,15 @@
 {
   "hooks": {
+    "PermissionRequest": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/permission-auto-allow.sh"
+          }
+        ]
+      }
+    ],
     "PreToolUse": [
       {
         "matcher": "Bash",
@@ -7,15 +17,53 @@
           {
             "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/pretool-bash-loop-guard.sh"
+          },
+          {
+            "type": "command",
+            "command": "cmd=$(echo \"$CLAUDE_TOOL_INPUT\" | grep -oE '\"command\":\\s*\"[^\"]*\"' | head -1); if echo \"$cmd\" | grep -qE '\"(python |python3 )' && ! echo \"$cmd\" | grep -q 'uv run'; then echo 'BLOCK: use \"uv run python\" not bare python'; exit 2; fi"
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/pretool-commit-check.sh"
           }
         ]
       },
       {
-        "matcher": "mcp__exa|mcp__research|mcp__paper-search|WebSearch|WebFetch",
+        "matcher": "mcp__exa|mcp__research|mcp__paper-search|mcp__brave-search|mcp__perplexity|mcp__firecrawl|WebSearch|WebFetch",
         "hooks": [
           {
             "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/pretool-search-burst.sh"
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/pretool-consensus-search.sh"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alien/.claude/hooks/tool-tracker.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Agent",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/pretool-subagent-gate.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/pretool-source-remind.sh"
           }
         ]
       }
@@ -27,6 +75,75 @@
           {
             "type": "command",
             "command": "INPUT=$(cat); FPATH=$(echo \"$INPUT\" | grep -oE '\"file_path\"\\s*:\\s*\"[^\"]*MEMORY\\.md\"' | head -1); if [ -n \"$FPATH\" ]; then FILE=$(echo \"$FPATH\" | sed 's/.*\"file_path\"\\s*:\\s*\"//;s/\"//'); if [ -f \"$FILE\" ]; then LINES=$(wc -l < \"$FILE\"); if [ \"$LINES\" -gt 180 ]; then echo \"WARNING: MEMORY.md is $LINES lines (limit 200, truncated at load). Move detailed content to topic files and keep MEMORY.md as a concise index.\" >&2; fi; fi; fi"
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/postwrite-source-check.sh"
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/posttool-verify-before-expand.sh"
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/postwrite-frontier-timeliness.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/posttool-bash-failure-loop.sh",
+            "statusMessage": "Checking for failure loops..."
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/posttool-review-check.sh"
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/posttool-verify-before-expand.sh"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alien/.claude/hooks/spinning-detector.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "mcp__research__read_paper|mcp__research__fetch_paper",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/posttool-research-reformat.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/stop-verify-plan.sh"
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/stop-uncommitted-warn.sh"
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/.claude/hooks/stop-debrief.sh"
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/.claude/hooks/stop-notify.sh"
           }
         ]
       }
@@ -42,6 +159,61 @@
         ]
       }
     ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/userprompt-context-warn.sh"
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/.claude/hooks/tab-color.sh working"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alien/.claude/hooks/session-init.sh"
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/subagent-start-log.sh"
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/subagent-epistemic-gate.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUseFailure": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/posttool-failure-log.sh",
+            "async": true
+          }
+        ]
+      }
+    ],
     "SessionEnd": [
       {
         "hooks": [
@@ -49,10 +221,24 @@
             "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/sessionend-log.sh",
             "async": true
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/sessionend-overview-trigger.sh",
+            "async": true
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/sessionend-index-sessions.sh",
+            "async": true
           }
         ]
       }
     ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/statusline.sh"
   },
   "enabledPlugins": {
     "frontend-design@claude-plugins-official": true,
