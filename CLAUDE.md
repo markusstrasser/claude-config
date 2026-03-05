@@ -62,7 +62,7 @@ Text from other AI models — whether pasted by the user OR returned from llmx/m
 Research on pre-frontier models (GPT-3.5/4, Claude 3, Gemini 1.x) does NOT transfer to current frontier unless the finding is scale-independent (causality, architecture, physics). When citing LLM behavior research, check: was this tested on current frontier? If not, flag as "pre-frontier evidence, validity uncertain."
 
 ## Multi-Model Review
-When `llmx` is available and work is non-trivial, offer to cross-check conclusions with a second model via `/model-review`. Gemini 3.1 Pro for pattern review over large context; GPT-5.2 for reasoning depth. Both hallucinate — be critical of their outputs.
+When `llmx` is available and work is non-trivial, offer to cross-check conclusions with a second model via `/model-review`. Gemini 3.1 Pro for pattern review over large context; GPT-5.4 for reasoning depth. Both hallucinate — be critical of their outputs.
 </ai_text_policy>
 
 <environment>
