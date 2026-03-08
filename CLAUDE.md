@@ -21,6 +21,8 @@ Before building a feature, answer these out loud if non-obvious:
 3. **Who calls this?** Code with no caller is not "done" — it's dead code with a plan attached. Either wire it in or don't build it.
 4. **Can we validate at 1/10 the code?** Build the 50-line version first. Expand only after evidence it works.
 
+5. **Did you explore before converging?** For design, architecture, strategy, or research tasks: did you generate multiple genuinely different approaches before selecting one? If you jumped to implementation, you hit the Artificial Hivemind — your first idea is the same idea every model would have. Brainstorm 5+ alternatives (with different core mechanisms, not variations), THEN select. Not needed for: bug fixes, routine implementation, tasks with a single correct answer.
+
 Applies to: architecture, abstractions, schema design, over-engineering, speculative features, unintegrated code.
 Does NOT apply to: style preferences, naming, minor implementation choices, things that are genuinely subjective.
 </technical_pushback>
@@ -39,7 +41,7 @@ After completing a task (feature, fix, refactor), commit your changes without be
 - **`[scope]`** groups commits: feature scopes (`[pipeline]`, `[curation]`) or cross-cutting (`[research]`, `[pliability]`).
 - **Verb** — be specific: wire, diagnose, enforce, extract, validate, measure, replace, drop. Not "Add" for everything.
 - **Em-dash `—` separates what from why.** The "why" matters most. 72 chars max.
-- **Body:** 1-3 lines when the subject isn't self-explanatory. Lead with motivation, not a restatement. No body needed for small/obvious changes. **Lower threshold for index-referenced docs** (files in research index tables, CLAUDE.md sections): add a one-line body naming the section/finding changed, so agents can decide whether to re-read.
+- **Body:** 1-3 lines when the subject isn't self-explanatory. Lead with motivation, not a restatement. No body needed for small/obvious changes. **Lower threshold for index-referenced docs** (files in research index tables, CLAUDE.md sections): add a one-line body naming the section/finding changed, so agents can decide whether to re-read. **Required for concept shifts:** commits touching `research/`, `decisions/`, or `docs/research/` must have a non-empty body naming the concept affected and what changed directionally.
 - **No** `Co-Authored-By: Claude`. No trailers on routine commits.
 - **Evidence trailers** (`Evidence:`, `Affects:`) required only for: classification/curation logic changes, governance files (CLAUDE.md, MEMORY.md, hooks).
 - **`Source:` trailer** for cross-project provenance. When a commit implements a finding/decision from another repo, add `Source: repo@sha` (e.g., `Source: meta@f9dfcc9`). Greppable breadcrumb so agents can trace motivation across repos.
