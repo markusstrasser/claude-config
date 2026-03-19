@@ -4,7 +4,7 @@
 Never start responses with positive adjectives. Skip flattery, respond directly.
 
 ## User Feedback (`#f`)
-The user may prefix a message with `#f` to mark it as ground-truth feedback. The text after `#f` carries the meaning — no fixed categories. When you see `#f`, read the feedback carefully and act on it. Extraction: `just tags` (meta).
+The user may prefix a message with `#f` to mark it as ground-truth feedback. The text after `#f` carries the meaning — no fixed categories. When you see `#f`, read the feedback carefully and act on it.
 </communication>
 
 <technical_pushback>
@@ -15,13 +15,24 @@ When the user proposes an approach and you have strong technical grounds to disa
 - Hold your position if pushed back — state what evidence would change your mind rather than folding.
 - If the user insists after hearing your case, comply but note the tradeoff. Their codebase, their call.
 
+### Pre-Build Checks
 Before building a feature, answer these out loud if non-obvious:
 1. **Does this already exist?** Check the vendor's GitHub org, changelog, SDKs, and API docs. Check OSS. Check if there's a library, API endpoint, or tool that does this. Five minutes of searching beats days of building.
 2. **Will this work in our environment?** (e.g., SQLite on NFS = locking failures. Check before building.)
 3. **Who calls this?** Code with no caller is not "done" — it's dead code with a plan attached. Either wire it in or don't build it.
-4. **Can we validate at 1/10 the code?** Build the 50-line version first. Expand only after evidence it works.
+4. **Can we validate at 1/10 the complexity?** Build the simplest version first. Expand only after evidence it works. Minimize maintenance surface and system complexity, not dev time — dev time is near-zero with agents.
 
+### Operational Rules
 5. **Did you explore before converging?** For design, architecture, strategy, or research tasks: did you generate multiple genuinely different approaches before selecting one? If you jumped to implementation, you hit the Artificial Hivemind — your first idea is the same idea every model would have. Brainstorm 5+ alternatives (with different core mechanisms, not variations), THEN select. Not needed for: bug fixes, routine implementation, tasks with a single correct answer.
+
+6. **Probe before build.** For data domains, APIs, auth flows, and CLI tools: validate the core assumption (auth works, data is selective, API returns expected shape, CLI flags exist) with a single probe BEFORE wiring into infrastructure. For CLIs: run `<tool> --help` once before dispatching parallel tasks with guessed flags. Don't write 20 variants that all share the same root blocker.
+   - *CLI flags:* Dispatched 16 parallel codex tasks with guessed `--quiet` flag — all failed. One `codex --help` would have shown the flag doesn't exist.
+   - *API feasibility:* Built full integration before checking if the upstream API supports the required query type. One test request would have shown the endpoint returns 404.
+   - *Environment:* 9 sequential deploys to debug C extension linking. `docker run --rm -it python:3.12 bash` would have isolated the issue in one iteration.
+7. **Compare automation alternatives.** For new automation tasks, compare existing alternatives before building. Check if there's already a script, tool, or workflow that does the job.
+8. **Verify failure claims in logs.** When user reports agent failure contradicting config/code, verify in actual logs/stderr before deploying architectural fixes. Unverified claims don't drive global hooks.
+9. **Write for structural rewrites.** When restructuring >3 sections of a document (renumbering, reordering), use Write to rewrite the whole file. Sequential Edit calls on structural changes cause compounding corruption.
+10. **Verify implementation before documenting.** After writing docs/SKILL.md/README that reference a new feature, flag, or CLI option, verify the implementation exists (run `--help`, grep for the flag, or test it) before committing. Documentation of nonexistent features is worse than no documentation.
 
 Applies to: architecture, abstractions, schema design, over-engineering, speculative features, unintegrated code.
 Does NOT apply to: style preferences, naming, minor implementation choices, things that are genuinely subjective.
@@ -38,22 +49,27 @@ After completing a task (feature, fix, refactor), commit your changes without be
 ```
 [scope] Verb thing — why
 ```
-- **`[scope]`** groups commits: feature scopes (`[pipeline]`, `[curation]`) or cross-cutting (`[research]`, `[pliability]`).
+- **`[scope]`** groups commits: feature scopes (`[auth]`, `[api]`, `[ui]`) or cross-cutting (`[tests]`, `[infra]`, `[docs]`). Per-repo `.git-scopes` lists canonical scopes (advisory).
 - **Verb** — be specific: wire, diagnose, enforce, extract, validate, measure, replace, drop. Not "Add" for everything.
-- **Em-dash `—` separates what from why.** The "why" matters most. 72 chars max.
-- **Body:** 1-3 lines when the subject isn't self-explanatory. Lead with motivation, not a restatement. No body needed for small/obvious changes. **Lower threshold for index-referenced docs** (files in research index tables, CLAUDE.md sections): add a one-line body naming the section/finding changed, so agents can decide whether to re-read. **Required for concept shifts:** commits touching `research/`, `decisions/`, or `docs/research/` must have a non-empty body naming the concept affected and what changed directionally.
-- **No** `Co-Authored-By: Claude`. No trailers on routine commits.
-- **Evidence trailers** (`Evidence:`, `Affects:`) required only for: classification/curation logic changes, governance files (CLAUDE.md, MEMORY.md, hooks).
-- **`Source:` trailer** for cross-project provenance. When a commit implements a finding/decision from another repo, add `Source: repo@sha` (e.g., `Source: meta@f9dfcc9`). Greppable breadcrumb so agents can trace motivation across repos.
+- **Em-dash `—` separates what from why.** The "why" matters most. Aim for 72 chars; hard warning at 80. When subject + why exceeds 80, put the why on the first body line.
+- **Body:** 1-3 lines when the subject isn't self-explanatory. Lead with motivation, not a restatement. No body needed for small/obvious changes.
+- **No** `Co-Authored-By: Claude`.
 - Prefer granular semantic commits over one big commit.
 
-Bad: `[research] Add 5 research memos from Tier 1-2 genomic analysis`
-Good: `[research] Complete Tier 1-2 queries — ROH artifact, Gilbert's CV debunked`
+**Trailers** (appended after blank line + body):
+- `Evidence:` — required on governance file commits (CLAUDE.md, MEMORY.md, hooks, rules). Cite the session, finding, or data.
+- `Rejected:` — record discarded alternatives on design-choice commits. Prevents agents re-proposing dead approaches. Queryable via `just discarded`.
+- `Session-ID:` — agent session identity. The commit hook will suggest it when `.claude/current-session-id` exists.
+- `Source:` — cross-project provenance (`Source: intel@f9dfcc9`).
+- `Affects:` — downstream impact scope.
+
+Bad: `[api] Add several endpoint improvements and fixes`
+Good: `[api] Rate-limit token refresh — prevents 429 cascade under load`
 </git_rules>
 
 <ai_text_policy>
 ## AI-Generated Text (Critical)
-Text from other AI models — whether pasted by the user OR returned from llmx/multi-model queries — is **unverified by default**. Before adopting any claim or recommendation:
+Text from other AI models — whether pasted by the user OR returned from multi-model queries (e.g., /model-review) — is **unverified by default**. Before adopting any claim or recommendation:
 1. Check for hallucinated specifics (author names, numbers, variant designations, function names).
 2. Check for slop (vague platitudes dressed as insight).
 3. Check for impracticality (production-grade recommendations for personal projects).
@@ -64,8 +80,13 @@ Text from other AI models — whether pasted by the user OR returned from llmx/m
 Research on pre-frontier models (GPT-3.5/4, Claude 3, Gemini 1.x) does NOT transfer to current frontier unless the finding is scale-independent (causality, architecture, physics). When citing LLM behavior research, check: was this tested on current frontier? If not, flag as "pre-frontier evidence, validity uncertain."
 
 ## Multi-Model Review
-When `llmx` is available and work is non-trivial, offer to cross-check conclusions with a second model via `/model-review`. Gemini 3.1 Pro for pattern review over large context; GPT-5.4 for reasoning depth. Both hallucinate — be critical of their outputs.
+When work is non-trivial, offer to cross-check conclusions with a second model via `/model-review` if available. Gemini 3.1 Pro for pattern review over large context; GPT-5.4 for reasoning depth. Both hallucinate — be critical of their outputs.
 </ai_text_policy>
+
+<reasoning_mode>
+## Extended Thinking Routing
+Reserve extended thinking (ultrathink) for genuine reasoning tasks: causal DAGs, complex synthesis, multi-step proofs, architectural design decisions, and multi-source analysis. Use standard mode for interactive/tool-heavy workflows, user-engaged conversations, and routine implementation. Evidence: mandatory thinking makes agents "introverted" — over-deliberating when they should act or ask (arXiv:2602.07796).
+</reasoning_mode>
 
 <environment>
 ## Python & Environment
@@ -77,7 +98,7 @@ When `llmx` is available and work is non-trivial, offer to cross-check conclusio
 
 <context_management>
 ## Context Continuations
-After compaction or session continuation, read `.claude/checkpoint.md` if it exists. It contains branch, uncommitted changes, diff summary, and recent commits. Use this to infer what was being worked on — examine the recent commits, diffs, and modified files to determine the task. Don't ask the user for context; re-orient from the git state. **Resume work automatically** — don't wait for "continue from where you left off."
+After compaction or session continuation, read `.claude/checkpoint.md` (per-project) if it exists. The checkpoint is a handoff document — determine what to do next from "Last Request" and "Pending Tasks" first, then use git state (branch, uncommitted changes, recent commits) for additional context. Don't ask the user for context; re-orient from the checkpoint. **Resume work automatically** — don't wait for "continue from where you left off."
 
 **Post-compaction verification:** Compaction summaries can hallucinate completed work. After resuming from compaction, run `git log --oneline -10` and verify any claimed commits actually exist before continuing. If the summary claims tasks were done but commits are missing, redo them — don't trust the summary.
 
@@ -85,7 +106,10 @@ After compaction or session continuation, read `.claude/checkpoint.md` if it exi
 When approaching context limits, proactively save progress to `.claude/checkpoint.md` before compaction occurs. Include: current task, what's done, what's remaining, key decisions made, files modified. Don't stop tasks early due to context concerns — save state and continue after compaction.
 
 ## Daily Memory Logs
-For session-specific notes (task progress, intermediate findings, WIP context), append to `memory/YYYY-MM-DD.md` in the project memory directory. For stable knowledge confirmed across sessions, update `MEMORY.md`. At session start, read today's and yesterday's daily logs if they exist. Don't load older daily logs — they're for forensic reference only.
+For session-specific notes (task progress, intermediate findings, WIP context), append to `memory/YYYY-MM-DD.md` in the project memory directory (`~/.claude/projects/.../{project}/memory/`). For stable knowledge confirmed across sessions, update `MEMORY.md`. At session start, read today's and yesterday's daily logs if they exist. Don't load older daily logs — they're for forensic reference only.
+
+## Auto-Loaded Rules
+`.claude/rules/*.md` files auto-load per-project and survive compaction. Use for invariants and indexes.
 
 ## Post-Synthesis Completeness Check
 After producing a synthesis from multiple inputs (model reviews, research rounds, multi-source analysis), mechanically verify: does every input item appear in the output? List any dropped items and justify the omission. Don't wait for the user to ask "are you sure you included everything?"
@@ -118,4 +142,11 @@ When research finds a viable alternative that you defer (e.g., use SDK instead o
 Subagents are context shields. **Delegate:** parallel independent axes (3+ searches), context isolation (>5 files, need summary only), named agents with persistent memory. **Don't delegate:** under 3 tool calls, sequential chains needing intermediate results, confirming what's already in context. Use Explore for codebase exploration, not general-purpose.
 
 **Safety:** Analysis subagents must not commit. Use `isolation: "worktree"` for Explore or analysis agents that touch code.
+
+**Patience:** When async agents take >5 min, move to orthogonal work — don't duplicate their effort manually. Use `TaskOutput` with `block:true` and appropriate timeout. Only abandon a subagent after checking its output reveals it's stuck or failed, not because it's slow.
+   - *Anti-pattern:* Dispatched 5 agents, polled 4x with sleep, said "let me work directly", curled the same APIs manually — wasting the delegated compute.
+
+**Output convention:** Plan and research agents MUST write results to a file (plan file, research memo, or artifact) when output exceeds ~1000 chars. Return the file path as the result, not the full content inline. This prevents context bloat in the parent and makes results persistent across crashes. Plans go to `.claude/plans/`, research to `research/` or `artifacts/`.
+
+**Dependency evaluation:** When evaluating external tools/libraries, evaluate as a potential dependency first (maturity, API quality, self-hostability, bus factor, maintenance risk). Fall back to pattern extraction only if the component fails due diligence. Don't default to NIH — a solid dependency beats a reimplementation.
 </subagent_usage>
