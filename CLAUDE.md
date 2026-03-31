@@ -17,7 +17,7 @@ When the user proposes an approach and you have strong technical grounds to disa
 
 ### Pre-Build Checks
 Before building a feature, answer these out loud if non-obvious:
-1. **Does this already exist?** Check the vendor's GitHub org, changelog, SDKs, and API docs. Check OSS. Check if there's a library, API endpoint, or tool that does this. Five minutes of searching beats days of building. Also applies when writing recommendations in research memos — grep the codebase for existing implementations before proposing fixes.
+1. **Does this already exist? Has this problem actually occurred?** Check the vendor's GitHub org, changelog, SDKs, and API docs. Check OSS. Check if there's a library, API endpoint, or tool that does this. Five minutes of searching beats days of building. Also applies when writing recommendations in research memos — grep the codebase for existing implementations before proposing fixes. For NEW infrastructure/systems: `git log --grep` for incidents the proposal would prevent. No incident history → the problem is hypothetical → default to not building it. Absence of a feature ≠ presence of a problem.
 2. **Will this work in our environment?** (e.g., SQLite on NFS = locking failures. Check before building.)
 3. **Who calls this?** Code with no caller is not "done" — it's dead code with a plan attached. Either wire it in or don't build it.
 4. **Can we validate at 1/10 the complexity?** Build the simplest version first. Expand only after evidence it works. Minimize maintenance surface and system complexity, not dev time — dev time is near-zero with agents.
@@ -31,11 +31,13 @@ Before building a feature, answer these out loud if non-obvious:
    - *API feasibility:* Built full integration before checking if the upstream API supports the required query type. One test request would have shown the endpoint returns 404.
    - *Environment:* 9 sequential deploys to debug C extension linking. `docker run --rm -it python:3.12 bash` would have isolated the issue in one iteration.
    - *Data schema:* Built 2,480-line 5-phase pipeline before validating taxonomy. Schema turned out flat and conflating three axes — required complete rewrite. Output the schema and validate it before implementing consumers.
+   - *CLI unexpected results:* When a purpose-built CLI (runlog.py, doctor.py, etc.) returns unexpected output, check `--help` or the project's docs file BEFORE probing the underlying DB schema with raw SQL. 9 wasted tool calls probing SQLite schema when `runlog.md` had the answer.
 8. **Compare automation alternatives.** For new automation tasks, compare existing alternatives before building. Check if there's already a script, tool, or workflow that does the job.
 9. **Verify failure claims in logs.** When user reports agent failure contradicting config/code, verify in actual logs/stderr before deploying architectural fixes. Unverified claims don't drive global hooks.
 10. **Write for structural rewrites.** When restructuring >3 sections of a document (renumbering, reordering), use Write to rewrite the whole file. Sequential Edit calls on structural changes cause compounding corruption.
 11. **Verify implementation before documenting.** After writing docs/SKILL.md/README that reference a new feature, flag, or CLI option, verify the implementation exists (run `--help`, grep for the flag, or test it) before committing. Documentation of nonexistent features is worse than no documentation.
 12. **Verify vendor claims before asserting.** Pricing, features, CLI flags, availability — search-verify before stating as fact. Training data is unreliable for fast-changing product details. Two finding types today: wrong Claude pricing stated from memory; hallucinated CLI flags presented as real.
+13. **Fix all confirmed findings, not "top N".** When an audit, review, or analysis produces a list of confirmed issues, fix ALL of them. Don't self-select a subset via "let me fix the top 3" or "most critical first" and implicitly drop the rest. If there's a genuine reason to defer a specific finding (blocked, needs human input, out of scope), state it explicitly per item. Performative triage of confirmed work is partial completion dressed as prioritization.
 
 Applies to: architecture, abstractions, schema design, over-engineering, speculative features, unintegrated code.
 Does NOT apply to: style preferences, naming, minor implementation choices, things that are genuinely subjective.
@@ -49,6 +51,8 @@ All commits go to main. No branches. This implicitly authorizes commits — don'
 After completing a task (feature, fix, refactor), commit your changes without being asked. Granular semantic commits — one logical change per commit. Update CLAUDE.md/README only if your changes warrant it. Don't stop and report "ready to commit" — just commit.
 
 **Never use `git add -A` or `git add .`** — these sweep in untracked scratch files, `.scratch/` artifacts, and temp outputs. Always `git add` specific files or use `git add -p` for interactive staging.
+
+**When multiple agents are active** (`pgrep -c claude` >= 2): commit after each logical edit, or use `isolation: "worktree"` when dispatching agents that touch code. Uncommitted changes from one agent can be swept into another agent's commit.
 
 ## Commit Message Format
 ```
@@ -64,7 +68,7 @@ After completing a task (feature, fix, refactor), commit your changes without be
 **Trailers** (appended after blank line + body):
 - `Evidence:` — required on governance file commits (CLAUDE.md, MEMORY.md, hooks, rules). Cite the session, finding, or data.
 - `Rejected:` — record discarded alternatives on design-choice commits. Prevents agents re-proposing dead approaches. Queryable via `just discarded`.
-- `Session-ID:` — agent session identity. The commit hook will suggest it when `.claude/current-session-id` exists.
+- `Session-ID:` — agent session identity. Auto-appended by `prepare-commit-msg` git hook from `.claude/current-session-id`.
 - `Source:` — cross-project provenance (`Source: intel@f9dfcc9`).
 - `Affects:` — downstream impact scope.
 
@@ -175,10 +179,11 @@ When research finds a viable alternative that you defer (e.g., use SDK instead o
 ## Subagent Usage
 Subagents are context shields. **Delegate:** parallel independent axes (3+ searches), context isolation (>5 files, need summary only), named agents with persistent memory. **Don't delegate:** under 3 tool calls, sequential chains needing intermediate results, confirming what's already in context. **Match agent type to task:** Explore for codebase exploration, researcher for verification/literature/evidence tasks, general-purpose only when no specialized type fits.
 
-**Safety:** Analysis subagents must not commit. Use `isolation: "worktree"` for Explore or analysis agents that touch code.
+**Safety:** Analysis subagents must not commit. Default to `isolation: "worktree"` for any subagent that touches code — hard filesystem isolation beats soft/verbal isolation by 7.8pp; soft isolation actually hurts on open-ended tasks (CAID, arXiv:2603.21489).
 
 **Patience:** When async agents take >5 min, move to orthogonal work — don't duplicate their effort manually. Use `TaskOutput` with `block:true` and appropriate timeout. Only abandon a subagent after checking its output reveals it's stuck or failed, not because it's slow.
    - *Anti-pattern:* Dispatched 5 agents, polled 4x with sleep, said "let me work directly", curled the same APIs manually — wasting the delegated compute.
+   - *File-read polling:* When background tasks (llmx, codex, Bash backgrounding) write output files, do NOT repeatedly Read the file to check progress. Wait for task-complete notification, then read once. If polling unavoidable, check size once, do orthogonal work, check again after delay — don't loop-Read the same file.
 
 **Turn budget:** When dispatching research subagents, include "stop searching at 70% of turns and synthesize" in the prompt. Subagents that search exhaustively run out of turns before producing output — 2+ confirmed incidents of full turn exhaustion with zero synthesis. The gotcha is in `research-tool-gotchas.md` but doesn't reach subagents reliably. The dispatch prompt is the only reliable injection point.
 
