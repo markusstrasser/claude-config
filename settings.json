@@ -1,6 +1,9 @@
 {
   "env": {
-    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
+    "CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS": "10000",
+    "CLAUDE_CODE_DISABLE_CRON": "0",
+    "CLAUDE_STREAM_IDLE_TIMEOUT_MS": "180000"
   },
   "includeGitInstructions": false,
   "hooks": {
@@ -10,6 +13,14 @@
           {
             "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/permission-auto-allow.sh"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/permission-log.sh"
           }
         ]
       }
@@ -40,16 +51,22 @@
           },
           {
             "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/pretool-ast-precommit.sh"
+            "command": "/Users/alien/Projects/skills/hooks/pretool-ast-precommit.sh",
+            "if": "Bash(git commit*)"
           },
           {
             "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/pretool-commit-check.sh"
+            "command": "/Users/alien/Projects/skills/hooks/pretool-commit-check.sh",
+            "if": "Bash(git commit*)"
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/pretool-multiagent-commit-guard.sh"
           }
         ]
       },
       {
-        "matcher": "mcp__exa|mcp__research|mcp__paper-search|mcp__brave-search|mcp__perplexity|mcp__firecrawl|mcp__scite|WebSearch|WebFetch",
+        "matcher": "mcp__exa|mcp__research|mcp__brave-search|mcp__perplexity|mcp__firecrawl|mcp__scite|WebSearch|WebFetch",
         "hooks": [
           {
             "type": "command",
@@ -70,6 +87,15 @@
           {
             "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/pretool-companion-remind.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Skill",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/pretool-skill-log.sh"
           }
         ]
       },
@@ -102,6 +128,15 @@
             "command": "/Users/alien/Projects/skills/hooks/pretool-goal-drift.sh"
           }
         ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/prewrite-frontmatter-inject.sh"
+          }
+        ]
       }
     ],
     "PostToolUse": [
@@ -118,6 +153,10 @@
           },
           {
             "type": "command",
+            "command": "/Users/alien/.claude/hooks/posttool-unsourced-claim-check.sh"
+          },
+          {
+            "type": "command",
             "command": "bash /Users/alien/Projects/meta/scripts/hooks/null-result-advisory.sh"
           },
           {
@@ -130,7 +169,7 @@
           },
           {
             "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/substrate-registration-reminder.sh"
+            "command": "uv run python3 /Users/alien/Projects/meta/scripts/postwrite-knowledge-index.py"
           }
         ]
       },
@@ -153,6 +192,10 @@
           {
             "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/postcommit-propagate-check.sh"
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/posttool-bash-poll.sh"
           }
         ]
       },
@@ -165,20 +208,42 @@
         ]
       },
       {
+        "matcher": "Skill",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/posttool-skill-log.sh"
+          }
+        ]
+      },
+      {
         "matcher": "Read",
         "hooks": [
           {
             "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/posttool-l3-telemetry.sh"
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/posttool-dup-read.sh"
           }
         ]
       },
       {
-        "matcher": "mcp__research__read_paper|mcp__research__fetch_paper|mcp__research__search_papers|mcp__exa__web_search_exa|mcp__exa__web_search_advanced_exa|mcp__exa__crawling_exa|mcp__brave-search__brave_web_search|mcp__brave-search__brave_news_search|mcp__paper-search__search_arxiv|mcp__paper-search__search_pubmed|mcp__paper-search__search_biorxiv|mcp__paper-search__search_medrxiv|mcp__paper-search__search_google_scholar|mcp__firecrawl__firecrawl_scrape|mcp__firecrawl__firecrawl_extract|mcp__scite__search_literature",
+        "matcher": "mcp__research__read_paper|mcp__research__fetch_paper|mcp__research__search_papers|mcp__research__search_preprints|mcp__exa__web_search_exa|mcp__exa__web_search_advanced_exa|mcp__exa__crawling_exa|mcp__brave-search__brave_web_search|mcp__brave-search__brave_news_search|mcp__firecrawl__firecrawl_scrape|mcp__firecrawl__firecrawl_extract|mcp__scite__search_literature",
         "hooks": [
           {
             "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/posttool-research-reformat.sh"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /Users/alien/Projects/skills/hooks/posttool-governance-state.py",
+            "statusMessage": "Logging governance state..."
           }
         ]
       }
@@ -188,15 +253,15 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/stop-plan-status.sh"
-          },
-          {
-            "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/stop-verify-plan.sh"
+            "command": "/Users/alien/Projects/skills/hooks/stop-plan-gate.sh"
           },
           {
             "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/stop-uncommitted-warn.sh"
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/.claude/hooks/stop-verify-claims.sh"
           },
           {
             "type": "command",
@@ -250,6 +315,10 @@
           {
             "type": "command",
             "command": "/Users/alien/.claude/hooks/session-init.sh"
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/selve/scripts/check-index-freshness.sh"
           }
         ]
       }
@@ -260,6 +329,17 @@
           {
             "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/subagent-start-log.sh"
+          }
+        ]
+      }
+    ],
+    "TaskCreated": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alien/.claude/hooks/task-created-log.sh",
+            "async": true
           }
         ]
       }
@@ -285,6 +365,35 @@
         ]
       }
     ],
+    "StopFailure": [
+      {
+        "matcher": "billing_error",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alien/.claude/hooks/billing-alert.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "rate_limit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alien/.claude/hooks/rate-limit-backoff.sh"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alien/.claude/hooks/stop-failure-log.sh",
+            "async": true
+          }
+        ]
+      }
+    ],
     "SessionEnd": [
       {
         "hooks": [
@@ -305,6 +414,20 @@
           }
         ]
       }
+    ],
+    "PermissionDenied": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/permission-denied-retry.sh"
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/permission-log.sh"
+          }
+        ]
+      }
     ]
   },
   "statusLine": {
@@ -315,7 +438,10 @@
     "frontend-design@claude-plugins-official": true,
     "playground@claude-plugins-official": true,
     "claude-md-management@claude-plugins-official": true,
-    "pyright-lsp@claude-plugins-official": true
+    "pyright-lsp@claude-plugins-official": true,
+    "skill-creator@claude-plugins-official": true
   },
+  "effortLevel": "medium",
+  "autoDreamEnabled": true,
   "skipDangerousModePermissionPrompt": true
 }
