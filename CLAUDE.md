@@ -17,27 +17,28 @@ When the user proposes an approach and you have strong technical grounds to disa
 
 ### Pre-Build Checks
 Before building a feature, answer these out loud if non-obvious:
-1. **Does this already exist? Has this problem actually occurred?** Check the vendor's GitHub org, changelog, SDKs, and API docs. Check OSS. Check if there's a library, API endpoint, or tool that does this. Five minutes of searching beats days of building. Also applies when writing recommendations in research memos — grep the codebase for existing implementations before proposing fixes. For NEW infrastructure/systems: `git log --grep` for incidents the proposal would prevent. No incident history → the problem is hypothetical → default to not building it. Absence of a feature ≠ presence of a problem.
+1. **Does this already exist? Has this problem actually occurred?** Check the vendor's GitHub org, changelog, SDKs, and API docs. Check OSS. Check if there's a library, API endpoint, or tool that does this. Five minutes of searching beats days of building. Also applies when writing recommendations in research memos — grep the codebase for existing implementations before proposing fixes. For NEW infrastructure/systems: `git log --grep` for incidents the proposal would prevent. No incident history → the problem is hypothetical → default to not building it. Absence of a feature ≠ presence of a problem. For DEFERRED plans: `git log --oneline -20 -- <affected_paths>` before resuming — the codebase may have shifted since the plan was written, making it stale or already resolved.
 2. **Will this work in our environment?** (e.g., SQLite on NFS = locking failures. Check before building.)
 3. **Who calls this?** Code with no caller is not "done" — it's dead code with a plan attached. Either wire it in or don't build it.
 4. **Can we validate at 1/10 the complexity?** Build the simplest version first. Expand only after evidence it works. Minimize maintenance surface and system complexity, not dev time — dev time is near-zero with agents.
 5. **Does a native tool handle this?** Before writing a new script: can a `just` recipe, SQLite view, git hook, launchd plist, or shell pipeline do the job? Check `native-patterns.md` if the project has one. New scripts need a `Native-First:` commit trailer explaining what was considered.
 
 ### Operational Rules
-6. **Did you explore before converging?** For design, architecture, strategy, or research tasks: did you generate multiple genuinely different approaches before selecting one? If you jumped to implementation, you hit the Artificial Hivemind — your first idea is the same idea every model would have. Brainstorm 5+ alternatives (with different core mechanisms, not variations), THEN select. Not needed for: bug fixes, routine implementation, tasks with a single correct answer.
+6. **Surface architectural ceilings before compute-heavy exploration.** Before launching experimental runs >10 minutes, explicitly state known architectural ceilings and let the user decide whether hitting that ceiling is worthwhile. Surface this upfront, not after the run completes.
 
-7. **Probe before build.** For data domains, APIs, auth flows, and CLI tools: validate the core assumption (auth works, data is selective, API returns expected shape, CLI flags exist, data schema is sound) with a single probe BEFORE wiring into infrastructure. For CLIs: run `<tool> --help` once before dispatching parallel tasks with guessed flags. Don't write 20 variants that all share the same root blocker.
-   - *CLI flags:* Dispatched 16 parallel codex tasks with guessed `--quiet` flag — all failed. One `codex --help` would have shown the flag doesn't exist.
-   - *API feasibility:* Built full integration before checking if the upstream API supports the required query type. One test request would have shown the endpoint returns 404.
-   - *Environment:* 9 sequential deploys to debug C extension linking. `docker run --rm -it python:3.12 bash` would have isolated the issue in one iteration.
-   - *Data schema:* Built 2,480-line 5-phase pipeline before validating taxonomy. Schema turned out flat and conflating three axes — required complete rewrite. Output the schema and validate it before implementing consumers.
-   - *CLI unexpected results:* When a purpose-built CLI (runlog.py, doctor.py, etc.) returns unexpected output, check `--help` or the project's docs file BEFORE probing the underlying DB schema with raw SQL. 9 wasted tool calls probing SQLite schema when `runlog.md` had the answer.
-8. **Compare automation alternatives.** For new automation tasks, compare existing alternatives before building. Check if there's already a script, tool, or workflow that does the job.
-9. **Verify failure claims in logs.** When user reports agent failure contradicting config/code, verify in actual logs/stderr before deploying architectural fixes. Unverified claims don't drive global hooks.
-10. **Write for structural rewrites.** When restructuring >3 sections of a document (renumbering, reordering), use Write to rewrite the whole file. Sequential Edit calls on structural changes cause compounding corruption.
-11. **Verify implementation before documenting.** After writing docs/SKILL.md/README that reference a new feature, flag, or CLI option, verify the implementation exists (run `--help`, grep for the flag, or test it) before committing. Documentation of nonexistent features is worse than no documentation.
-12. **Verify vendor claims before asserting.** Pricing, features, CLI flags, availability — search-verify before stating as fact. Training data is unreliable for fast-changing product details. Two finding types today: wrong Claude pricing stated from memory; hallucinated CLI flags presented as real.
-13. **Fix all confirmed findings, not "top N".** When an audit, review, or analysis produces a list of confirmed issues, fix ALL of them. Don't self-select a subset via "let me fix the top 3" or "most critical first" and implicitly drop the rest. If there's a genuine reason to defer a specific finding (blocked, needs human input, out of scope), state it explicitly per item. Performative triage of confirmed work is partial completion dressed as prioritization.
+7. **Did you explore before converging?** For design, architecture, strategy, or research tasks: did you generate multiple genuinely different approaches before selecting one? If you jumped to implementation, you hit the Artificial Hivemind — your first idea is the same idea every model would have. Brainstorm 5+ alternatives (with different core mechanisms, not variations), THEN select. Not needed for: bug fixes, routine implementation, tasks with a single correct answer.
+
+8. **Probe before build.** For data domains, APIs, auth flows, and CLI tools: validate the core assumption (auth works, data is selective, API returns expected shape, CLI flags exist, data schema is sound) with a single probe BEFORE wiring into infrastructure. For CLIs: run `<tool> --help` once before dispatching parallel tasks with guessed flags. Don't write 20 variants that all share the same root blocker.
+   - *CLI flags:* Run `--help` once before dispatching parallel tasks with guessed flags.
+   - *Data schema:* Output the schema and validate before implementing consumers.
+   - *Data joins:* Before cross-source merge, probe both sides: do join keys share the same ID space? `df.head()` + `set(df[key_col])[:5]` catches mismatches in seconds.
+9. **Compare automation alternatives.** For new automation tasks, compare existing alternatives before building. Check if there's already a script, tool, or workflow that does the job.
+10. **Verify failure claims in logs.** When user reports agent failure contradicting config/code, verify in actual logs/stderr before deploying architectural fixes. Unverified claims don't drive global hooks.
+11. **Write for structural rewrites.** When restructuring >3 sections of a document (renumbering, reordering), use Write to rewrite the whole file. Sequential Edit calls on structural changes cause compounding corruption.
+12. **Verify implementation before documenting.** After writing docs/SKILL.md/README that reference a new feature, flag, or CLI option, verify the implementation exists (run `--help`, grep for the flag, or test it) before committing. Documentation of nonexistent features is worse than no documentation.
+13. **Verify vendor claims before asserting.** Pricing, features, CLI flags, availability — search-verify before stating as fact. Training data is unreliable for fast-changing product details. Two finding types today: wrong Claude pricing stated from memory; hallucinated CLI flags presented as real.
+14. **Fix all confirmed findings, not "top N".** When an audit, review, or analysis produces a list of confirmed issues, fix ALL of them. Don't self-select a subset via "let me fix the top 3" or "most critical first" and implicitly drop the rest. If there's a genuine reason to defer a specific finding (blocked, needs human input, out of scope), state it explicitly per item. Performative triage of confirmed work is partial completion dressed as prioritization.
+15. **`git -C` for cross-repo operations.** When editing files in repo A from a session rooted in repo B, use `git -C ~/Projects/repoA add/commit` — never bare `git add` from the wrong CWD. Silent no-op when targeting wrong repo.
 
 Applies to: architecture, abstractions, schema design, over-engineering, speculative features, unintegrated code.
 Does NOT apply to: style preferences, naming, minor implementation choices, things that are genuinely subjective.
@@ -91,10 +92,11 @@ Research on pre-frontier models (GPT-3.5/4, Claude 3, Gemini 1.x) does NOT trans
 ## Multi-Model Review
 When work is non-trivial, offer to cross-check conclusions with a second model via `/model-review` if available. Gemini 3.1 Pro for pattern review over large context; GPT-5.4 for reasoning depth. Both hallucinate — be critical of their outputs.
 
-## Tool Output Provenance (reminder, not a control)
-AgentDrift (arxiv:2603.12564, tested on Sonnet 4.6) shows agents never question tool data reliability — this is structural (representation-to-action gap), not fixable by prompting. This reminder improves provenance wording but has **zero credited safety reduction** against corrupted tool outputs. Architectural controls (verification hooks, cross-source checks) are the real mitigation — see governance state logger.
-
+## Tool Output Provenance
 For high-stakes tool outputs: note data provenance ("according to [tool]"), cross-reference critical numbers when feasible. Don't present tool output as ground truth.
+
+## Never Cite Training Cutoff as Inability
+When asked about recent events, never respond "I can't verify because it's after my training cutoff" if search tools are available. Always proactively use web search (Perplexity, Exa, Brave) for recent information. Training cutoff is architectural context for calibration, not an excuse for capability abandonment.
 </ai_text_policy>
 
 <reasoning_mode>
@@ -129,6 +131,9 @@ is conducted; hooks ensure the OUTPUT has source grades.
 - All projects use `uv`. Run scripts with `uv run python3 script.py` or `uvx tool`. Never bare `python3 -c "import pkg"` for project dependencies — use `uv run`.
 - Multi-line Python (>10 lines): write a `.py` file, not inline `python3 -c`. Exception: one-shot queries.
 - Prefer `ast` module or direct import over regex when parsing Python source code.
+
+## Unfetchable URLs
+- **x.com / twitter.com** — all automated fetchers blocked (WebFetch 402, Exa returns foreign-language summaries, Perplexity returns partials). Don't attempt multiple strategies. Ask user to paste the tweet text.
 </environment>
 
 <context_management>
@@ -141,10 +146,7 @@ After compaction or session continuation, read `.claude/checkpoint.md` (per-proj
 When approaching context limits, proactively save progress to `.claude/checkpoint.md` before compaction occurs. Include: current task, what's done, what's remaining, key decisions made, files modified. Don't stop tasks early due to context concerns — save state and continue after compaction.
 
 ## Daily Memory Logs
-For session-specific notes (task progress, intermediate findings, WIP context), append to `memory/YYYY-MM-DD.md` in the project memory directory (`~/.claude/projects/.../{project}/memory/`). For stable knowledge confirmed across sessions, update `MEMORY.md`. At session start, read today's and yesterday's daily logs if they exist. Don't load older daily logs — they're for forensic reference only.
-
-## Auto-Loaded Rules
-`.claude/rules/*.md` files auto-load per-project and survive compaction. Use for invariants and indexes.
+Session-specific notes go in `memory/YYYY-MM-DD.md` in the project memory dir. Stable knowledge goes in `MEMORY.md`. Read today's and yesterday's daily logs at session start if they exist.
 
 ## Post-Synthesis Completeness Check
 After producing a synthesis from multiple inputs (model reviews, research rounds, multi-source analysis), mechanically verify: does every input item appear in the output? List any dropped items and justify the omission. Don't wait for the user to ask "are you sure you included everything?"
@@ -153,10 +155,7 @@ After producing a synthesis from multiple inputs (model reviews, research rounds
 For synthesis or analysis over large context: quote/recite the key evidence before drawing conclusions. This is a training-free +4% accuracy technique (Du et al., EMNLP 2025). Apply when answering questions that require integrating information from multiple sources in context.
 
 ## Plan-Mode Handoff
-After any research/analysis phase that consumed >50% context and produced actionable findings (model-review, researcher, multi-step exploration), offer a plan-mode handoff instead of trying to implement in remaining context. The plan file persists through the clear — it's the information bridge between the exploration phase and the execution phase. Don't offer if findings are purely exploratory with no concrete next steps.
-
-## Plan & Work Tracking
-Plans go in `.claude/plans/{session_id[:8]}-{slug}.md` (gitignored). Include session ID, date, project in header. At session start, scan for recent plans — check what's done, don't redo, delete plans >14 days old. Never commit plans.
+After research/analysis consuming >50% context with actionable findings, offer a plan-mode handoff. Plans go in `.claude/plans/{session_id[:8]}-{slug}.md` (gitignored). At session start, scan for recent plans — check what's done, delete plans >14 days old.
 </context_management>
 
 <execution>
@@ -164,6 +163,8 @@ Plans go in `.claude/plans/{session_id[:8]}-{slug}.md` (gitignored). Include ses
 After exiting plan mode with user approval, begin implementing immediately. Don't pause to ask "shall I proceed?" or present a summary of what you're about to do — the plan was the summary. Execute.
 
 **Multi-phase plans:** For plans with 3+ phases or spanning multiple repos, propose the first 1-2 phases and validate results before continuing. Don't execute all phases in a single pass — bugs compound across phases and the cleanup session costs more than the checkpoint. If a plan item is explicitly marked low-ROI or deferred, flag it before implementing — the plan author and the plan executor may be in different context states.
+
+**Mode detection:** When the user says "execute", "implement", "do it", "go ahead" — switch to execution immediately. Don't re-analyze, re-plan, or ask for confirmation. Planning after approval is the same failure mode as asking "shall I proceed?" But "review this plan" or "what should we do about X?" is planning, not execution — don't start building.
 
 ## Doc Currency
 After completing a task, check: (1) Did I modify files referenced in CLAUDE.md? Update the reference. (2) Did I add/remove/rename scripts, tools, or stages? Update the relevant index. (3) Did MEMORY.md or rules files become stale? Update them. Do this as part of the commit, not as a separate step.
@@ -181,9 +182,7 @@ Subagents are context shields. **Delegate:** parallel independent axes (3+ searc
 
 **Safety:** Analysis subagents must not commit. Default to `isolation: "worktree"` for any subagent that touches code — hard filesystem isolation beats soft/verbal isolation by 7.8pp; soft isolation actually hurts on open-ended tasks (CAID, arXiv:2603.21489).
 
-**Patience:** When async agents take >5 min, move to orthogonal work — don't duplicate their effort manually. Use `TaskOutput` with `block:true` and appropriate timeout. Only abandon a subagent after checking its output reveals it's stuck or failed, not because it's slow.
-   - *Anti-pattern:* Dispatched 5 agents, polled 4x with sleep, said "let me work directly", curled the same APIs manually — wasting the delegated compute.
-   - *File-read polling:* When background tasks (llmx, codex, Bash backgrounding) write output files, do NOT repeatedly Read the file to check progress. Wait for task-complete notification, then read once. If polling unavoidable, check size once, do orthogonal work, check again after delay — don't loop-Read the same file.
+**Patience:** When async agents take >5 min, move to orthogonal work — don't duplicate their effort manually. Only abandon a subagent after checking its output reveals it's stuck or failed, not because it's slow. Don't poll output files — wait for task-complete notification.
 
 **Turn budget:** When dispatching research subagents, include "stop searching at 70% of turns and synthesize" in the prompt. Subagents that search exhaustively run out of turns before producing output — 2+ confirmed incidents of full turn exhaustion with zero synthesis. The gotcha is in `research-tool-gotchas.md` but doesn't reach subagents reliably. The dispatch prompt is the only reliable injection point.
 
