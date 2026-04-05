@@ -32,6 +32,7 @@ Before building a feature, answer these out loud if non-obvious:
    - *CLI flags:* Run `--help` once before dispatching parallel tasks with guessed flags.
    - *Data schema:* Output the schema and validate before implementing consumers.
    - *Data joins:* Before cross-source merge, probe both sides: do join keys share the same ID space? `df.head()` + `set(df[key_col])[:5]` catches mismatches in seconds.
+   - *Batch API costs:* Before any batch job >1K items, run a 10-item probe. Check the billing SKU names (image vs video vs text pricing tiers differ by 10-100x). Extrapolate and state the cost estimate to the user before proceeding. Evidence: 7K videos sent to Gemini Embedding 2 "video" SKU cost €94; a 10-item probe would have revealed this.
 9. **Compare automation alternatives.** For new automation tasks, compare existing alternatives before building. Check if there's already a script, tool, or workflow that does the job.
 10. **Verify failure claims in logs.** When user reports agent failure contradicting config/code, verify in actual logs/stderr before deploying architectural fixes. Unverified claims don't drive global hooks.
 11. **Write for structural rewrites.** When restructuring >3 sections of a document (renumbering, reordering), use Write to rewrite the whole file. Sequential Edit calls on structural changes cause compounding corruption.
