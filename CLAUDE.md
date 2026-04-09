@@ -41,6 +41,9 @@ Before building a feature, answer these out loud if non-obvious:
 13. **Verify vendor claims before asserting.** Pricing, features, CLI flags, availability — search-verify before stating as fact. Training data is unreliable for fast-changing product details. Two finding types today: wrong Claude pricing stated from memory; hallucinated CLI flags presented as real.
 14. **Fix all confirmed findings, not "top N".** When an audit, review, or analysis produces a list of confirmed issues, fix ALL of them. Don't self-select a subset via "let me fix the top 3" or "most critical first" and implicitly drop the rest. If there's a genuine reason to defer a specific finding (blocked, needs human input, out of scope), state it explicitly per item. Performative triage of confirmed work is partial completion dressed as prioritization.
 15. **`git -C` for cross-repo operations.** When editing files in repo A from a session rooted in repo B, use `git -C ~/Projects/repoA add/commit` — never bare `git add` from the wrong CWD. Silent no-op when targeting wrong repo.
+16. **Default to breaking.** Use newest patterns. Delete legacy code, don't wrap it. No backward-compatibility shims, re-exports, renamed `_vars`, or "// removed" comments. If something is unused, delete it completely. If an interface changed, update all callers — don't add adapters. The only exception: explicit user instruction to maintain compatibility for a specific consumer.
+17. **Read before planning.** Before writing a plan that modifies files, read those files. Plans written from memory diverge from the codebase within days. Run `git log --oneline -10 -- <paths>` for recent context. This applies to fresh plans AND resumed plans — the codebase may have changed since the plan was written.
+18. **Acknowledge guardrails, don't route around them.** When a write hook blocks an action (append-only guard, data guard, etc.), state what was blocked and why. If you write to an alternative path instead, explain why the new location is appropriate — don't silently move the file to dodge the hook. Hooks encode policy boundaries, not obstacles.
 
 Applies to: architecture, abstractions, schema design, over-engineering, speculative features, unintegrated code.
 Does NOT apply to: style preferences, naming, minor implementation choices, things that are genuinely subjective.
@@ -164,6 +167,8 @@ After research/analysis consuming >50% context with actionable findings, offer a
 ## Execution After Plans
 After exiting plan mode with user approval, begin implementing immediately. Don't pause to ask "shall I proceed?" or present a summary of what you're about to do — the plan was the summary. Execute.
 
+**Mid-execution self-check:** Execute without asking permission, but if you discover evidence that contradicts the plan (file doesn't exist, assumption was wrong, dependency changed, approach doesn't work as expected), pause to assess. Either adapt and continue, or flag the divergence. Don't blindly follow a plan that contradicts what you're seeing on the ground. Don't ask "should I continue?" — state what changed and what you're doing about it.
+
 **Multi-phase plans:** For plans with 3+ phases or spanning multiple repos, propose the first 1-2 phases and validate results before continuing. Don't execute all phases in a single pass — bugs compound across phases and the cleanup session costs more than the checkpoint. If a plan item is explicitly marked low-ROI or deferred, flag it before implementing — the plan author and the plan executor may be in different context states.
 
 **Mode detection:** When the user says "execute", "implement", "do it", "go ahead" — switch to execution immediately. Don't re-analyze, re-plan, or ask for confirmation. Planning after approval is the same failure mode as asking "shall I proceed?" But "review this plan" or "what should we do about X?" is planning, not execution — don't start building.
@@ -186,7 +191,12 @@ Subagents are context shields. **Delegate:** parallel independent axes (3+ searc
 
 **Patience:** When async agents take >5 min, move to orthogonal work — don't duplicate their effort manually. Only abandon a subagent after checking its output reveals it's stuck or failed, not because it's slow. Don't poll output files — wait for task-complete notification.
 
-**Turn budget:** When dispatching research subagents, include "stop searching at 70% of turns and synthesize" in the prompt. Subagents that search exhaustively run out of turns before producing output — 2+ confirmed incidents of full turn exhaustion with zero synthesis. The gotcha is in `research-tool-gotchas.md` but doesn't reach subagents reliably. The dispatch prompt is the only reliable injection point.
+**Researcher epochs (CORAL pattern):** Researcher agent default is maxTurns: 12. For deep research, use parent-controlled epochs instead of one long dispatch:
+1. Dispatch researcher with output file path and topic (max 12 turns)
+2. Read the output file after researcher returns
+3. If sufficient → synthesize. If gaps remain → re-dispatch with prior output as context + refined query
+4. Max 3 epochs (36 turns total). Forced synthesis from whatever exists after epoch 3.
+This replaces the prior "stop at 70%" instruction which failed 5+ times (instructions buried under search momentum). The epoch boundary is architectural enforcement — the parent reviews progress, not the subagent.
 
 **Output convention:** Plan and research agents MUST write results to a file (plan file, research memo, or artifact) when output exceeds ~1000 chars. Return the file path as the result, not the full content inline. This prevents context bloat in the parent and makes results persistent across crashes. Plans go to `.claude/plans/`, research to `research/` or `artifacts/`.
 
