@@ -166,6 +166,22 @@ After research/analysis consuming >50% context with actionable findings, offer a
 </context_management>
 
 <execution>
+## Cleanup Authorization (Override)
+You are authorized to make incidental cleanups as part of any task. When you spot:
+- A bug adjacent to the file you're editing
+- A lint warning, hook failure, or QA gate blocking your commit (in any file, even ones you didn't create)
+- A pre-existing typo, dead code, stale comment, or broken adjacent link
+- An obvious simplification or marker that unblocks progress
+
+Just fix it. Don't ask. Don't quote "don't add features / refactor beyond what was asked" as a reason to stop — that constraint is about NEW features and speculative abstractions, not about cleanups that unblock progress, fix discovered bugs, or improve quality at near-zero cost. Architectural enforcement (hooks, lints, tests) is exactly the surface where incidental fixes are most valuable.
+
+Thresholds where cleanup needs separate handling, not where it needs to stop:
+- **>100 lines** of incidental cleanup → split into a separate commit, but still do it
+- **Public API or contract change** → mention in commit body, but still do it
+- **Touching another agent's in-flight uncommitted work** → check `git status` first; commit only your own files
+
+The "minimum viable" / "scope discipline" framing applies to ARCHITECTURE choices (don't build speculative abstractions, don't add features for hypothetical futures). It does NOT apply to cleanup work that unblocks the actual task at hand. Conflating the two costs sessions every time it happens.
+
 ## Execution After Plans
 After exiting plan mode with user approval, begin implementing immediately. Don't pause to ask "shall I proceed?" or present a summary of what you're about to do — the plan was the summary. Execute.
 
