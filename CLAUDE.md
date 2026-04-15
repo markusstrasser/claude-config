@@ -87,7 +87,7 @@ Good: `[api] Rate-limit token refresh — prevents 429 cascade under load`
 
 <ai_text_policy>
 ## AI-Generated Text (Critical)
-Text from other AI models — whether pasted by the user OR returned from multi-model queries (e.g., /model-review) — is **unverified by default**. Before adopting any claim or recommendation:
+Text from other AI models — whether pasted by the user OR returned from multi-model queries (e.g., /critique model) — is **unverified by default**. Before adopting any claim or recommendation:
 1. Check for hallucinated specifics (author names, numbers, variant designations, function names).
 2. Check for slop (vague platitudes dressed as insight).
 3. Check for impracticality (production-grade recommendations for personal projects).
@@ -98,7 +98,7 @@ Text from other AI models — whether pasted by the user OR returned from multi-
 Research on pre-frontier models (GPT-3.5/4, Claude 3, Gemini 1.x) does NOT transfer to current frontier unless the finding is scale-independent (causality, architecture, physics). When citing LLM behavior research, check: was this tested on current frontier? If not, flag as "pre-frontier evidence, validity uncertain."
 
 ## Multi-Model Review
-When work is non-trivial, offer to cross-check conclusions with a second model via `/model-review` if available. Gemini 3.1 Pro for pattern review over large context; GPT-5.4 for reasoning depth. Both hallucinate — be critical of their outputs.
+When work is non-trivial, offer to cross-check conclusions with a second model via `/critique model` if available. Gemini 3.1 Pro for pattern review over large context; GPT-5.4 for reasoning depth. Both hallucinate — be critical of their outputs.
 
 ## Tool Output Provenance
 For high-stakes tool outputs: note data provenance ("according to [tool]"), cross-reference critical numbers when feasible. Don't present tool output as ground truth.
