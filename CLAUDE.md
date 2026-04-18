@@ -219,6 +219,8 @@ This replaces the prior "stop at 70%" instruction which failed 5+ times (instruc
 
 **Output convention:** Plan and research agents MUST write results to a file (plan file, research memo, or artifact) when output exceeds ~1000 chars. Return the file path as the result, not the full content inline. This prevents context bloat in the parent and makes results persistent across crashes. Plans go to `.claude/plans/`, research to `research/` or `artifacts/`.
 
+**Manifest convention for cherry-pick / merge / multi-file-edit subagents:** Subagents performing cherry-pick, merge, or multi-file-edit work MUST return a manifest of files-included AND files-skipped (with reason) — not just success/failure. The coordinator diffs the manifest against `git show --stat` of the source commits before accepting the result. Without this, subagents can silently drop new test files or auxiliary changes from the merge and report success. Evidence: phenome 9ab45210 cherry-pick lost test files; coordinator believed they were lost in transit (2026-04-17).
+
 **Inventory before dispatch:** Before spawning research subagents, check `git log --oneline -20` and grep for the topic in the target project. Two confirmed incidents of 3+ subagents rediscovering completed work (~9M tokens wasted). The rule was in MEMORY.md and failed twice — this is the enforcement location.
 
 **Dependency evaluation:** When evaluating external tools/libraries, evaluate as a potential dependency first (maturity, API quality, self-hostability, bus factor, maintenance risk). Fall back to pattern extraction only if the component fails due diligence. Don't default to NIH — a solid dependency beats a reimplementation.

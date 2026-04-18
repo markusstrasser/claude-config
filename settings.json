@@ -43,11 +43,27 @@
           },
           {
             "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/pretool-duckdb-quote-guard.sh"
+          },
+          {
+            "type": "command",
             "command": "/Users/alien/.claude/hooks/pretool-modal-cost-guard.sh"
           },
           {
             "type": "command",
+            "command": "/Users/alien/.claude/hooks/pretool-modal-script-audit.sh"
+          },
+          {
+            "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/pretool-cost-guard.sh"
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/pretool-terse-bash.sh"
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/pretool-cost-awareness.sh"
           },
           {
             "type": "command",
@@ -62,11 +78,28 @@
           {
             "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/pretool-multiagent-commit-guard.sh"
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/pretool-modal-run-guard.sh"
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/pretool-destructive-git-ref.sh"
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/pretool-worktree-cwd-guard.sh"
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/precommit-plan-completion-guard.sh",
+            "if": "Bash(git commit*)"
           }
         ]
       },
       {
-        "matcher": "mcp__exa|mcp__research|mcp__brave-search|mcp__perplexity|mcp__firecrawl|mcp__scite|WebSearch|WebFetch",
+        "matcher": "mcp__exa|mcp__research|mcp__brave-search|mcp__perplexity|mcp__firecrawl|mcp__scite|mcp__parallel|WebSearch|WebFetch",
         "hooks": [
           {
             "type": "command",
@@ -79,10 +112,23 @@
         ]
       },
       {
+        "matcher": "mcp__exa__web_search_advanced_exa",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/pretool-exa-context-guard.sh"
+          }
+        ]
+      },
+      {
         "hooks": [
           {
             "type": "command",
             "command": "/Users/alien/.claude/hooks/tool-tracker.sh"
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/pretool-read-discipline.sh"
           },
           {
             "type": "command",
@@ -157,7 +203,7 @@
           },
           {
             "type": "command",
-            "command": "bash /Users/alien/Projects/meta/scripts/hooks/null-result-advisory.sh"
+            "command": "bash /Users/alien/Projects/agent-infra/scripts/hooks/null-result-advisory.sh"
           },
           {
             "type": "command",
@@ -169,7 +215,11 @@
           },
           {
             "type": "command",
-            "command": "uv run python3 /Users/alien/Projects/meta/scripts/postwrite-knowledge-index.py"
+            "command": "uv run python3 /Users/alien/Projects/agent-infra/scripts/postwrite-knowledge-index.py"
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/posttool-plan-review-gate.sh"
           }
         ]
       },
@@ -253,6 +303,10 @@
         "hooks": [
           {
             "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/stop-subagent-synthesis-gate.sh"
+          },
+          {
+            "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/stop-plan-gate.sh"
           },
           {
@@ -270,6 +324,11 @@
           {
             "type": "command",
             "command": "/Users/alien/.claude/hooks/stop-notify.sh"
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/stop-progress-check.sh",
+            "async": true
           }
         ]
       }
@@ -318,7 +377,7 @@
           },
           {
             "type": "command",
-            "command": "/Users/alien/Projects/selve/scripts/check-index-freshness.sh"
+            "command": "/Users/alien/Projects/phenome/scripts/check-index-freshness.sh"
           }
         ]
       }
@@ -404,11 +463,6 @@
           },
           {
             "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/sessionend-overview-trigger.sh",
-            "async": true
-          },
-          {
-            "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/sessionend-index-sessions.sh",
             "async": true
           }
@@ -432,7 +486,8 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "~/.claude/statusline.sh"
+    "command": "~/.claude/statusline.sh",
+    "refreshInterval": 5
   },
   "enabledPlugins": {
     "frontend-design@claude-plugins-official": true,
@@ -441,7 +496,7 @@
     "pyright-lsp@claude-plugins-official": true,
     "skill-creator@claude-plugins-official": true
   },
-  "effortLevel": "medium",
+  "effortLevel": "high",
   "autoDreamEnabled": true,
   "skipDangerousModePermissionPrompt": true
 }
