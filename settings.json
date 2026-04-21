@@ -6,6 +6,28 @@
     "CLAUDE_STREAM_IDLE_TIMEOUT_MS": "180000"
   },
   "includeGitInstructions": false,
+  "permissions": {
+    "allow": [
+      "Edit(//Users/alien/.claude/**)",
+      "Write(//Users/alien/.claude/**)",
+      "Edit(//Users/alien/Projects/skills/**)",
+      "Write(//Users/alien/Projects/skills/**)",
+      "Edit(**/.claude/settings*.json)",
+      "Write(**/.claude/settings*.json)",
+      "Edit(**/.claude/hooks/**)",
+      "Write(**/.claude/hooks/**)",
+      "Edit(**/.claude/skills/**)",
+      "Write(**/.claude/skills/**)",
+      "Edit(**/.claude/rules/**)",
+      "Write(**/.claude/rules/**)",
+      "Edit(**/.claude/agents/**)",
+      "Write(**/.claude/agents/**)",
+      "Edit(**/.claude/commands/**)",
+      "Write(**/.claude/commands/**)",
+      "Edit(**/CLAUDE.md)",
+      "Write(**/CLAUDE.md)"
+    ]
+  },
   "hooks": {
     "PermissionRequest": [
       {
@@ -296,6 +318,15 @@
             "statusMessage": "Logging governance state..."
           }
         ]
+      },
+      {
+        "matcher": "Agent",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/posttool-subagent-output-check.sh"
+          }
+        ]
       }
     ],
     "Stop": [
@@ -496,29 +527,7 @@
     "pyright-lsp@claude-plugins-official": true,
     "skill-creator@claude-plugins-official": true
   },
-  "effortLevel": "xhigh",
+  "effortLevel": "high",
   "autoDreamEnabled": true,
-  "skipDangerousModePermissionPrompt": true,
-  "permissions": {
-    "allow": [
-      "Edit(//Users/alien/.claude/**)",
-      "Write(//Users/alien/.claude/**)",
-      "Edit(//Users/alien/Projects/skills/**)",
-      "Write(//Users/alien/Projects/skills/**)",
-      "Edit(**/.claude/settings*.json)",
-      "Write(**/.claude/settings*.json)",
-      "Edit(**/.claude/hooks/**)",
-      "Write(**/.claude/hooks/**)",
-      "Edit(**/.claude/skills/**)",
-      "Write(**/.claude/skills/**)",
-      "Edit(**/.claude/rules/**)",
-      "Write(**/.claude/rules/**)",
-      "Edit(**/.claude/agents/**)",
-      "Write(**/.claude/agents/**)",
-      "Edit(**/.claude/commands/**)",
-      "Write(**/.claude/commands/**)",
-      "Edit(**/CLAUDE.md)",
-      "Write(**/CLAUDE.md)"
-    ]
-  }
+  "skipDangerousModePermissionPrompt": true
 }
