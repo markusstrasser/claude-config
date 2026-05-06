@@ -4,7 +4,8 @@
     "CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS": "10000",
     "CLAUDE_CODE_DISABLE_CRON": "0",
     "CLAUDE_STREAM_IDLE_TIMEOUT_MS": "180000",
-    "ENABLE_PROMPT_CACHING_1H": "1"
+    "ENABLE_PROMPT_CACHING_1H": "1",
+    "SLASH_COMMAND_TOOL_CHAR_BUDGET": "32000"
   },
   "includeGitInstructions": false,
   "permissions": {
@@ -25,9 +26,21 @@
       "Write(**/.claude/agents/**)",
       "Edit(**/.claude/commands/**)",
       "Write(**/.claude/commands/**)",
+      "Edit(**/.claude/plans/**)",
+      "Write(**/.claude/plans/**)",
+      "Edit(**/.claude/checkpoint.md)",
+      "Write(**/.claude/checkpoint.md)",
       "Edit(**/CLAUDE.md)",
-      "Write(**/CLAUDE.md)"
-    ]
+      "Write(**/CLAUDE.md)",
+      "mcp__fmp__get_company_profile",
+      "mcp__fmp__get_insider_trading",
+      "mcp__fmp__get_price_target",
+      "mcp__fmp__get_analyst_estimates",
+      "mcp__fmp__get_analyst_ratings",
+      "mcp__exa__web_search_exa",
+      "mcp__exa__web_search_advanced_exa"
+    ],
+    "defaultMode": "auto"
   },
   "hooks": {
     "PermissionRequest": [
@@ -526,9 +539,32 @@
     "playground@claude-plugins-official": true,
     "claude-md-management@claude-plugins-official": true,
     "pyright-lsp@claude-plugins-official": true,
-    "skill-creator@claude-plugins-official": true
+    "skill-creator@claude-plugins-official": true,
+    "exa@claude-plugins-official": true
   },
-  "effortLevel": "high",
+  "effortLevel": "medium",
   "autoDreamEnabled": true,
-  "skipDangerousModePermissionPrompt": true
+  "skipDangerousModePermissionPrompt": true,
+  "editorMode": "vim",
+  "verbose": true,
+  "remoteControlAtStartup": true,
+  "agentPushNotifEnabled": true,
+  "skipAutoPermissionPrompt": true,
+  "skillOverrides": {
+    "keybindings-help": "user-invocable-only",
+    "fewer-permission-prompts": "user-invocable-only",
+    "update-config": "user-invocable-only",
+    "init": "user-invocable-only",
+    "playground:playground": "name-only",
+    "frontend-design:frontend-design": "name-only",
+    "scientific-drawing": "name-only",
+    "gpt-image-2": "name-only",
+    "claude-md-management:claude-md-improver": "name-only",
+    "claude-md-management:revise-claude-md": "name-only",
+    "skill-creator:skill-creator": "name-only",
+    "skill-authoring": "name-only",
+    "schedule": "name-only",
+    "security-review": "name-only",
+    "x-api": "name-only"
+  }
 }
