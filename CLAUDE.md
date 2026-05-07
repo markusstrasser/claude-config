@@ -61,6 +61,8 @@ After completing a task (feature, fix, refactor), commit your changes without be
 
 **Never use `git add -A` or `git add .`** — these sweep in untracked scratch files, `.scratch/` artifacts, and temp outputs. Always `git add` specific files or use `git add -p` for interactive staging.
 
+**Never run `git commit` via `run_in_background=true`.** A commit blocked by a pre-commit hook (ruff, lint, ownership guard) returns exit 0 from the `git commit` invocation itself — the task-completed notification looks like success even when nothing landed. Discoverable only by grepping the background output file. Run commits in the foreground; if you need parallelism, batch the staging in the background and the commit in the foreground. Same class of failure as piping `git commit` through `tail`/`head`.
+
 **When multiple agents are active** (`pgrep -c claude` >= 2): commit after each logical edit, or use `isolation: "worktree"` when dispatching agents that touch code. Uncommitted changes from one agent can be swept into another agent's commit.
 
 ## Commit Message Format
@@ -98,7 +100,7 @@ Text from other AI models — whether pasted by the user OR returned from multi-
 Research on pre-frontier models (GPT-3.5/4, Claude 3, Gemini 1.x) does NOT transfer to current frontier unless the finding is scale-independent (causality, architecture, physics). When citing LLM behavior research, check: was this tested on current frontier? If not, flag as "pre-frontier evidence, validity uncertain."
 
 ## Multi-Model Review
-When work is non-trivial, offer to cross-check conclusions with a second model via `/critique model` if available. Gemini 3.1 Pro for pattern review over large context; GPT-5.4 for reasoning depth. Both hallucinate — be critical of their outputs.
+When work is non-trivial, offer to cross-check conclusions with a second model via `/critique model` if available. Gemini 3.1 Pro for pattern review over large context; GPT-5.5 for reasoning depth. Both hallucinate — be critical of their outputs.
 
 ## Tool Output Provenance
 For high-stakes tool outputs: note data provenance ("according to [tool]"), cross-reference critical numbers when feasible. Don't present tool output as ground truth.
@@ -139,6 +141,10 @@ is conducted; hooks ensure the OUTPUT has source grades.
 - All projects use `uv`. Run scripts with `uv run python3 script.py` or `uvx tool`. Never bare `python3 -c "import pkg"` for project dependencies — use `uv run`.
 - Multi-line Python (>10 lines): write a `.py` file, not inline `python3 -c`. Exception: one-shot queries.
 - Prefer `ast` module or direct import over regex when parsing Python source code.
+- **Never mutate Python source via string regex.** When inserting decorators, imports, or edits across multiple files, use the Edit tool (precise old/new strings with line context) or AST (`ast.parse` → mutate → `ast.unparse`). Regex `\n` substitution and the writer's newline handling routinely collide, producing inline-merged decorators that crash with `SyntaxError`. If a batch edit is genuinely needed, write a Python script that uses `libcst` or `ast` and verify with `python -m py_compile` before committing. Evidence: 3 test files corrupted simultaneously in one session by a `\n@decorator\n` regex insert that ended up inline with `def`.
+
+## git
+- Prefer `git --no-pager diff --no-ext-diff` for any non-trivial diff. External differs (`difft`, `delta`, etc.) configured in `~/.gitconfig` for human-tty viewing inject control bytes (`\x01` between fields, ANSI escapes) and silently truncate large diffs ("external diff died" error). The `--no-ext-diff` flag bypasses this without touching user config. Evidence: ~30 min lost in one session debugging a regex that didn't match because the diff stream had SOH bytes.
 
 ## Unfetchable URLs
 - **x.com / twitter.com** — all automated fetchers blocked (WebFetch 402, Exa returns foreign-language summaries, Perplexity returns partials). Don't attempt multiple strategies. Ask user to paste the tweet text.
