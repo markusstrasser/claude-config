@@ -42,6 +42,23 @@
     ],
     "defaultMode": "auto"
   },
+  "skillOverrides": {
+    "keybindings-help": "user-invocable-only",
+    "fewer-permission-prompts": "name-only",
+    "update-config": "name-only",
+    "init": "user-invocable-only",
+    "playground:playground": "name-only",
+    "frontend-design:frontend-design": "name-only",
+    "scientific-drawing": "name-only",
+    "gpt-image-2": "name-only",
+    "claude-md-management:claude-md-improver": "name-only",
+    "claude-md-management:revise-claude-md": "name-only",
+    "skill-creator:skill-creator": "name-only",
+    "skill-authoring": "name-only",
+    "schedule": "name-only",
+    "security-review": "name-only",
+    "x-api": "name-only"
+  },
   "hooks": {
     "PermissionRequest": [
       {
@@ -131,6 +148,10 @@
             "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/precommit-plan-completion-guard.sh",
             "if": "Bash(git commit*)"
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/pretool-plan-protect.sh"
           }
         ]
       },
@@ -542,29 +563,12 @@
     "skill-creator@claude-plugins-official": true,
     "exa@claude-plugins-official": true
   },
-  "effortLevel": "medium",
+  "effortLevel": "high",
   "autoDreamEnabled": true,
   "skipDangerousModePermissionPrompt": true,
   "editorMode": "vim",
   "verbose": true,
   "remoteControlAtStartup": true,
   "agentPushNotifEnabled": true,
-  "skipAutoPermissionPrompt": true,
-  "skillOverrides": {
-    "keybindings-help": "user-invocable-only",
-    "fewer-permission-prompts": "name-only",
-    "update-config": "name-only",
-    "init": "user-invocable-only",
-    "playground:playground": "name-only",
-    "frontend-design:frontend-design": "name-only",
-    "scientific-drawing": "name-only",
-    "gpt-image-2": "name-only",
-    "claude-md-management:claude-md-improver": "name-only",
-    "claude-md-management:revise-claude-md": "name-only",
-    "skill-creator:skill-creator": "name-only",
-    "skill-authoring": "name-only",
-    "schedule": "name-only",
-    "security-review": "name-only",
-    "x-api": "name-only"
-  }
+  "skipAutoPermissionPrompt": true
 }
