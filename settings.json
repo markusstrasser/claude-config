@@ -169,6 +169,15 @@
         ]
       },
       {
+        "matcher": "WebFetch|mcp__research__fetch_paper|mcp__research__save_paper|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/pretool-papers-store-remind.sh"
+          }
+        ]
+      },
+      {
         "matcher": "mcp__exa__web_search_advanced_exa",
         "hooks": [
           {
