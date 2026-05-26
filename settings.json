@@ -112,10 +112,6 @@
           },
           {
             "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/pretool-terse-bash.sh"
-          },
-          {
-            "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/pretool-cost-awareness.sh"
           },
           {
@@ -173,7 +169,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/pretool-papers-store-remind.sh"
+            "command": "/Users/alien/Projects/skills/hooks/pretool-corpus-remind.sh"
           }
         ]
       },
@@ -191,10 +187,6 @@
           {
             "type": "command",
             "command": "/Users/alien/.claude/hooks/tool-tracker.sh"
-          },
-          {
-            "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/pretool-read-discipline.sh"
           },
           {
             "type": "command",
@@ -312,14 +304,6 @@
           {
             "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/posttool-bash-poll.sh"
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/Users/alien/.claude/hooks/spinning-detector.sh"
           }
         ]
       },
@@ -572,7 +556,7 @@
     "skill-creator@claude-plugins-official": true,
     "exa@claude-plugins-official": true
   },
-  "effortLevel": "high",
+  "effortLevel": "medium",
   "autoDreamEnabled": true,
   "skipDangerousModePermissionPrompt": true,
   "editorMode": "vim",
