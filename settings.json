@@ -230,6 +230,10 @@
           {
             "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/pretool-goal-drift.sh"
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/pretool-research-provenance-warn.sh"
           }
         ]
       },
@@ -287,7 +291,8 @@
           {
             "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/posttool-bash-failure-loop.sh",
-            "statusMessage": "Checking for failure loops..."
+            "statusMessage": "Checking for failure loops...",
+            "continueOnBlock": true
           },
           {
             "type": "command",
@@ -325,7 +330,8 @@
           },
           {
             "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/posttool-dup-read.sh"
+            "command": "/Users/alien/Projects/skills/hooks/posttool-dup-read.sh",
+            "continueOnBlock": true
           }
         ]
       },
