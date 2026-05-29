@@ -84,6 +84,14 @@
         "hooks": [
           {
             "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/pretool-git-noext-inject.sh"
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/pretool-git-add-all-guard.sh"
+          },
+          {
+            "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/pretool-bash-loop-guard.sh"
           },
           {
@@ -291,8 +299,7 @@
           {
             "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/posttool-bash-failure-loop.sh",
-            "statusMessage": "Checking for failure loops...",
-            "continueOnBlock": true
+            "statusMessage": "Checking for failure loops..."
           },
           {
             "type": "command",
@@ -330,8 +337,7 @@
           },
           {
             "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/posttool-dup-read.sh",
-            "continueOnBlock": true
+            "command": "/Users/alien/Projects/skills/hooks/posttool-dup-read.sh"
           }
         ]
       },
@@ -562,8 +568,8 @@
     "skill-creator@claude-plugins-official": true,
     "exa@claude-plugins-official": true
   },
-  "effortLevel": "medium",
-  "autoDreamEnabled": true,
+  "effortLevel": "xhigh",
+  "autoDreamEnabled": false,
   "skipDangerousModePermissionPrompt": true,
   "editorMode": "vim",
   "verbose": true,
