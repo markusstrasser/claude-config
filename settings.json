@@ -285,11 +285,11 @@
           },
           {
             "type": "command",
-            "command": "uv run python3 /Users/alien/Projects/agent-infra/scripts/postwrite-knowledge-index.py"
+            "command": "/Users/alien/Projects/skills/hooks/posttool-plan-review-gate.sh"
           },
           {
             "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/posttool-plan-review-gate.sh"
+            "command": "/Users/alien/.claude/hooks/posttool-canonical-tool-probe.sh"
           }
         ]
       },
