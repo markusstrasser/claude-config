@@ -435,6 +435,10 @@
           {
             "type": "command",
             "command": "/Users/alien/.claude/hooks/tab-color.sh working"
+          },
+          {
+            "type": "command",
+            "command": "cd /Users/alien/Projects/agent-infra && uv run python3 scripts/gov_intake.py 2>/dev/null || true"
           }
         ]
       }
@@ -575,5 +579,13 @@
   "verbose": true,
   "remoteControlAtStartup": true,
   "agentPushNotifEnabled": true,
-  "skipAutoPermissionPrompt": true
+  "skipAutoPermissionPrompt": true,
+  "extraKnownMarketplaces": {
+    "webwright": {
+      "source": {
+        "source": "github",
+        "repo": "microsoft/webwright"
+      }
+    }
+  }
 }
