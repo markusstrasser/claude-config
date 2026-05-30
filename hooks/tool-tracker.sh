@@ -69,8 +69,13 @@ if [ "$TOOL" = "Read" ]; then
         else
             dedup_key="$fpath"
         fi
-        # Count total full-file reads (no offset) of this file
-        TOTAL_READS=$(grep -cxF "$fpath" <(cut -d'|' -f1 "$READS_FILE") 2>/dev/null || echo 0)
+        # Count total full-file reads (no offset) of this file.
+        # NOTE: do NOT append `|| echo 0` — grep -c already prints "0" on no-match
+        # AND exits non-zero, so `|| echo 0` yields "0\n0", which then trips
+        # `[: integer expected` on the comparisons below. Capture, then default.
+        # (Same bug class fixed in pretool-read-discipline.sh:31.)
+        TOTAL_READS=$(grep -cxF "$fpath" <(cut -d'|' -f1 "$READS_FILE") 2>/dev/null)
+        TOTAL_READS="${TOTAL_READS:-0}"
 
         if [ -z "$has_offset" ] && [ "$TOTAL_READS" -ge 4 ]; then
             # Blocking: 4+ full-file reads is almost certainly wasteful (shadow data: 302 triggers at ≥4)
