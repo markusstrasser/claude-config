@@ -294,6 +294,15 @@
         ]
       },
       {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/posttool-session-touched-log.sh"
+          }
+        ]
+      },
+      {
         "matcher": "Bash",
         "hooks": [
           {
@@ -572,14 +581,6 @@
     "skill-creator@claude-plugins-official": true,
     "exa@claude-plugins-official": true
   },
-  "effortLevel": "xhigh",
-  "autoDreamEnabled": false,
-  "skipDangerousModePermissionPrompt": true,
-  "editorMode": "vim",
-  "verbose": true,
-  "remoteControlAtStartup": true,
-  "agentPushNotifEnabled": true,
-  "skipAutoPermissionPrompt": true,
   "extraKnownMarketplaces": {
     "webwright": {
       "source": {
@@ -587,5 +588,13 @@
         "repo": "microsoft/webwright"
       }
     }
-  }
+  },
+  "effortLevel": "medium",
+  "autoDreamEnabled": false,
+  "skipDangerousModePermissionPrompt": true,
+  "editorMode": "vim",
+  "verbose": true,
+  "remoteControlAtStartup": true,
+  "agentPushNotifEnabled": true,
+  "skipAutoPermissionPrompt": true
 }
