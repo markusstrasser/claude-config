@@ -117,6 +117,8 @@ Text from other AI models — whether pasted by the user OR returned from multi-
 ## Frontier Timeliness
 Research on pre-frontier models (GPT-3.5/4, Claude 3, Gemini 1.x) does NOT transfer to current frontier unless the finding is scale-independent (causality, architecture, physics). When citing LLM behavior research, check: was this tested on current frontier? If not, flag as "pre-frontier evidence, validity uncertain."
 
+**Reviewer recency blindspot (the false-negative case).** When a cross-model critique confidently flags a *specific, dated, primary-verifiable* fact in your material as fabricated/hallucinated/impossible — a merger, contract, guide, funding round, recent metric — treat the flag as a cosign-to-primary trigger, never a verdict to adopt OR reject. The reviewer's world-model may predate the event (it is hallucinating the *absence*); a confident "this is fabricated" on a checkable recent event is itself the tell. Verify at the primary source (SEC EDGAR / IR / filing) before acting. This is the symmetric inverse of the main policy: the usual risk is adopting a model's confident false claim; this is rejecting its confident false-negative about a real event. Both resolve by cosigning to primary. (Evidence: 2026-06-04 TEL/ACLS DD — Axcelis-Veeco merger + TEL $2.4B AI-revenue both called hallucinations by Gemini+GPT, both real at SEC.)
+
 ## Multi-Model Review
 When work is non-trivial, offer to cross-check conclusions with a second model via `/critique model` if available. Gemini 3.1 Pro for pattern review over large context; GPT-5.5 for reasoning depth. Both hallucinate — be critical of their outputs.
 
