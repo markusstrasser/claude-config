@@ -96,11 +96,7 @@
           },
           {
             "type": "command",
-            "command": "cmd=$(echo \"$CLAUDE_TOOL_INPUT\" | grep -oE '\"command\":\\s*\"[^\"]*\"' | head -1); if echo \"$cmd\" | grep -qE '\"(python |python3 )' && ! echo \"$cmd\" | grep -q 'uv run'; then echo 'BLOCK: use \"uv run python\" not bare python'; exit 2; fi"
-          },
-          {
-            "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/pretool-llmx-guard.sh"
+            "command": "cmd=$(cat | grep -oE '\"command\":\\s*\"[^\"]*\"' | head -1); if echo \"$cmd\" | grep -qE '\"(python |python3 )' && ! echo \"$cmd\" | grep -q 'uv run'; then echo 'BLOCK: use \"uv run python\" not bare python'; exit 2; fi"
           },
           {
             "type": "command",
@@ -217,6 +213,10 @@
           {
             "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/pretool-subagent-gate.sh"
+          },
+          {
+            "type": "command",
+            "command": "python3 /Users/alien/Projects/skills/hooks/pretool-inventory-dispatch.py"
           }
         ]
       },
@@ -399,10 +399,6 @@
           },
           {
             "type": "command",
-            "command": "/Users/alien/.claude/hooks/stop-debrief.sh"
-          },
-          {
-            "type": "command",
             "command": "/Users/alien/.claude/hooks/stop-notify.sh"
           },
           {
@@ -526,15 +522,6 @@
             "command": "/Users/alien/.claude/hooks/rate-limit-backoff.sh"
           }
         ]
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/Users/alien/.claude/hooks/stop-failure-log.sh",
-            "async": true
-          }
-        ]
       }
     ],
     "SessionEnd": [
@@ -601,5 +588,6 @@
   "verbose": true,
   "remoteControlAtStartup": true,
   "agentPushNotifEnabled": true,
-  "skipAutoPermissionPrompt": true
+  "skipAutoPermissionPrompt": true,
+  "fastMode": true
 }
