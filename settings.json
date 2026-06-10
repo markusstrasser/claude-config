@@ -456,7 +456,7 @@
           },
           {
             "type": "command",
-            "command": "INPUT=$(cat); if printf '%s' \"$INPUT\" | grep -qi 'governance:'; then printf '%s' \"$INPUT\" | python3 /Users/alien/Projects/agent-infra/scripts/gov_intake.py 2>/dev/null; fi; true"
+            "command": "INPUT=$(cat); if printf '%s' \"$INPUT\" | grep -qi '#f'; then printf '%s' \"$INPUT\" | python3 /Users/alien/Projects/agent-infra/scripts/gov_intake.py 2>/dev/null; fi; true"
           }
         ]
       }
