@@ -153,6 +153,8 @@ is conducted; hooks ensure the OUTPUT has source grades.
 6. **Conviction is immutable but updatable.** Never edit a past judgment — add a new entry. The trail of belief changes is itself calibration data (KL divergence, resolution observables).
 
 7. **Tools should document themselves for agents.** Schema caches, auto-generated indexes, self-describing file names. The agent should not need to query "what's in this database?" every session.
+
+8. **Never let a proxy stand in for the principal check.** A value that gates a decision must come from the principal check, not a cheaper stand-in trusted silently. Four faces seen in one window: a dead data plane that silently falls back to another source (fail loud / `[DEGRADED]`, never substitute); a prose page rendered from structured data read as if it were the source (extract from the structured origin — pages-as-projection, never pages-as-source); a screen scored in a normalized unit (bpc/%/per-token) while the objective is absolute (the screen's unit must match the objective's unit for length-/shape-changing moves); a dev box that misreports the binding constraint (measure on the platform that judges). A proxy is fine as an explicit labeled screen; never as a silent substitute. See agent-infra `decisions/2026-06-10-silent-proxy-as-truth.md`.
 </epistemic_discipline>
 
 <environment>
