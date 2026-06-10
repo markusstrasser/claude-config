@@ -251,6 +251,10 @@
           {
             "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/pretool-research-provenance-warn.sh"
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/pretool-raw-openai-guard.sh"
           }
         ]
       },
@@ -452,7 +456,7 @@
           },
           {
             "type": "command",
-            "command": "cd /Users/alien/Projects/agent-infra && uv run python3 scripts/gov_intake.py 2>/dev/null || true"
+            "command": "INPUT=$(cat); if printf '%s' \"$INPUT\" | grep -qi 'governance:'; then printf '%s' \"$INPUT\" | python3 /Users/alien/Projects/agent-infra/scripts/gov_intake.py 2>/dev/null; fi; true"
           }
         ]
       }
@@ -580,18 +584,11 @@
     "claude-md-management@claude-plugins-official": true,
     "pyright-lsp@claude-plugins-official": true,
     "skill-creator@claude-plugins-official": true,
-    "exa@claude-plugins-official": true
-  },
-  "extraKnownMarketplaces": {
-    "webwright": {
-      "source": {
-        "source": "github",
-        "repo": "microsoft/webwright"
-      }
-    }
+    "exa@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true
   },
   "effortLevel": "medium",
-  "fastMode": true,
+  "fastMode": false,
   "tui": "default",
   "autoDreamEnabled": false,
   "skipDangerousModePermissionPrompt": true,
