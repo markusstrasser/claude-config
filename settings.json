@@ -42,6 +42,7 @@
     ],
     "defaultMode": "auto"
   },
+  "model": "claude-fable-5[1m]",
   "skillOverrides": {
     "keybindings-help": "user-invocable-only",
     "fewer-permission-prompts": "name-only",
@@ -93,6 +94,14 @@
           {
             "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/pretool-bash-loop-guard.sh"
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/pretool-heavy-load-guard.sh"
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/pretool-no-background-commit.sh"
           },
           {
             "type": "command",
@@ -582,12 +591,13 @@
     }
   },
   "effortLevel": "medium",
+  "fastMode": true,
+  "tui": "default",
   "autoDreamEnabled": false,
   "skipDangerousModePermissionPrompt": true,
   "editorMode": "vim",
   "verbose": true,
   "remoteControlAtStartup": true,
   "agentPushNotifEnabled": true,
-  "skipAutoPermissionPrompt": true,
-  "fastMode": true
+  "skipAutoPermissionPrompt": true
 }
