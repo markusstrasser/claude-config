@@ -429,6 +429,11 @@
             "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/precompact-log.sh",
             "async": true
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/session-stability-log.sh precompact",
+            "async": true
           }
         ]
       }
@@ -471,6 +476,10 @@
           {
             "type": "command",
             "command": "/Users/alien/Projects/phenome/scripts/check-index-freshness.sh"
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/session-stability-log.sh sessionstart"
           }
         ]
       }
