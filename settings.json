@@ -389,6 +389,15 @@
             "command": "/Users/alien/Projects/skills/hooks/posttool-subagent-output-check.sh"
           }
         ]
+      },
+      {
+        "matcher": "ScheduleWakeup|CronCreate",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alien/.claude/hooks/posttool-loop-tracker.sh"
+          }
+        ]
       }
     ],
     "Stop": [
@@ -597,7 +606,6 @@
     "typescript-lsp@claude-plugins-official": true
   },
   "effortLevel": "medium",
-  "fastMode": false,
   "tui": "default",
   "autoDreamEnabled": false,
   "skipDangerousModePermissionPrompt": true,
