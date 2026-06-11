@@ -189,8 +189,8 @@ Session-specific notes go in `memory/YYYY-MM-DD.md` in the project memory dir. S
 ## Post-Synthesis Completeness Check
 After producing a synthesis from multiple inputs (model reviews, research rounds, multi-source analysis), mechanically verify: does every input item appear in the output? List any dropped items and justify the omission. Don't wait for the user to ask "are you sure you included everything?"
 
-## Recitation Before Reasoning
-For synthesis or analysis over large context: quote/recite the key evidence before drawing conclusions. This is a training-free +4% accuracy technique (Du et al., EMNLP 2025). Apply when answering questions that require integrating information from multiple sources in context.
+## Ground Conclusions in Quoted Source Evidence
+For synthesis or analysis over large context: quote the key *source* evidence (filings, data rows, documents) a conclusion rests on, anchoring the answer to retrieved facts rather than recall. This is a training-free +4% accuracy technique (Du et al., EMNLP 2025). This means quoting external evidence — not narrating or transcribing your own internal reasoning. Apply when integrating information from multiple sources in context.
 
 ## Plan-Mode Handoff
 After research/analysis consuming >50% context with actionable findings, offer a plan-mode handoff. Plans go in `.claude/plans/{session_id[:8]}-{slug}.md` (gitignored). At session start, scan for recent plans — check what's done, delete plans >14 days old.
