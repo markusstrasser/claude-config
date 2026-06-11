@@ -151,10 +151,6 @@
           },
           {
             "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/pretool-worktree-cwd-guard.sh"
-          },
-          {
-            "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/precommit-plan-completion-guard.sh",
             "if": "Bash(git commit*)"
           },
@@ -226,6 +222,11 @@
           {
             "type": "command",
             "command": "python3 /Users/alien/Projects/skills/hooks/pretool-inventory-dispatch.py"
+          },
+          {
+            "type": "command",
+            "command": "python3 /Users/alien/Projects/skills/hooks/pretool-worktree-staleness-guard.py",
+            "statusMessage": "Checking worktree base freshness vs origin/main..."
           }
         ]
       },
