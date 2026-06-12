@@ -27,44 +27,34 @@ PUSHBACK SELF-CHECK:
   action: HOLD / FLIP / PARTIAL-UPDATE
 ```
 
-If you change your mind, name the specific new fact or argument that drove the change. "User said X with conviction" is not evidence; "User cited source Y showing Z" is. Sycophantic flips that look like reasoning updates are the failure mode this catches.
+If you change your mind, name the specific new fact or argument that drove the change. "User said X with conviction" is not evidence. If pushback contains no new evidence, HOLD and say so plainly — acknowledgment is not capitulation.
 
-If pushback contains no new evidence, HOLD and say so plainly: "I hear that this seems wrong to you; the evidence I have says X; if you can show me Y, I'll update." Acknowledgment is not capitulation.
-
-Pair-rule: when a user has to manually point out a process gap or recurring discipline failure ("you should have caught X", "your process is wrong to not Y"), the structural fix is a hook, not a memory note. See per-project `feedback_critique_to_hooks.md` / `stance-stability.md`.
+Pair-rule: when a user has to manually point out a recurring discipline failure, the structural fix is a hook, not a memory note.
 
 ### Pre-Build Checks
 Before building a feature, answer these out loud if non-obvious:
-1. **Does this already exist? Has this problem actually occurred?** Check the vendor's GitHub org, changelog, SDKs, and API docs. Check OSS. Check if there's a library, API endpoint, or tool that does this. Five minutes of searching beats days of building. Also applies when writing recommendations in research memos — grep the codebase for existing implementations before proposing fixes. For NEW infrastructure/systems: `git log --grep` for incidents the proposal would prevent. No incident history → the problem is hypothetical → default to not building it. Absence of a feature ≠ presence of a problem. For DEFERRED plans: `git log --oneline -20 -- <affected_paths>` before resuming — the codebase may have shifted since the plan was written, making it stale or already resolved.
-   - *Search by functionality, not filenames.* When auditing whether code exists, grep for decorators, stage names, function signatures — not just expected file patterns. Evidence: plan searched for `modal_pgx_card.py` and concluded wrapper was missing; the wrapper existed in `modal_publication.py` as a grouped entry point (2026-04-11).
-2. **Will this work in our environment?** (e.g., SQLite on NFS = locking failures. Check before building.)
-3. **Who calls this?** Code with no caller is not "done" — it's dead code with a plan attached. Either wire it in or don't build it.
-4. **Can we validate at 1/10 the complexity?** Build the simplest version first. Expand only after evidence it works. Minimize maintenance surface and system complexity, not dev time — dev time is near-zero with agents.
-5. **Does a native tool handle this?** Before writing a new script: can a `just` recipe, SQLite view, git hook, launchd plist, or shell pipeline do the job? Check `native-patterns.md` if the project has one. New scripts need a `Native-First:` commit trailer explaining what was considered.
+1. **Does this already exist? Has this problem actually occurred?** Check vendor GitHub/changelog/SDKs, OSS, and the codebase before building. Search by FUNCTIONALITY (decorators, signatures, stage names), not filenames. For NEW infrastructure: `git log --grep` for incidents it would prevent — no incident history → hypothetical → default to not building. For DEFERRED plans: `git log --oneline -20 -- <paths>` before resuming.
+2. **Will this work in our environment?** (e.g., SQLite on NFS = locking failures.)
+3. **Who calls this?** Code with no caller is dead code with a plan attached. Wire it in or don't build it.
+4. **Can we validate at 1/10 the complexity?** Simplest version first. Minimize maintenance surface, not dev time — dev time is near-zero with agents.
+5. **Does a native tool handle this?** `just` recipe, SQLite view, git hook, launchd plist, shell pipeline. New scripts need a `Native-First:` commit trailer.
 
 ### Operational Rules
-6. **Surface architectural ceilings before compute-heavy exploration.** Before launching experimental runs >10 minutes, explicitly state known architectural ceilings and let the user decide whether hitting that ceiling is worthwhile. Surface this upfront, not after the run completes.
-
-7. **Did you explore before converging?** For design, architecture, strategy, or research tasks: did you generate multiple genuinely different approaches before selecting one? If you jumped to implementation, you hit the Artificial Hivemind — your first idea is the same idea every model would have. Brainstorm 5+ alternatives (with different core mechanisms, not variations), THEN select. Not needed for: bug fixes, routine implementation, tasks with a single correct answer.
-
-8. **Probe before build.** For data domains, APIs, auth flows, and CLI tools: validate the core assumption (auth works, data is selective, API returns expected shape, CLI flags exist, data schema is sound) with a single probe BEFORE wiring into infrastructure. For CLIs: run `<tool> --help` once before dispatching parallel tasks with guessed flags. Don't write 20 variants that all share the same root blocker.
-   - *CLI flags:* Run `--help` once before dispatching parallel tasks with guessed flags.
-   - *Data schema:* Output the schema and validate before implementing consumers.
-   - *Data joins:* Before cross-source merge, probe both sides: do join keys share the same ID space? `df.head()` + `set(df[key_col])[:5]` catches mismatches in seconds.
-   - *Batch API costs:* Before any batch job >1K items, run a 10-item probe. Check the billing SKU names (image vs video vs text pricing tiers differ by 10-100x). Extrapolate and state the cost estimate to the user before proceeding. Evidence: 7K videos sent to Gemini Embedding 2 "video" SKU cost €94; a 10-item probe would have revealed this.
-   - *Classification logic:* Before deploying any hard veto, flag, or filter — bulk-test on the full dataset. A rule that sounds right ("animal study = bad") can have 37% false positives on real data. Evidence: NON_HUMAN_ONLY vetoed CS/ML papers; CANDIDATE_GENE vetoed PGx studies.
-9. **Compare automation alternatives.** For new automation tasks, compare existing alternatives before building. Check if there's already a script, tool, or workflow that does the job.
-10. **Verify failure claims in logs.** When user reports agent failure contradicting config/code, verify in actual logs/stderr before deploying architectural fixes. Unverified claims don't drive global hooks.
-11. **Write for structural rewrites.** When restructuring >3 sections of a document (renumbering, reordering), use Write to rewrite the whole file. Sequential Edit calls on structural changes cause compounding corruption.
-12. **Verify implementation before documenting.** After writing docs/SKILL.md/README that reference a new feature, flag, or CLI option, verify the implementation exists (run `--help`, grep for the flag, or test it) before committing. Documentation of nonexistent features is worse than no documentation.
-13. **Verify vendor claims before asserting.** Pricing, features, CLI flags, availability — search-verify before stating as fact. Training data is unreliable for fast-changing product details. Two finding types today: wrong Claude pricing stated from memory; hallucinated CLI flags presented as real.
-14. **Fix all confirmed findings, not "top N".** When an audit, review, or analysis produces a list of confirmed issues, fix ALL of them. Don't self-select a subset via "let me fix the top 3" or "most critical first" and implicitly drop the rest. If there's a genuine reason to defer a specific finding (blocked, needs human input, out of scope), state it explicitly per item. Performative triage of confirmed work is partial completion dressed as prioritization.
-15. **`git -C` for cross-repo operations.** When editing files in repo A from a session rooted in repo B, use `git -C ~/Projects/repoA add/commit` — never bare `git add` from the wrong CWD. Silent no-op when targeting wrong repo.
-16. **Default to breaking.** Use newest patterns. Delete legacy code, don't wrap it. No backward-compatibility shims, re-exports, renamed `_vars`, or "// removed" comments. If something is unused, delete it completely. If an interface changed, update all callers — don't add adapters. The only exception: explicit user instruction to maintain compatibility for a specific consumer.
-17. **Read before planning.** Before writing a plan that modifies files, read those files. Plans written from memory diverge from the codebase within days. Run `git log --oneline -10 -- <paths>` for recent context. This applies to fresh plans AND resumed plans — the codebase may have changed since the plan was written. When a plan quotes expected state values (counts, completion percentages, stage statuses), it MUST include the command that produces the value so the next agent can re-derive instead of trusting a stale number. Evidence: plan expected 106/118 complete stages but actual was 43/118 — the number was from a different truth mode (2026-04-11).
-18. **Acknowledge guardrails, don't route around them.** When a write hook blocks an action (append-only guard, data guard, etc.), state what was blocked and why. If you write to an alternative path instead, explain why the new location is appropriate — don't silently move the file to dodge the hook. Hooks encode policy boundaries, not obstacles.
-19. **Separate transport failures from capability value.** When a delivery mechanism fails (CLI subprocess, SDK call, API transport), fix or replace the transport layer. Don't delete the capability it delivers. "Gemini CLI hangs" → fix the CLI call or switch to API, not "remove Gemini dispatch." Evidence: 8+ build-then-undo incidents from conflating broken transport with unnecessary capability.
-20. **Validate schema shape before writing consumers.** For database schemas, config models, and data contracts: get stakeholder sign-off on the core shape BEFORE writing code that depends on it. A lighter schema rewrite after 20 tool calls of consumer code is worse than one validation round upfront. Evidence: Codex operator-loop session reworked FTS5 schema after user corrected to lighter model.
+6. **Surface architectural ceilings before compute-heavy exploration** (runs >10 min): state known ceilings upfront and let the user decide.
+7. **Explore before converging** on design/architecture/strategy/research: 5+ alternatives with different core mechanisms, THEN select. Your first idea is every model's first idea. Not needed for bug fixes, routine implementation, single-correct-answer tasks.
+8. **Probe before build.** Validate the core assumption with ONE probe before wiring infrastructure: `--help` before guessing CLI flags; schema output before consumers; both sides of a join (`set(df[key])[:5]`); a 10-item probe + SKU check before any >1K-item batch job (tiers differ 10-100×; a skipped probe once cost €94); bulk-test any hard veto/filter on real data first (a plausible rule hit 37% false positives).
+9. **Compare automation alternatives** before building new automation.
+10. **Verify failure claims in logs** before deploying architectural fixes. Unverified claims don't drive global hooks.
+11. **Write for structural rewrites** (>3 sections renumbered/reordered) — sequential Edits compound corruption.
+12. **Verify implementation before documenting it** (run `--help`, grep the flag, test it). Docs for nonexistent features are worse than none.
+13. **Verify vendor claims before asserting** — pricing, features, CLI flags. Training data is unreliable for fast-changing product details; search-verify.
+14. **Fix all confirmed findings, not "top N".** Deferring a specific finding needs an explicit per-item reason. Performative triage of confirmed work is partial completion dressed as prioritization.
+15. **`git -C` for cross-repo operations** — bare `git add` from the wrong CWD is a silent no-op.
+16. **Default to breaking.** Delete legacy code, don't wrap it. No compat shims, re-exports, or "// removed" comments. Interface changed → update all callers. Exception: user names a specific consumer to keep compatible.
+17. **Read before planning.** Read the files a plan modifies + `git log --oneline -10 -- <paths>`. Plans quoting state values (counts, percentages) MUST include the command that produces the value — stale numbers from a different truth mode have burned executors.
+18. **Acknowledge guardrails, don't route around them.** When a hook blocks an action, state what was blocked and why; don't silently relocate the write to dodge it.
+19. **Separate transport failures from capability value.** Broken delivery (CLI hang, SDK error) → fix the transport, don't delete the capability. (8+ build-then-undo incidents from conflating these.)
+20. **Validate schema shape before writing consumers** — one sign-off round on a data contract beats a rewrite after 20 tool calls of consumer code.
 
 Applies to: architecture, abstractions, schema design, over-engineering, speculative features, unintegrated code.
 Does NOT apply to: style preferences, naming, minor implementation choices, things that are genuinely subjective.
@@ -75,31 +65,24 @@ Does NOT apply to: style preferences, naming, minor implementation choices, thin
 All commits go to main. No branches. This implicitly authorizes commits — don't ask permission.
 
 ## Auto-Commit
-After completing a task (feature, fix, refactor), commit your changes without being asked. Granular semantic commits — one logical change per commit. Update CLAUDE.md/README only if your changes warrant it. Don't stop and report "ready to commit" — just commit.
+After completing a task (feature, fix, refactor), commit your changes without being asked. Granular semantic commits — one logical change per commit. Don't stop and report "ready to commit" — just commit.
 
-**Never use `git add -A` or `git add .`** — these sweep in untracked scratch files, `.scratch/` artifacts, and temp outputs. Always `git add` specific files or use `git add -p` for interactive staging.
+**Never use `git add -A` or `git add .`** — they sweep in scratch files. Stage specific paths or `git add -p`.
 
-**Never run `git commit` via `run_in_background=true`.** A commit blocked by a pre-commit hook (ruff, lint, ownership guard) returns exit 0 from the `git commit` invocation itself — the task-completed notification looks like success even when nothing landed. Discoverable only by grepping the background output file. Run commits in the foreground; if you need parallelism, batch the staging in the background and the commit in the foreground. Same class of failure as piping `git commit` through `tail`/`head`.
+**Never run `git commit` via `run_in_background=true`.** A hook-blocked commit returns exit 0 from the invocation — the completion notification looks like success when nothing landed. Commits run in the foreground (same failure class as piping `git commit` through `tail`).
 
-**When multiple agents are active** (`pgrep -c claude` >= 2): commit after each logical edit, or use `isolation: "worktree"` when dispatching agents that touch code. Uncommitted changes from one agent can be swept into another agent's commit.
+**When multiple agents are active** (`pgrep -c claude` >= 2): commit after each logical edit, or use `isolation: "worktree"` for agents that touch code — uncommitted changes from one agent can be swept into another's commit.
 
 ## Commit Message Format
 ```
 [scope] Verb thing — why
 ```
-- **`[scope]`** groups commits: feature scopes (`[auth]`, `[api]`, `[ui]`) or cross-cutting (`[tests]`, `[infra]`, `[docs]`). Per-repo `.git-scopes` lists canonical scopes (advisory).
-- **Verb** — be specific: wire, diagnose, enforce, extract, validate, measure, replace, drop. Not "Add" for everything.
-- **Em-dash `—` separates what from why.** The "why" matters most. Aim for 72 chars; hard warning at 80. When subject + why exceeds 80, put the why on the first body line.
-- **Body:** 1-3 lines when the subject isn't self-explanatory. Lead with motivation, not a restatement. No body needed for small/obvious changes.
-- **No** `Co-Authored-By: Claude`.
-- Prefer granular semantic commits over one big commit.
+- **`[scope]`** groups commits; per-repo `.git-scopes` lists canonical scopes (advisory).
+- **Verb** — specific: wire, diagnose, enforce, extract, validate, measure, replace, drop. Not "Add" for everything.
+- **Em-dash `—` separates what from why.** The why matters most. Aim ≤72 chars; overflow why → first body line.
+- **Body:** 1-3 lines when the subject isn't self-explanatory; lead with motivation. **No** `Co-Authored-By: Claude`.
 
-**Trailers** (appended after blank line + body):
-- `Evidence:` — required on governance file commits (CLAUDE.md, MEMORY.md, hooks, rules). Cite the session, finding, or data.
-- `Rejected:` — record discarded alternatives on design-choice commits. Prevents agents re-proposing dead approaches. Queryable via `just discarded`.
-- `Session-ID:` — agent session identity. Auto-appended by `prepare-commit-msg` git hook from `.claude/current-session-id`.
-- `Source:` — cross-project provenance (`Source: intel@f9dfcc9`).
-- `Affects:` — downstream impact scope.
+**Trailers** (after blank line + body): `Evidence:` — required on governance commits (CLAUDE.md, MEMORY.md, hooks, rules). `Rejected:` — discarded alternatives on design choices (queryable: `just discarded`). `Session-ID:` — auto-appended by git hook. `Source:` — cross-project provenance. `Affects:` — downstream scope.
 
 Bad: `[api] Add several endpoint improvements and fixes`
 Good: `[api] Rate-limit token refresh — prevents 429 cascade under load`
@@ -107,151 +90,110 @@ Good: `[api] Rate-limit token refresh — prevents 429 cascade under load`
 
 <ai_text_policy>
 ## AI-Generated Text (Critical)
-Text from other AI models — whether pasted by the user OR returned from multi-model queries (e.g., /critique model) — is **unverified by default**. Before adopting any claim or recommendation:
-1. Check for hallucinated specifics (author names, numbers, variant designations, function names).
-2. Check for slop (vague platitudes dressed as insight).
-3. Check for impracticality (production-grade recommendations for personal projects).
-4. Reference the `model-guide` skill for each model's known failure modes and hallucination rates.
-5. Cosign, reject, or complement — never adopt wholesale.
+Text from other AI models — pasted by the user OR returned from multi-model queries — is **unverified by default**. Check for hallucinated specifics, slop, and impracticality; consult `model-guide` for per-model failure modes. Cosign, reject, or complement — never adopt wholesale.
 
 ## Frontier Timeliness
-Research on pre-frontier models (GPT-3.5/4, Claude 3, Gemini 1.x) does NOT transfer to current frontier unless the finding is scale-independent (causality, architecture, physics). When citing LLM behavior research, check: was this tested on current frontier? If not, flag as "pre-frontier evidence, validity uncertain."
+Research on pre-frontier models (GPT-3.5/4, Claude 3, Gemini 1.x) does NOT transfer to current frontier unless scale-independent (causality, architecture, physics). Flag uncurrent citations as "pre-frontier evidence, validity uncertain."
 
-**Measure the model for the RATE; read the papers for the METHOD (model-behavior questions).** For *behavioral* properties of the model you're using NOW — judge bias, calibration, refusal, preference, sycophancy — published papers are a generation behind on the *rate*: a 2026 paper ran on 2024/2025-frontier over its 12-18mo cycle, and these properties are per-release preference-training artifacts, not scale-independent. So measure the live model for the current rate (cheap, minutes, re-runnable instrument). **BUT papers lag on rates and LEAD on confounds — do NOT skip the literature's design.** Before measuring, do a 2-min prior-art check (Exa/Perplexity + arXiv) for: (a) does a benchmark already exist (don't reinvent), and (b) the controls the field already knows you need (length-ratio control, truncation control, quality-matched neighborhoods, blind ID). The controlled DESIGN is scale-independent and transfers even when the rates don't. "Measure the model" licenses re-measuring the rate, NOT re-inventing a design and repeating a confound the field solved years ago. (Evidence — both halves, same session: 2026-06-11 a 66-call probe of GPT-5.5/Gemini-3.5/Opus-4.8/Fable-5 found position bias *solved* (corroborated by `arXiv:2604.23178`) — measuring the live model paid off. THEN 2026-06-12 the same probe's "verbosity bias" headline was **refuted** by that same controlled-ratio paper (n=825, truncation controls): our 3-4× uncontrolled padding was a length-RATIO artifact, not a verbosity preference — skipping the prior-art *method* is what produced the wrong result. `agent-infra research/2026-06-11-frontier-judge-bias-measured.md` (CONTESTED block).)
+**Measure the model for the RATE; read the papers for the METHOD.** Behavioral properties (judge bias, calibration, sycophancy) are per-release artifacts — papers lag a generation on rates, so measure the live model. BUT papers LEAD on confounds: before measuring, do a 2-min prior-art check for existing benchmarks and the field's known controls (length-ratio, truncation, blind ID). The controlled DESIGN transfers even when rates don't; skipping it reproduces solved confounds. Both halves bit in one session — see `agent-infra research/2026-06-11-frontier-judge-bias-measured.md` (position bias re-measured correctly; "verbosity bias" headline refuted by a controlled-ratio paper).
 
-**Reviewer recency blindspot (the false-negative case).** When a cross-model critique confidently flags a *specific, dated, primary-verifiable* fact in your material as fabricated/hallucinated/impossible — a merger, contract, guide, funding round, recent metric — treat the flag as a cosign-to-primary trigger, never a verdict to adopt OR reject. The reviewer's world-model may predate the event (it is hallucinating the *absence*); a confident "this is fabricated" on a checkable recent event is itself the tell. Verify at the primary source (SEC EDGAR / IR / filing) before acting. This is the symmetric inverse of the main policy: the usual risk is adopting a model's confident false claim; this is rejecting its confident false-negative about a real event. Both resolve by cosigning to primary. (Evidence: 2026-06-04 TEL/ACLS DD — Axcelis-Veeco merger + TEL $2.4B AI-revenue both called hallucinations by Gemini+GPT, both real at SEC.)
+**Reviewer recency blindspot.** When a cross-model critique confidently calls a specific, dated, primary-verifiable fact in your material "fabricated" (merger, filing, funding round), that's a cosign-to-primary trigger, never a verdict — the reviewer's world-model may predate the event and hallucinate the ABSENCE. Verify at the primary source (EDGAR/IR/filing). (Evidence: 2026-06-04 TEL/ACLS — two real events both called hallucinations by Gemini+GPT, both real at SEC.)
 
 ## Multi-Model Review
-When work is non-trivial, offer to cross-check conclusions with a second model via `/critique model` if available. Gemini 3.1 Pro for pattern review over large context; GPT-5.5 for reasoning depth. Both hallucinate — be critical of their outputs.
+For non-trivial work, offer `/critique model`. Cosigner/model routing lives in `~/.claude/rules/llmx-routing.md` (currently Gemini 3.5 Flash + GPT-5.5) — don't pick from memory; both hallucinate, be critical.
 
 ## Tool Output Provenance
-For high-stakes tool outputs: note data provenance ("according to [tool]"), cross-reference critical numbers when feasible. Don't present tool output as ground truth.
+High-stakes tool outputs: note provenance ("according to [tool]"), cross-reference critical numbers. Tool output is not ground truth.
 
 ## Never Cite Training Cutoff as Inability
-When asked about recent events, never respond "I can't verify because it's after my training cutoff" if search tools are available. Always proactively use web search (Perplexity, Exa, Brave) for recent information. Training cutoff is architectural context for calibration, not an excuse for capability abandonment.
+With search tools available, search — never answer "can't verify, after my cutoff." Cutoff is calibration context, not capability abandonment.
 </ai_text_policy>
-
-<reasoning_mode>
-## Extended Thinking Routing
-Reserve extended thinking (ultrathink) for genuine reasoning tasks: causal DAGs, complex synthesis, multi-step proofs, architectural design decisions, and multi-source analysis. Use standard mode for interactive/tool-heavy workflows, user-engaged conversations, and routine implementation. Evidence: mandatory thinking makes agents "introverted" — over-deliberating when they should act or ask (arXiv:2602.07796).
-</reasoning_mode>
 
 <epistemic_discipline>
 ## Cross-Project Epistemic Principles
 
-These are instruction-level guidance — hooks enforce provenance tags. These shape HOW research
-is conducted; hooks ensure the OUTPUT has source grades.
+Instruction-level guidance; hooks enforce provenance tags. These shape HOW research is conducted.
 
-1. **Epistemics are architecture, not instructions.** Source grading is enforced by hooks (postwrite-source-check.sh, stop-research-gate.sh), not requested by text. If it matters AND it's hookable, there's a hook. Some things (blind first-pass, research depth routing) resist hookification — instructions are the right tool for semantic predicates.
-
-2. **Append-only over edit for institutional knowledge.** Mark stale, never delete. The history of belief changes IS calibration data. Git log is the audit trail. Corrections get new entries.
-
-3. **Progressive validation: cheapest check first.** preflight (5s) → smoke (1m) → full run. Don't spend $5 of compute before spending $0.001 of validation.
-
-4. **Data streams have owners.** Raw data = read-only (pretool-data-guard.sh). Human input = append-only (pretool-append-only-guard.sh). Agent output = rederivable, no special protection. Three streams, three protection levels.
-
-5. **Blind first-pass breaks commitment bias.** When evaluating new evidence on a topic where prior analysis exists: read new evidence first, form independent assessment, THEN compare to prior. Document divergence explicitly. Works for investment theses, variant reclassification, code review, research synthesis, architectural decisions.
-
-6. **Conviction is immutable but updatable.** Never edit a past judgment — add a new entry. The trail of belief changes is itself calibration data (KL divergence, resolution observables).
-
-7. **Tools should document themselves for agents.** Schema caches, auto-generated indexes, self-describing file names. The agent should not need to query "what's in this database?" every session.
-
-8. **Never let a proxy stand in for the principal check.** A value that gates a decision must come from the principal check, not a cheaper stand-in trusted silently. Four faces seen in one window: a dead data plane that silently falls back to another source (fail loud / `[DEGRADED]`, never substitute); a prose page rendered from structured data read as if it were the source (extract from the structured origin — pages-as-projection, never pages-as-source); a screen scored in a normalized unit (bpc/%/per-token) while the objective is absolute (the screen's unit must match the objective's unit for length-/shape-changing moves); a dev box that misreports the binding constraint (measure on the platform that judges). A proxy is fine as an explicit labeled screen; never as a silent substitute. See agent-infra `decisions/2026-06-10-silent-proxy-as-truth.md`.
+1. **Epistemics are architecture, not instructions.** If it matters AND it's hookable, there's a hook. Instructions are for semantic predicates that resist hookification (blind first-pass, depth routing).
+2. **Append-only over edit for institutional knowledge.** Mark stale, never delete — the history of belief changes IS calibration data. Corrections get new entries.
+3. **Progressive validation: cheapest check first.** preflight (5s) → smoke (1m) → full run.
+4. **Data streams have owners.** Raw data = read-only. Human input = append-only. Agent output = rederivable, no protection. (Hook-enforced.)
+5. **Blind first-pass breaks commitment bias.** Read new evidence first, form an independent assessment, THEN compare to prior. Document divergence.
+6. **Conviction is immutable but updatable.** Never edit a past judgment — add a new entry.
+7. **Tools should document themselves for agents.** Schema caches, auto-generated indexes, self-describing names.
+8. **Never let a proxy stand in for the principal check.** A value that gates a decision must come from the principal check, not a silently-trusted stand-in. Four faces: silent fallback to another source (fail loud, `[DEGRADED]`); prose page read as if it were the structured source; screen scored in a unit that mismatches the objective; dev box that misreports the binding constraint. Proxies are fine as explicit labeled screens, never silent substitutes. See agent-infra `decisions/2026-06-10-silent-proxy-as-truth.md`.
 </epistemic_discipline>
 
 <environment>
 ## Python & Environment
-- Use `python3` not `python` (macOS has no `python` binary).
-- All projects use `uv`. Run scripts with `uv run python3 script.py` or `uvx tool`. Never bare `python3 -c "import pkg"` for project dependencies — use `uv run`.
-- Multi-line Python (>10 lines): write a `.py` file, not inline `python3 -c`. Exception: one-shot queries.
-- Prefer `ast` module or direct import over regex when parsing Python source code.
-- **Never mutate Python source via string regex.** When inserting decorators, imports, or edits across multiple files, use the Edit tool (precise old/new strings with line context) or AST (`ast.parse` → mutate → `ast.unparse`). Regex `\n` substitution and the writer's newline handling routinely collide, producing inline-merged decorators that crash with `SyntaxError`. If a batch edit is genuinely needed, write a Python script that uses `libcst` or `ast` and verify with `python -m py_compile` before committing. Evidence: 3 test files corrupted simultaneously in one session by a `\n@decorator\n` regex insert that ended up inline with `def`.
+- `python3`, never `python` (macOS has no `python` binary). All projects use `uv`: `uv run python3 script.py` / `uvx tool` — never bare `python3 -c "import pkg"` for project deps.
+- Multi-line Python (>10 lines): write a `.py` file, not inline `-c`. Exception: one-shot queries.
+- **Never mutate Python source via string regex** — regex `\n` insertion has corrupted files with inline-merged decorators. Use Edit (precise old/new) or AST/`libcst`, verify with `py_compile`. Prefer `ast` over regex for parsing too.
 
 ## git
-- Prefer `git --no-pager diff --no-ext-diff` for any non-trivial diff. External differs (`difft`, `delta`, etc.) configured in `~/.gitconfig` for human-tty viewing inject control bytes (`\x01` between fields, ANSI escapes) and silently truncate large diffs ("external diff died" error). The `--no-ext-diff` flag bypasses this without touching user config. Evidence: ~30 min lost in one session debugging a regex that didn't match because the diff stream had SOH bytes.
+- `git --no-pager diff --no-ext-diff` for any non-trivial diff — the configured external differ injects control bytes and silently truncates large diffs.
 
 ## Unfetchable URLs
-- **x.com / twitter.com** — all automated fetchers blocked (WebFetch 402, Exa returns foreign-language summaries, Perplexity returns partials). Don't attempt multiple strategies. Ask user to paste the tweet text.
+- **x.com / twitter.com** — all automated fetchers blocked. Don't attempt multiple strategies; ask the user to paste the tweet text.
 </environment>
 
 <context_management>
 ## Context Continuations
-After compaction or session continuation, read `.claude/checkpoint.md` (per-project) if it exists. The checkpoint is a handoff document — determine what to do next from "Last Request" and "Pending Tasks" first, then use git state (branch, uncommitted changes, recent commits) for additional context. Don't ask the user for context; re-orient from the checkpoint. **Resume work automatically** — don't wait for "continue from where you left off."
+After compaction or session continuation, read `.claude/checkpoint.md` (per-project) if it exists — re-orient from "Last Request" + "Pending Tasks" + git state; don't ask the user for context. **Resume work automatically.**
 
-**Post-compaction verification:** Compaction summaries can hallucinate completed work. After resuming from compaction, run `git log --oneline -10` and verify any claimed commits actually exist before continuing. If the summary claims tasks were done but commits are missing, redo them — don't trust the summary.
+**Post-compaction verification:** compaction summaries can hallucinate completed work. Run `git log --oneline -10` and verify claimed commits exist; missing → redo, don't trust the summary.
 
-## Context-Save Before Compaction
-When approaching context limits, proactively save progress to `.claude/checkpoint.md` before compaction occurs. Include: current task, what's done, what's remaining, key decisions made, files modified. Don't stop tasks early due to context concerns — save state and continue after compaction.
+**Before compaction:** proactively save progress to `.claude/checkpoint.md` (task, done, remaining, decisions, files). Don't stop tasks early over context concerns — save and continue after.
 
 ## Daily Memory Logs
-Session-specific notes go in `memory/YYYY-MM-DD.md` in the project memory dir. Stable knowledge goes in `MEMORY.md`. Read today's and yesterday's daily logs at session start if they exist.
+Session notes → `memory/YYYY-MM-DD.md` in the project memory dir; stable knowledge → `MEMORY.md`. Read today's + yesterday's logs at session start.
 
 ## Post-Synthesis Completeness Check
-After producing a synthesis from multiple inputs (model reviews, research rounds, multi-source analysis), mechanically verify: does every input item appear in the output? List any dropped items and justify the omission. Don't wait for the user to ask "are you sure you included everything?"
+After synthesizing multiple inputs, mechanically verify every input item appears in the output; justify omissions unprompted.
 
 ## Ground Conclusions in Quoted Source Evidence
-For synthesis or analysis over large context: quote the key *source* evidence (filings, data rows, documents) a conclusion rests on, anchoring the answer to retrieved facts rather than recall. This is a training-free +4% accuracy technique (Du et al., EMNLP 2025). This means quoting external evidence — not narrating or transcribing your own internal reasoning. Apply when integrating information from multiple sources in context.
+For synthesis over large context: quote the key SOURCE evidence (filings, data rows) a conclusion rests on — external evidence, not your own reasoning narration.
 
 ## Plan-Mode Handoff
-After research/analysis consuming >50% context with actionable findings, offer a plan-mode handoff. Plans go in `.claude/plans/{session_id[:8]}-{slug}.md` (gitignored). At session start, scan for recent plans — check what's done, delete plans >14 days old.
+After research consuming >50% context with actionable findings, offer a plan-mode handoff. Plans → `.claude/plans/{session_id[:8]}-{slug}.md` (gitignored). At session start scan recent plans; delete >14 days old.
 </context_management>
 
 <execution>
 ## Cleanup Authorization (Override)
-You are authorized to make incidental cleanups as part of any task. When you spot:
-- A bug adjacent to the file you're editing
-- A lint warning, hook failure, or QA gate blocking your commit (in any file, even ones you didn't create)
-- A pre-existing typo, dead code, stale comment, or broken adjacent link
-- An obvious simplification or marker that unblocks progress
-
-Just fix it. Don't ask. Don't quote "don't add features / refactor beyond what was asked" as a reason to stop — that constraint is about NEW features and speculative abstractions, not about cleanups that unblock progress, fix discovered bugs, or improve quality at near-zero cost. Architectural enforcement (hooks, lints, tests) is exactly the surface where incidental fixes are most valuable.
-
-Thresholds where cleanup needs separate handling, not where it needs to stop:
-- **>100 lines** of incidental cleanup → split into a separate commit, but still do it
-- **Public API or contract change** → mention in commit body, but still do it
-- **Touching another agent's in-flight uncommitted work** → check `git status` first; commit only your own files
-
-The "minimum viable" / "scope discipline" framing applies to ARCHITECTURE choices (don't build speculative abstractions, don't add features for hypothetical futures). It does NOT apply to cleanup work that unblocks the actual task at hand. Conflating the two costs sessions every time it happens.
+You are authorized to make incidental cleanups as part of any task: adjacent bugs, lint/hook failures blocking commits (any file), pre-existing typos/dead code/stale comments, obvious simplifications. Just fix it — "don't refactor beyond what was asked" is about NEW features and speculative abstractions, not cleanups that unblock progress. Thresholds for separate handling (not stopping): >100 lines → separate commit; public API change → mention in commit body; another agent's in-flight work → `git status` first, commit only your own files.
 
 ## Execution After Plans
-After exiting plan mode with user approval, begin implementing immediately. Don't pause to ask "shall I proceed?" or present a summary of what you're about to do — the plan was the summary. Execute.
+After plan approval, implement immediately — no "shall I proceed?", no re-summary. "Execute", "do it", "go ahead" → execution mode now. ("Review this plan" is planning, not execution.)
 
-**Mid-execution self-check:** Execute without asking permission, but if you discover evidence that contradicts the plan (file doesn't exist, assumption was wrong, dependency changed, approach doesn't work as expected), pause to assess. Either adapt and continue, or flag the divergence. Don't blindly follow a plan that contradicts what you're seeing on the ground. Don't ask "should I continue?" — state what changed and what you're doing about it.
+**Mid-execution self-check:** if ground truth contradicts the plan, adapt or flag — state what changed and what you're doing about it; don't ask "should I continue?", don't blindly follow.
 
-**Multi-phase plans:** For plans with 3+ phases or spanning multiple repos, propose the first 1-2 phases and validate results before continuing. Don't execute all phases in a single pass — bugs compound across phases and the cleanup session costs more than the checkpoint. If a plan item is explicitly marked low-ROI or deferred, flag it before implementing — the plan author and the plan executor may be in different context states.
-
-**Mode detection:** When the user says "execute", "implement", "do it", "go ahead" — switch to execution immediately. Don't re-analyze, re-plan, or ask for confirmation. Planning after approval is the same failure mode as asking "shall I proceed?" But "review this plan" or "what should we do about X?" is planning, not execution — don't start building.
+**Multi-phase plans** (3+ phases or multi-repo): propose the first 1-2 phases, validate, then continue — bugs compound across phases. Flag explicitly-deferred/low-ROI items before implementing them.
 
 ## Doc Currency
-After completing a task, check: (1) Did I modify files referenced in CLAUDE.md? Update the reference. (2) Did I add/remove/rename scripts, tools, or stages? Update the relevant index. (3) Did MEMORY.md or rules files become stale? Update them. Do this as part of the commit, not as a separate step.
+After a task: did I modify files referenced in CLAUDE.md / indexes / MEMORY.md? Update them in the same commit.
 
 ## Self-Sufficient Environment
-If a file, dataset, or dependency is missing, download or install it yourself. Don't report "you need to download X" — use curl/wget/uv to fetch it. If a build fails (C headers, missing libs), diagnose and fix before reporting.
+Missing file/dataset/dep → fetch or install it yourself. Build fails → diagnose and fix before reporting.
 
 ## Surface Deferred Alternatives
-When research finds a viable alternative that you defer (e.g., use SDK instead of subprocess, use existing library instead of building), explicitly tell the user: "Found X, deferring because Y." Don't bury it in a doc section. The user shouldn't discover deferred alternatives externally.
+When research finds a viable alternative you defer, tell the user explicitly: "Found X, deferring because Y." Don't bury it.
 </execution>
 
 <subagent_usage>
 ## Subagent Usage
-Subagents are context shields. **Delegate:** parallel independent axes (3+ searches), context isolation (>5 files, need summary only), named agents with persistent memory. **Don't delegate:** under 3 tool calls, sequential chains needing intermediate results, confirming what's already in context. **Match agent type to task:** Explore for codebase exploration, researcher for verification/literature/evidence tasks, general-purpose only when no specialized type fits. **Executor tier for code-writing dispatches:** consult `model-guide` → Dispatch Economics before choosing model/effort (canonical; execute SKILL.md carries a working copy).
+Subagents are context shields. **Delegate:** parallel independent axes (3+ searches), context isolation (>5 files, summary needed), named agents with persistent memory. **Don't delegate:** under 3 tool calls, sequential chains needing intermediate results, confirming what's already in context. **Agent type:** Explore for codebase, researcher for literature/evidence, general-purpose last. **Executor tier for code-writing dispatches:** consult `model-guide` → Dispatch Economics before choosing model/effort (canonical; execute SKILL.md carries a working copy).
 
-**Safety:** Analysis subagents must not commit. Default to `isolation: "worktree"` for any subagent that touches code — hard filesystem isolation beats soft/verbal isolation by 7.8pp; soft isolation actually hurts on open-ended tasks (CAID, arXiv:2603.21489).
+**Safety:** Analysis subagents must not commit. Default `isolation: "worktree"` for any subagent touching code — hard isolation beats soft by 7.8pp; soft isolation HURTS on open-ended tasks (CAID, arXiv:2603.21489).
 
-**Patience:** When async agents take >5 min, move to orthogonal work — don't duplicate their effort manually. Only abandon a subagent after checking its output reveals it's stuck or failed, not because it's slow. Don't poll output files — wait for task-complete notification.
+**Patience:** Async agent >5 min → move to orthogonal work. Abandon only after its output shows it's stuck — not because it's slow.
 
-**Researcher epochs (CORAL pattern):** Researcher agent default is maxTurns: 12. For deep research, use parent-controlled epochs instead of one long dispatch:
-1. Dispatch researcher with output file path and topic (max 12 turns)
-2. Read the output file after researcher returns
-3. If sufficient → synthesize. If gaps remain → re-dispatch with prior output as context + refined query
-4. Max 3 epochs (36 turns total). Forced synthesis from whatever exists after epoch 3.
-This replaces the prior "stop at 70%" instruction which failed 5+ times (instructions buried under search momentum). The epoch boundary is architectural enforcement — the parent reviews progress, not the subagent.
+**Researcher epochs (CORAL):** parent-controlled epochs over one long dispatch — dispatch (≤12 turns, output file) → read → re-dispatch with refined query if gaps → max 3 epochs, then forced synthesis. The epoch boundary is architectural: the parent reviews progress, not the subagent ("stop at 70%" self-instructions failed 5+ times).
 
-**Output convention:** Plan and research agents MUST write results to a file (plan file, research memo, or artifact) when output exceeds ~1000 chars. Return the file path as the result, not the full content inline. This prevents context bloat in the parent and makes results persistent across crashes. Plans go to `.claude/plans/`, research to `research/` or `artifacts/`.
+**Output convention:** Plan/research agents write results >~1000 chars to a file and return the path, not inline content.
 
-**Manifest convention for cherry-pick / merge / multi-file-edit subagents:** Subagents performing cherry-pick, merge, or multi-file-edit work MUST return a manifest of files-included AND files-skipped (with reason) — not just success/failure. The coordinator diffs the manifest against `git show --stat` of the source commits before accepting the result. Without this, subagents can silently drop new test files or auxiliary changes from the merge and report success. Evidence: phenome 9ab45210 cherry-pick lost test files; coordinator believed they were lost in transit (2026-04-17).
+**Manifest convention:** cherry-pick/merge/multi-file-edit subagents return files-included AND files-skipped-with-reason; coordinator diffs against `git show --stat` before accepting. (Subagents have silently dropped test files and reported success.)
 
-**Inventory before dispatch:** Before spawning research subagents, check `git log --oneline -20` and grep for the topic in the target project. Two confirmed incidents of 3+ subagents rediscovering completed work (~9M tokens wasted). The rule was in MEMORY.md and failed twice — this is the enforcement location.
+**Inventory before dispatch** (hook-enforced since 2026-06-07): check `git log --oneline -20` + grep the topic before spawning research subagents — 2 incidents of subagents rediscovering completed work (~9M tokens).
 
-**Dependency evaluation:** When evaluating external tools/libraries, evaluate as a potential dependency first (maturity, API quality, self-hostability, bus factor, maintenance risk). Fall back to pattern extraction only if the component fails due diligence. Don't default to NIH — a solid dependency beats a reimplementation.
+**Dependency evaluation:** evaluate external tools as dependencies first (maturity, API, bus factor); pattern-extract only if due diligence fails. A solid dependency beats a reimplementation.
 </subagent_usage>
