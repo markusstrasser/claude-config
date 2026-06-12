@@ -67,11 +67,7 @@ All commits go to main. No branches. This implicitly authorizes commits — don'
 ## Auto-Commit
 After completing a task (feature, fix, refactor), commit your changes without being asked. Granular semantic commits — one logical change per commit. Don't stop and report "ready to commit" — just commit.
 
-**Never use `git add -A` or `git add .`** — they sweep in scratch files. Stage specific paths or `git add -p`.
-
-**Never run `git commit` via `run_in_background=true`.** A hook-blocked commit returns exit 0 from the invocation — the completion notification looks like success when nothing landed. Commits run in the foreground (same failure class as piping `git commit` through `tail`).
-
-**When multiple agents are active** (`pgrep -c claude` >= 2): commit after each logical edit, or use `isolation: "worktree"` for agents that touch code — uncommitted changes from one agent can be swept into another's commit.
+Hook-enforced (text here is the why, the block is the enforcement): no `git add -A`/`.` (sweeps scratch files — stage specific paths); no backgrounded `git commit` (hook-blocked commits return exit 0 and look successful); multi-agent sessions → commit per logical edit or worktree-isolate (cross-agent sweep risk).
 
 ## Commit Message Format
 ```
@@ -126,12 +122,11 @@ Instruction-level guidance; hooks enforce provenance tags. These shape HOW resea
 
 <environment>
 ## Python & Environment
-- `python3`, never `python` (macOS has no `python` binary). All projects use `uv`: `uv run python3 script.py` / `uvx tool` — never bare `python3 -c "import pkg"` for project deps.
-- Multi-line Python (>10 lines): write a `.py` file, not inline `-c`. Exception: one-shot queries.
-- **Never mutate Python source via string regex** — regex `\n` insertion has corrupted files with inline-merged decorators. Use Edit (precise old/new) or AST/`libcst`, verify with `py_compile`. Prefer `ast` over regex for parsing too.
+- `uv run python3` (hook blocks bare python; macOS has no `python`). Multi-line Python (>10 lines) → a `.py` file, not inline `-c`.
+- **Never mutate Python source via string regex** — has corrupted files (inline-merged decorators). Edit tool or AST/`libcst` + `py_compile`.
 
 ## git
-- `git --no-pager diff --no-ext-diff` for any non-trivial diff — the configured external differ injects control bytes and silently truncates large diffs.
+- `--no-ext-diff` is auto-injected by hook (external differ corrupts/truncates streams) — don't remove it from commands.
 
 ## Unfetchable URLs
 - **x.com / twitter.com** — all automated fetchers blocked. Don't attempt multiple strategies; ask the user to paste the tweet text.
@@ -141,9 +136,9 @@ Instruction-level guidance; hooks enforce provenance tags. These shape HOW resea
 ## Context Continuations
 After compaction or session continuation, read `.claude/checkpoint.md` (per-project) if it exists — re-orient from "Last Request" + "Pending Tasks" + git state; don't ask the user for context. **Resume work automatically.**
 
-**Post-compaction verification:** compaction summaries can hallucinate completed work. Run `git log --oneline -10` and verify claimed commits exist; missing → redo, don't trust the summary.
+**Post-compaction verification** (hook-prompted by `postcompact-verify.sh`): summaries can hallucinate completed work — verify claimed commits in `git log`; missing → redo.
 
-**Before compaction:** proactively save progress to `.claude/checkpoint.md` (task, done, remaining, decisions, files). Don't stop tasks early over context concerns — save and continue after.
+**Before compaction** (hook-prompted): save progress to `.claude/checkpoint.md`; don't stop tasks early over context concerns.
 
 ## Daily Memory Logs
 Session notes → `memory/YYYY-MM-DD.md` in the project memory dir; stable knowledge → `MEMORY.md`. Read today's + yesterday's logs at session start.
@@ -172,9 +167,6 @@ After plan approval, implement immediately — no "shall I proceed?", no re-summ
 ## Doc Currency
 After a task: did I modify files referenced in CLAUDE.md / indexes / MEMORY.md? Update them in the same commit.
 
-## Self-Sufficient Environment
-Missing file/dataset/dep → fetch or install it yourself. Build fails → diagnose and fix before reporting.
-
 ## Surface Deferred Alternatives
 When research finds a viable alternative you defer, tell the user explicitly: "Found X, deferring because Y." Don't bury it.
 </execution>
@@ -189,7 +181,7 @@ Subagents are context shields. **Delegate:** parallel independent axes (3+ searc
 
 **Researcher epochs (CORAL):** parent-controlled epochs over one long dispatch — dispatch (≤12 turns, output file) → read → re-dispatch with refined query if gaps → max 3 epochs, then forced synthesis. The epoch boundary is architectural: the parent reviews progress, not the subagent ("stop at 70%" self-instructions failed 5+ times).
 
-**Output convention:** Plan/research agents write results >~1000 chars to a file and return the path, not inline content.
+**Output convention** (gate-enforced by `pretool-subagent-gate.sh`): plan/research agents write results >~1000 chars to a file (stub-first) and return the path.
 
 **Manifest convention:** cherry-pick/merge/multi-file-edit subagents return files-included AND files-skipped-with-reason; coordinator diffs against `git show --stat` before accepting. (Subagents have silently dropped test files and reported success.)
 
