@@ -234,7 +234,7 @@ When research finds a viable alternative that you defer (e.g., use SDK instead o
 
 <subagent_usage>
 ## Subagent Usage
-Subagents are context shields. **Delegate:** parallel independent axes (3+ searches), context isolation (>5 files, need summary only), named agents with persistent memory. **Don't delegate:** under 3 tool calls, sequential chains needing intermediate results, confirming what's already in context. **Match agent type to task:** Explore for codebase exploration, researcher for verification/literature/evidence tasks, general-purpose only when no specialized type fits.
+Subagents are context shields. **Delegate:** parallel independent axes (3+ searches), context isolation (>5 files, need summary only), named agents with persistent memory. **Don't delegate:** under 3 tool calls, sequential chains needing intermediate results, confirming what's already in context. **Match agent type to task:** Explore for codebase exploration, researcher for verification/literature/evidence tasks, general-purpose only when no specialized type fits. **Executor tier for code-writing dispatches:** consult `model-guide` → Dispatch Economics before choosing model/effort (canonical; execute SKILL.md carries a working copy).
 
 **Safety:** Analysis subagents must not commit. Default to `isolation: "worktree"` for any subagent that touches code — hard filesystem isolation beats soft/verbal isolation by 7.8pp; soft isolation actually hurts on open-ended tasks (CAID, arXiv:2603.21489).
 
