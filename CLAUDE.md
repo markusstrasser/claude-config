@@ -69,6 +69,8 @@ After completing a task (feature, fix, refactor), commit your changes without be
 
 Hook-enforced (text here is the why, the block is the enforcement): no `git add -A`/`.` (sweeps scratch files — stage specific paths); no backgrounded `git commit` (hook-blocked commits return exit 0 and look successful); multi-agent sessions → commit per logical edit or worktree-isolate (cross-agent sweep risk).
 
+**Concurrent peer sessions on one repo → launch with `claude --worktree`.** Multiple interactive `claude`/`codex` on the same checkout clobber shared `.claude/` state (checkpoint, current-session-id, trackers) — the field-standard fix is isolate-per-agent + merge via git (CAID: worktree beats soft isolation 7.8pp). A SessionStart hook warns when it detects a peer sharing the checkout. (Subagent `isolation: "worktree"` is covered separately under Subagent Usage.)
+
 ## Commit Message Format
 ```
 [scope] Verb thing — why
@@ -118,6 +120,7 @@ Instruction-level guidance; hooks enforce provenance tags. These shape HOW resea
 6. **Conviction is immutable but updatable.** Never edit a past judgment — add a new entry.
 7. **Tools should document themselves for agents.** Schema caches, auto-generated indexes, self-describing names.
 8. **Never let a proxy stand in for the principal check.** A value that gates a decision must come from the principal check, not a silently-trusted stand-in. Four faces: silent fallback to another source (fail loud, `[DEGRADED]`); prose page read as if it were the structured source; screen scored in a unit that mismatches the objective; dev box that misreports the binding constraint. Proxies are fine as explicit labeled screens, never silent substitutes. See agent-infra `decisions/2026-06-10-silent-proxy-as-truth.md`.
+9. **A shared invariant has ONE definition; consumers load it, never re-state it.** Separate from the proven-common bar (which governs CODE extraction — duplicated *logic* is mere inefficiency, extract only at ≥2 consumers): an **invariant whose inconsistency is a *correctness* bug** — a taxonomy, schema, grading rule, gold-field list, validation regex — gets defined ONCE (the enforceable form in a hook/lib, the vocabulary in one doc) and every enforcer LOADS it. Re-stating it drifts silently until two enforcers disagree on the same input (the provenance-tag taxonomy had drifted across 5 enforcers — engine/genomics/graded tags all divergent — until single-sourced to `skills/hooks/provenance_tags.re` + a drift-test). A consumer that genuinely can't load the canonical (cross-language/cross-repo) may vendor a copy ONLY behind a drift-test asserting equality. **Bounds — resist the opposite (over-centralization) trap:** this is for machine-checkable invariants, NOT prose rules (CLAUDE.md restates discipline deliberately — in-context presence beats a link) and NOT ordinary local constants; no shared-package/versioning machinery for a value two files happen to share. Test before homing: "would two copies silently diverging be a *correctness* failure?" If no, leave it duplicated.
 </epistemic_discipline>
 
 <environment>
