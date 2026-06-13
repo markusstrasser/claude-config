@@ -42,7 +42,6 @@
     ],
     "defaultMode": "auto"
   },
-  "model": "claude-fable-5[1m]",
   "skillOverrides": {
     "keybindings-help": "user-invocable-only",
     "fewer-permission-prompts": "name-only",
@@ -86,6 +85,10 @@
           {
             "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/pretool-git-noext-inject.sh"
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/pretool-pyunbuffered-inject.sh"
           },
           {
             "type": "command",
@@ -235,11 +238,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/Users/alien/.claude/hooks/pretool-shared-infra-guard.sh"
-          },
-          {
-            "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/pretool-source-remind.sh"
+            "command": "/Users/alien/Projects/skills/hooks/pretool-governance-edit-notice.sh"
           },
           {
             "type": "command",
@@ -399,6 +398,14 @@
             "command": "/Users/alien/.claude/hooks/posttool-loop-tracker.sh"
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/posttool-context-checkpoint-advisory.sh"
+          }
+        ]
       }
     ],
     "Stop": [
@@ -490,6 +497,19 @@
           {
             "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/session-stability-log.sh sessionstart"
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/sessionstart-peer-session-warn.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/sessionstart-compact-resume.sh"
           }
         ]
       }
@@ -592,14 +612,17 @@
       }
     ]
   },
+  "worktree": {
+    "baseRef": "head"
+  },
   "statusLine": {
     "type": "command",
     "command": "~/.claude/statusline.sh",
     "refreshInterval": 5
   },
   "enabledPlugins": {
-    "frontend-design@claude-plugins-official": true,
-    "playground@claude-plugins-official": true,
+    "frontend-design@claude-plugins-official": false,
+    "playground@claude-plugins-official": false,
     "claude-md-management@claude-plugins-official": true,
     "pyright-lsp@claude-plugins-official": true,
     "skill-creator@claude-plugins-official": true,
