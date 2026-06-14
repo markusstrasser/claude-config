@@ -398,14 +398,6 @@
             "command": "/Users/alien/.claude/hooks/posttool-loop-tracker.sh"
           }
         ]
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/posttool-context-checkpoint-advisory.sh"
-          }
-        ]
       }
     ],
     "Stop": [
