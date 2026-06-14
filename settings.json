@@ -108,7 +108,7 @@
           },
           {
             "type": "command",
-            "command": "cmd=$(cat | grep -oE '\"command\":\\s*\"[^\"]*\"' | head -1); if echo \"$cmd\" | grep -qE '\"(python |python3 )' && ! echo \"$cmd\" | grep -q 'uv run'; then echo 'BLOCK: use \"uv run python\" not bare python'; exit 2; fi"
+            "command": "python3 /Users/alien/Projects/skills/hooks/pretool-uv-python-guard.py"
           },
           {
             "type": "command",
