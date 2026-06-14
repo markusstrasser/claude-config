@@ -471,6 +471,10 @@
           {
             "type": "command",
             "command": "INPUT=$(cat); if printf '%s' \"$INPUT\" | grep -qi '#f'; then printf '%s' \"$INPUT\" | python3 /Users/alien/Projects/agent-infra/scripts/gov_intake.py 2>/dev/null; fi; true"
+          },
+          {
+            "type": "command",
+            "command": "python3 /Users/alien/Projects/skills/hooks/userprompt-prior-context.py"
           }
         ]
       }
