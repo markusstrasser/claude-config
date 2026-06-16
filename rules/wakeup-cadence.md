@@ -16,3 +16,16 @@
 - **Mechanism split:** `Bash run_in_background` when there's a live Bash channel to dispatch
   on; `ScheduleWakeup` only when there isn't (autonomous loops, post-compaction handoffs).
   They are not substitutes.
+
+## Self-imposed dates are reminders, not timers (added 2026-06-16)
+A "promote/cut ~DATE", "revisit by DATE", or "review on DATE" written in a finding, shadow,
+ADR, or proposal is a REMINDER, not a trigger — nothing fires on it unless an agent acts.
+- **Never `ScheduleWakeup` / `/schedule` / `CronCreate` against a self-imposed date.** Schedule
+  only against external state that changes on a real clock (a CI run, a deploy, a vendor window,
+  a cron someone else owns). "Our shadow says promote/cut on the 21st" is a note, not a clock.
+- Don't cite a self-imposed date as a deadline ("due the 21st") or treat it as a gate.
+- Promotion/cut is **evidence-or-operator-triggered** — it happens when the data crosses a
+  threshold or the operator decides, on whatever day that is.
+
+Evidence: 2026-06-16 — agent offered to `/schedule` a shadow's "promote/cut ~2026-06-21";
+operator: "What happens on June 21st? Nothing. If we don't do it."
