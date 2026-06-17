@@ -5,7 +5,9 @@
     "CLAUDE_CODE_DISABLE_CRON": "0",
     "CLAUDE_STREAM_IDLE_TIMEOUT_MS": "180000",
     "ENABLE_PROMPT_CACHING_1H": "1",
-    "SLASH_COMMAND_TOOL_CHAR_BUDGET": "32000"
+    "SLASH_COMMAND_TOOL_CHAR_BUDGET": "32000",
+    "SMART_JUDGE_MODE": "enforce",
+    "SMART_JUDGE_ENFORCE_VECTORS": "verify_before_claim,over_caution"
   },
   "includeGitInstructions": false,
   "permissions": {
@@ -112,6 +114,10 @@
           },
           {
             "type": "command",
+            "command": "python3 /Users/alien/Projects/skills/hooks/pretool-bare-modal-guard.py"
+          },
+          {
+            "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/pretool-duckdb-quote-guard.sh"
           },
           {
@@ -160,12 +166,20 @@
           {
             "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/pretool-plan-protect.sh"
+          },
+          {
+            "type": "command",
+            "command": "python3 /Users/alien/Projects/skills/hooks/pretool-cursor-model-guard.py"
           }
         ]
       },
       {
         "matcher": "mcp__exa|mcp__research|mcp__brave-search|mcp__perplexity|mcp__firecrawl|mcp__scite|mcp__parallel|WebSearch|WebFetch",
         "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /Users/alien/Projects/skills/hooks/pretool-research-skill-gate.py"
+          },
           {
             "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/pretool-search-burst.sh"
@@ -497,6 +511,11 @@
           {
             "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/sessionstart-peer-session-warn.sh"
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/sessionstart-close-drain.sh",
+            "async": true
           }
         ]
       },
@@ -621,11 +640,11 @@
     "playground@claude-plugins-official": false,
     "claude-md-management@claude-plugins-official": true,
     "pyright-lsp@claude-plugins-official": true,
-    "skill-creator@claude-plugins-official": true,
-    "exa@claude-plugins-official": true,
-    "typescript-lsp@claude-plugins-official": true
+    "skill-creator@claude-plugins-official": false,
+    "exa@claude-plugins-official": false,
+    "typescript-lsp@claude-plugins-official": false
   },
-  "effortLevel": "medium",
+  "effortLevel": "high",
   "tui": "default",
   "autoDreamEnabled": false,
   "skipDangerousModePermissionPrompt": true,
