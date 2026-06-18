@@ -94,6 +94,8 @@ Hook-enforced (text here is the why, the block is the enforcement): no `git add 
 
 **Concurrent peer sessions on one repo → launch with `claude --worktree`.** Multiple interactive `claude`/`codex` on the same checkout clobber shared `.claude/` state (checkpoint, current-session-id, trackers) — the field-standard fix is isolate-per-agent + merge via git (CAID: worktree beats soft isolation 7.8pp). A SessionStart hook warns when it detects a peer sharing the checkout. (Subagent `isolation: "worktree"` is covered separately under Subagent Usage.)
 
+**Derived artifacts are gitignored — track the GENERATOR + SOURCE, never the OUTPUT (#g 2026-06-18).** Anything a generator/cron/render produces (index caches, overview/state markers, a rendered `architecture.png` from its tracked `.mmd` source) belongs in `.gitignore`: a tracked generated file churns history and silently drifts from its generator. Keep the generator script + its source input tracked; let the output regenerate on disk (auto-loaded context files still load from the working tree even when gitignored). Gitignore IS the enforcement — an ignored file can't be `git add`ed without `-f`; so when you add a generator, add its output glob in the SAME commit, and watch near-miss patterns (`.claude/overview-marker` silently failed to match `-source`/`-tooling`, leaking derived state into tracking).
+
 ## Commit Message Format
 ```
 [scope] Verb thing — why
