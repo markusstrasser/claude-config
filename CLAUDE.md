@@ -170,6 +170,46 @@ Instruction-level guidance; hooks enforce provenance tags. These shape HOW resea
 - **x.com / twitter.com** — all automated fetchers blocked. Don't attempt multiple strategies; ask the user to paste the tweet text.
 </environment>
 
+<agent_toolbelt>
+## Agent Search Toolbelt
+
+Default search remains `rg`: exact, local, gitignore-aware, no stale index. Use it first for small/medium repos, precise literals, negative-evidence proofs, and final verification of indexed hits.
+
+**Indexed code search for large repos:** Zoekt is installed for agent use:
+- Binaries: `zoekt`, `zoekt-git-index`, `zoekt-index`, `zoekt-webserver`
+- Installed via Go in `~/go/bin`; exposed on PATH through symlinks in `~/.local/bin`
+- Default index dir: `~/.zoekt`
+- Initially indexed: `genomics`, `intel`, `phenome`, `agent-infra`, `hutter`, `anim-workbench`
+
+Use Zoekt when the repo/corpus is large enough that `rg` exploration is causing broad scans or false leads, especially cross-repo discovery:
+```bash
+zoekt -index_dir ~/.zoekt -r 'MutationGateway'
+zoekt -index_dir ~/.zoekt -r 'repo:genomics MutationGateway'
+zoekt -index_dir ~/.zoekt -l 'file:py Corpus'
+```
+
+Zoekt is a discovery layer, not the principal check. After a Zoekt hit matters, verify against the working tree with `rg`/`sed`/file read before editing or making a claim. Prefer plain output for interactive inspection; `zoekt -jsonl` encodes line content, so use it only from scripts that decode the `Line` field.
+
+Refresh the index before relying on it for changed code:
+```bash
+zoekt-git-index -index ~/.zoekt /Users/alien/Projects/intel /Users/alien/Projects/phenome /Users/alien/Projects/agent-infra
+```
+
+If a repo has `extensions.worktreeConfig=true` and `zoekt-git-index` fails with `worktreeconfig`, temporarily unset and restore it in one shell:
+```bash
+(cd /Users/alien/Projects/genomics && \
+  trap 'git config --local extensions.worktreeConfig true' EXIT && \
+  git config --local --unset extensions.worktreeConfig && \
+  zoekt-git-index -index ~/.zoekt .)
+```
+
+Escalation rules:
+- `rg` — exact local probe, final verification, negative-evidence logs.
+- `zoekt` — indexed discovery over large repos / cross-repo search.
+- `ast-grep` — structural syntax search/rewrite; do not force regex for AST-shaped changes.
+- repo maps / outlines — routing context only; read source before claims.
+</agent_toolbelt>
+
 <context_management>
 ## Context Continuations
 After compaction or session continuation, read `.claude/checkpoint.md` (per-project) if it exists — re-orient from "Last Request" + "Pending Tasks" + git state; don't ask the user for context. **Resume work automatically.**
