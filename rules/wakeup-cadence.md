@@ -51,10 +51,17 @@ subagents ran; operator (#f+#g): "scheudle yourself better /loops then (like met
 runs/dreamer etc)". The fix is portfolio rotation, institutionalized here (global), not one session.
 
 ## Escalation is a file, never a block — the human is the OUTEST loop (added 2026-06-18, #f)
-The outermost loop is the HUMAN. An autonomous loop **never ends a turn on a question and never
-blocks waiting** for a human answer (= AutoResearch "ready means execute": finishing all prep then
-asking "should I submit?" is the hidden zero-interaction violation — and it's our measured
-`over_caution` blindspot cluster). When the loop needs the human, it writes and keeps going:
+The outermost loop is the HUMAN. An autonomous loop doesn't **yield on a question it could resolve
+itself, or block waiting** when it could route the ask to a file and progress other fronts
+(= AutoResearch "ready means execute": finishing all prep then asking "should I submit?" is the
+hidden zero-interaction violation — and it's our measured `over_caution` blindspot cluster).
+**Stopping is CORRECT, not a failure, when** the blocker is genuinely unresolvable AND no other
+front makes real progress AND continuing would waste resources — write the ask to `HUMAN.md`, then
+stop. Spinning to avoid stopping is itself the waste anti-pattern ("a tick that only re-arms a timer
+with zero work done", above). Whether a given loop is held to "don't stop on resolvable asks" is an
+**explicit per-loop policy the operator sets** (drop a `.claude/loop-enforce-no-question-stop`
+marker), not something a hook decides unilaterally. When the loop needs the human but has real work
+left, it writes and keeps going:
 - **Append to the loop-root `HUMAN.md`** (the loop's human-outbox — the human-facing surface of the
   outermost loop), then continue on other portfolio fronts. Non-blocking by construction.
 - `HUMAN.md` is a **FEEDER into the existing question-VIEW, not a new store** (agent-infra ADR
