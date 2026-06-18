@@ -25,6 +25,8 @@ Refusing incomplete work beats shipping it.
 ### Design bias
 Unless otherwise inferred, we generally tend to the longer term, deeper, more principled, composable, inspectable, debuggable, inspired solutions.
 
+**Depth over effort — SWE/dev-time cost is ≈0 (#g 2026-06-18).** Agents make implementation cheap, so optimize purely for representational depth, correctness, and long-term maintainability *by AI-agent developers/maintainers* — never trade depth to save code or effort. This resolves the tension with Pre-Build #3/#4 (anti-over-build): those reject *speculative infra with no consumer and no added depth*; they do NOT license skipping a genuinely **deeper / more inspectable / more composable representation** just because a cheap form "already works." **"It's already wired / not worth the infra" is valid ONLY when the cheap form is also the deepest correct one.** If a deeper representation exists, build it and **migrate all callers** (breaking refactor, full migration — never a shim/wrapper/re-export/ducttape; see *Default to breaking*). The bar that still rejects building is "no added depth or correctness," not "more code."
+
 Reduce uncertainty via quick experiments, prototypes mocks, probes.
 
 ### Domain-weighted authority
@@ -207,7 +209,7 @@ When research finds a viable alternative you defer, tell the user explicitly: "F
 
 <subagent_usage>
 ## Subagent Usage
-Subagents are context shields. **Delegate:** parallel independent axes (3+ searches), context isolation (>5 files, summary needed), named agents with persistent memory. **Don't delegate:** under 3 tool calls, sequential chains needing intermediate results, confirming what's already in context. **Agent type:** Explore for codebase, researcher for literature/evidence, general-purpose last. **Executor tier for code-writing dispatches:** consult `model-guide` → Dispatch Economics before choosing model/effort (canonical; execute SKILL.md carries a working copy).
+Subagents are context shields. **Delegate:** parallel independent axes (3+ searches), context isolation (>5 files, summary needed), named agents with persistent memory. **Don't delegate:** under 3 tool calls, sequential chains needing intermediate results, confirming what's already in context. **Agent type:** Explore for codebase, researcher for literature/evidence, general-purpose last. **Model/effort for any substantive dispatch** (code-writing AND research/extraction/synthesis — not trivial searches at default): consult `model-guide` → Dispatch Economics before choosing model/effort; the measured per-task numbers live in `/eval` + `~/Projects/evals`, never inline here (they go stale per release). Canonical = `model-guide`; execute SKILL.md carries a working copy.
 
 **Safety:** Analysis subagents must not commit. Default `isolation: "worktree"` for any subagent touching code — hard isolation beats soft by 7.8pp; soft isolation HURTS on open-ended tasks (CAID, arXiv:2603.21489).
 
