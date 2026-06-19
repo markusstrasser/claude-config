@@ -86,7 +86,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/pretool-git-noext-inject.sh"
+            "command": "/Users/alien/Projects/skills/hooks/pretool-git-noext-inject.sh",
+            "if": "Bash(git*)"
           },
           {
             "type": "command",
@@ -94,7 +95,8 @@
           },
           {
             "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/pretool-git-add-all-guard.sh"
+            "command": "/Users/alien/Projects/skills/hooks/pretool-git-add-all-guard.sh",
+            "if": "Bash(git*)"
           },
           {
             "type": "command",
@@ -102,15 +104,24 @@
           },
           {
             "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/pretool-bash-background-ampersand.py"
+          },
+          {
+            "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/pretool-heavy-load-guard.sh"
           },
           {
             "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/pretool-no-background-commit.sh"
+            "command": "/Users/alien/Projects/skills/hooks/pretool-no-background-commit.sh",
+            "if": "Bash(git*)"
           },
           {
             "type": "command",
             "command": "python3 /Users/alien/Projects/skills/hooks/pretool-uv-python-guard.py"
+          },
+          {
+            "type": "command",
+            "command": "python3 /Users/alien/Projects/skills/hooks/pretool-genomics-pythonpath-guard.py"
           },
           {
             "type": "command",
@@ -148,7 +159,8 @@
           },
           {
             "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/pretool-multiagent-commit-guard.sh"
+            "command": "/Users/alien/Projects/skills/hooks/pretool-multiagent-commit-guard.sh",
+            "if": "Bash(git*)"
           },
           {
             "type": "command",
@@ -156,7 +168,8 @@
           },
           {
             "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/pretool-destructive-git-ref.sh"
+            "command": "/Users/alien/Projects/skills/hooks/pretool-destructive-git-ref.sh",
+            "if": "Bash(git*)"
           },
           {
             "type": "command",
@@ -317,6 +330,10 @@
           {
             "type": "command",
             "command": "/Users/alien/.claude/hooks/posttool-canonical-tool-probe.sh"
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/posttool-foreclosure-grounding.sh"
           }
         ]
       },
@@ -441,6 +458,11 @@
             "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/stop-progress-check.sh",
             "async": true
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/stop-loop-ended-on-question.sh",
+            "async": true
           }
         ]
       }
@@ -489,6 +511,10 @@
           {
             "type": "command",
             "command": "python3 /Users/alien/Projects/skills/hooks/userprompt-prior-context.py"
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/agent-infra/scripts/hooks/continuation-directive-guard.py"
           }
         ]
       }
@@ -591,6 +617,16 @@
         ]
       }
     ],
+    "MessageDisplay": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/message-timestamp-display.sh"
+          }
+        ]
+      }
+    ],
     "SessionEnd": [
       {
         "hooks": [
@@ -644,12 +680,14 @@
     "exa@claude-plugins-official": false,
     "typescript-lsp@claude-plugins-official": false
   },
-  "effortLevel": "high",
+  "effortLevel": "low",
   "tui": "default",
   "autoDreamEnabled": false,
   "skipDangerousModePermissionPrompt": true,
+  "theme": "dark",
   "editorMode": "vim",
-  "verbose": true,
+  "verbose": false,
+  "showMessageTimestamps": true,
   "remoteControlAtStartup": true,
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true
