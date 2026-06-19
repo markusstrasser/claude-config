@@ -50,6 +50,17 @@ Evidence: 2026-06-17 anim-workbench — agent set a bare 1800s idle fallback whi
 subagents ran; operator (#f+#g): "scheudle yourself better /loops then (like meta/heretic/subagent
 runs/dreamer etc)". The fix is portfolio rotation, institutionalized here (global), not one session.
 
+**APPLIES TO EVERY AUTONOMOUS RUN — not just `/loop` idle-ticks (added 2026-06-19, #g+#f, flagged 3×).**
+A `/goal` run, a pasted overnight-driver prompt, or any self-directed session is EQUALLY subject to this —
+the portfolio is the DEFAULT operating mode, not something you do only while waiting. **FIRST action of any
+autonomous run: stand up the portfolio `/loop`** (a self-paced `/loop` whose tick ROTATES grind / heretic /
+dreamer / meta and dispatches subagents in PARALLEL) — do NOT run single-threaded serial build→measure.
+Self-check: if you're about to build/measure with no heretic on the last result and no dreamer before
+converging, you've already drifted — set the loop. (Why this kept failing: the section read as `/loop`-only
+guidance, so `/goal` runs skipped it — that framing is now explicitly closed.) Evidence: 2026-06-19 arc-agi —
+operator flagged the missing portfolio TWICE in one session ("Are you running dreamer/heretic/outer loops
+regularly?" → "you have to set /loops for all the metascaffolding … are the docs not wired in?").
+
 ## Escalation is a file, never a block — the human is the OUTEST loop (added 2026-06-18, #f)
 The outermost loop is the HUMAN. An autonomous loop doesn't **yield on a question it could resolve
 itself, or block waiting** when it could route the ask to a file and progress other fronts
