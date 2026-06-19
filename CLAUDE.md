@@ -64,7 +64,7 @@ Before building a feature, answer these out loud if non-obvious:
 ### Operational Rules
 6. **Surface architectural ceilings before compute-heavy exploration** (runs >10 min): state known ceilings upfront and let the user decide.
 7. **Explore before converging** on design/architecture/strategy/research: 5+ alternatives with different core mechanisms, THEN select. Your first idea is every model's first idea. Not needed for bug fixes, routine implementation, single-correct-answer tasks.
-8. **Probe before build** — `--help` before guessing CLI flags; schema output before consumers; both sides of a join (`set(df[key])[:5]`); a 10-item probe + SKU check before any >1K-item batch job (tiers differ 10-100×; a skipped probe once cost €94); bulk-test any hard veto/filter on real data first (a plausible rule hit 37% false positives).
+8. **Probe before ACTION, not just build — value-of-information (#g 2026-06-19).** If the information that would DECIDE an action is cheap to get, get it FIRST — always, before proposing, framing a "decision," planning, or acting. This generalizes beyond builds: a cheap deciding-probe routinely FLIPS the action, so the seconds it costs are near-free against a wrong plan executed (one session, 2026-06-19: "the ingest pipeline already exists," "the principles already encode the reframe," "the input is stale" — each reversed the next move *before* work started; the same arc nearly proposed a greenfield rebuild of machinery that was already landed). Default to the probe whenever it's cheap and the answer changes what you do. The build-probes are instances: `--help` before guessing CLI flags; schema output before consumers; both sides of a join (`set(df[key])[:5]`); a 10-item probe + SKU check before any >1K-item batch job (tiers differ 10-100×; a skipped probe once cost €94); bulk-test any hard veto/filter on real data first (a plausible rule hit 37% false positives).
 9. **Compare automation alternatives** before building new automation.
 10. **Verify failure claims in logs** before deploying architectural fixes. Unverified claims don't drive global hooks.
 11. **Write for structural rewrites** (>3 sections renumbered/reordered) — sequential Edits compound corruption.
@@ -211,6 +211,22 @@ Escalation rules:
 
 **Sourcebot status:** source is cloned at `/Users/alien/Projects/best/sourcebot` for evaluation. Treat it as source-available FSL/EE split, not a default installed agent tool. Free Sourcebot provides web/REST code search over a Zoekt backend (`POST /api/search`) and local-repo indexing via Docker deployment; its MCP server and Ask/codebase-agent path are entitlement-gated paid features. Do not tell agents to use Sourcebot MCP unless a running deployment plus license/API key is verified. If a Sourcebot instance is running, use it as a large-repo discovery/API layer and still verify load-bearing hits with `rg`/file reads against the working tree.
 </agent_toolbelt>
+
+<orchestrator_tooling>
+## Orchestrator-model tooling (file-bus; lives in agent-infra)
+
+**Workflow skill:** `/orchestrate` — modes `status|audit|fix|ship`. **Registry (flags):** `~/Projects/agent-infra/.claude/rules/orchestrator-tool-names.md`.
+
+**Roles:** operator = human; orchestrator model = frontier parent (dispatch, triage, propose); scout = ask-mode, audit files only.
+
+```bash
+just -f ~/Projects/agent-infra/justfile --list | rg 'operator-status|baseline-since|audit-findings|commit-slice|verification-gate|adversarial-debug'
+```
+
+**Pipeline:** `baseline-since-last-green` → `/debug` if needed → `audit-findings-consolidation` → fix → `verification-gate-runner` → `commit-slice-planning` → operator approves apply.
+
+**LLM policy:** stderr `llm: none|optional|required`; no bare `--use-agent`; `ORCHESTRATOR_TOOLS_NO_LLM=1`; gate `UNKNOWN` = no autonomous apply.
+</orchestrator_tooling>
 
 <context_management>
 ## Context Continuations
