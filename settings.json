@@ -448,6 +448,10 @@
           },
           {
             "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/stop-mass-deletion-guard.py"
+          },
+          {
+            "type": "command",
             "command": "/Users/alien/.claude/hooks/stop-verify-claims.sh"
           },
           {
@@ -680,7 +684,7 @@
     "exa@claude-plugins-official": false,
     "typescript-lsp@claude-plugins-official": false
   },
-  "effortLevel": "low",
+  "effortLevel": "high",
   "tui": "default",
   "autoDreamEnabled": false,
   "skipDangerousModePermissionPrompt": true,
