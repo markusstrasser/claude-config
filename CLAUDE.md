@@ -154,7 +154,7 @@ Instruction-level guidance; hooks enforce provenance tags. These shape HOW resea
 5. **Blind first-pass breaks commitment bias.** Read new evidence first, form an independent assessment, THEN compare to prior. Document divergence.
 6. **Conviction is immutable but updatable.** Never edit a past judgment — add a new entry.
 7. **Tools should document themselves for agents.** Schema caches, auto-generated indexes, self-describing names.
-8. **Never let a proxy stand in for the principal check.** A value that gates a decision must come from the principal check, not a silently-trusted stand-in. Four faces: silent fallback to another source (fail loud, `[DEGRADED]`); prose page read as if it were the structured source; screen scored in a unit that mismatches the objective; dev box that misreports the binding constraint. Proxies are fine as explicit labeled screens, never silent substitutes. See agent-infra `decisions/2026-06-10-silent-proxy-as-truth.md`.
+8. **Never let a proxy stand in for the principal check.** A value that gates a decision must come from the principal check, not a silently-trusted stand-in. Five faces: silent fallback to another source (fail loud, `[DEGRADED]`); prose page read as if it were the structured source; screen scored in a unit that mismatches the objective; dev box that misreports the binding constraint; **an eval/RSI loop ratcheting on an IN-SAMPLE proxy (dev-set score) for an OUT-OF-DISTRIBUTION principal (held-out transfer) — it Goodharts into overfitting: measure held-out, never count in-sample as progress (arc-agi 2026-06-20: a full session built 5 per-game lookup-table "solvers" this way, with the anti-overfit mandate in context the whole time — only an aligned METRIC stops it, not a warning).** Proxies are fine as explicit labeled screens, never silent substitutes. See agent-infra `decisions/2026-06-10-silent-proxy-as-truth.md`.
 9. **A shared invariant has ONE definition; consumers load it, never re-state it.** Separate from the proven-common bar (which governs CODE extraction — duplicated *logic* is mere inefficiency, extract only at ≥2 consumers): an **invariant whose inconsistency is a *correctness* bug** — a taxonomy, schema, grading rule, gold-field list, validation regex — gets defined ONCE (the enforceable form in a hook/lib, the vocabulary in one doc) and every enforcer LOADS it. Re-stating it drifts silently until two enforcers disagree on the same input (the provenance-tag taxonomy had drifted across 5 enforcers — engine/genomics/graded tags all divergent — until single-sourced to `skills/hooks/provenance_tags.re` + a drift-test). A consumer that genuinely can't load the canonical (cross-language/cross-repo) may vendor a copy ONLY behind a drift-test asserting equality. **Bounds — resist the opposite (over-centralization) trap:** this is for machine-checkable invariants, NOT prose rules (CLAUDE.md restates discipline deliberately — in-context presence beats a link) and NOT ordinary local constants; no shared-package/versioning machinery for a value two files happen to share. Test before homing: "would two copies silently diverging be a *correctness* failure?" If no, leave it duplicated.
 </epistemic_discipline>
 
@@ -212,6 +212,23 @@ Escalation rules:
 **Sourcebot status:** source is cloned at `/Users/alien/Projects/best/sourcebot` for evaluation. Treat it as source-available FSL/EE split, not a default installed agent tool. Free Sourcebot provides web/REST code search over a Zoekt backend (`POST /api/search`) and local-repo indexing via Docker deployment; its MCP server and Ask/codebase-agent path are entitlement-gated paid features. Do not tell agents to use Sourcebot MCP unless a running deployment plus license/API key is verified. If a Sourcebot instance is running, use it as a large-repo discovery/API layer and still verify load-bearing hits with `rg`/file reads against the working tree.
 </agent_toolbelt>
 
+<orientation>
+## Cross-project orientation (derived inventory — never hand-count)
+
+**Hub:** `~/Projects/agent-infra` — RSI loop, harness tooling, typed system inventory.
+
+| Question | From any repo |
+|---|---|
+| What IS the system? | `just -f ~/Projects/agent-infra/justfile orient` |
+| Inventory drift? | `just -f ~/Projects/agent-infra/justfile system-inventory --drift` |
+| RSI shape (1 screen) | Read `~/Projects/agent-infra/ARCHITECTURE.md` |
+| Health / activity | `uv run python3 ~/Projects/agent-infra/scripts/doctor.py` · `dashboard.py` |
+
+**Rule:** launchd slugs, recipe lists, job counts → **derived** (`orient`, `system-inventory`, `@system` tags on plists). Do not copy slug lists into prose — they rot hourly.
+
+**Naming trap:** queue **orchestrator** (deleted 2026-06-07) ≠ **orchestrator model** (frontier parent session) + file-bus **just recipes** (2026-06).
+</orientation>
+
 <orchestrator_tooling>
 ## Orchestrator-model tooling (file-bus; lives in agent-infra)
 
@@ -220,7 +237,9 @@ Escalation rules:
 **Roles:** operator = human; orchestrator model = frontier parent (dispatch, triage, propose); scout = ask-mode, audit files only.
 
 ```bash
-just -f ~/Projects/agent-infra/justfile --list | rg 'operator-status|baseline-since|audit-findings|commit-slice|verification-gate|adversarial-debug'
+J="just -f ~/Projects/agent-infra/justfile"
+$J operator-status-briefing ~/Projects/<repo>    # operator glance
+/orchestrate <repo> status|audit|fix|ship       # workflow skill
 ```
 
 **Pipeline:** `baseline-since-last-green` → `/debug` if needed → `audit-findings-consolidation` → fix → `verification-gate-runner` → `commit-slice-planning` → operator approves apply.
