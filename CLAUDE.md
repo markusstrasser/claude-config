@@ -209,6 +209,8 @@ Escalation rules:
 - `ast-grep` — structural syntax search/rewrite; do not force regex for AST-shaped changes.
 - repo maps / outlines — routing context only; read source before claims.
 
+**Session history (past discussions, any repo):** `agentlogs search --project <repo> "query"` (quote queries — FTS5 reads `-` as an operator) · `agentlogs recent` — global tool over the cross-vendor session store; reach for it to recover prior context before re-deriving.
+
 **Sourcebot status:** source is cloned at `/Users/alien/Projects/best/sourcebot` for evaluation. Treat it as source-available FSL/EE split, not a default installed agent tool. Free Sourcebot provides web/REST code search over a Zoekt backend (`POST /api/search`) and local-repo indexing via Docker deployment; its MCP server and Ask/codebase-agent path are entitlement-gated paid features. Do not tell agents to use Sourcebot MCP unless a running deployment plus license/API key is verified. If a Sourcebot instance is running, use it as a large-repo discovery/API layer and still verify load-bearing hits with `rg`/file reads against the working tree.
 </agent_toolbelt>
 
@@ -237,8 +239,10 @@ Escalation rules:
 **Roles:** operator = human; orchestrator model = frontier parent (dispatch, triage, propose); scout = ask-mode, audit files only.
 
 ```bash
-J="just -f ~/Projects/agent-infra/justfile"
+J="just -f ~/Projects/agent-infra/justfile"      # hub recipes run from ANY repo; `$J orient` lists them (ground truth)
 $J operator-status-briefing ~/Projects/<repo>    # operator glance
+$J adversarial-debug-scout ~/Projects/<repo> &   # fire-and-forget audit scouts → docs/audit/ (background it)
+$J debug-until-dry ~/Projects/<repo> &           # fire-and-forget full audit: cursor wave loop until no new confirmed bugs
 /orchestrate <repo> status|audit|fix|ship       # workflow skill
 ```
 
