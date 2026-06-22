@@ -334,6 +334,10 @@
           {
             "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/posttool-foreclosure-grounding.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash /Users/alien/Projects/skills/hooks/posttool-decision-backstamp.sh"
           }
         ]
       },
@@ -391,6 +395,10 @@
           {
             "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/posttool-dup-read.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash /Users/alien/Projects/skills/hooks/posttool-decision-currency.sh"
           }
         ]
       },
