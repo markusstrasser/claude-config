@@ -175,6 +175,8 @@ Instruction-level guidance; hooks enforce provenance tags. These shape HOW resea
 
 Default search remains `rg`: exact, local, gitignore-aware, no stale index. Use it first for small/medium repos, precise literals, negative-evidence proofs, and final verification of indexed hits.
 
+**`rg`'s gitignore-awareness is a SILENT FALSE-ZERO trap on DATA/derived trees** (same class as `--no-ext-diff` on rg, now hook-guarded): a repo's gitignored content — corpus parses (`corpus/<slug>/parsed.*/page.md`), `indexed/` caches, build output, vendored DBs — is INVISIBLE to default `rg`, so a search over it returns `0` for content that plainly exists. Any `rg` whose target tree is gitignored data MUST pass `--no-ignore` (or `-uu`); a surprising `0` from a negative-evidence/work-list grep over such a tree is the tell — verify with `--no-ignore` (or `find`/direct read) before reasoning from the zero. (Evidence: 2026-06-22 — `rg` reported 0 Cloudflare-blocked corpus parses because the parses are gitignored; `--no-ignore` showed the real picture.)
+
 **Indexed code search for large repos:** Zoekt is installed for agent use:
 - Binaries: `zoekt`, `zoekt-git-index`, `zoekt-index`, `zoekt-webserver`
 - Installed via Go in `~/go/bin`; exposed on PATH through symlinks in `~/.local/bin`
