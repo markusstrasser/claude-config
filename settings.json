@@ -42,7 +42,13 @@
       "mcp__exa__web_search_exa",
       "mcp__exa__web_search_advanced_exa"
     ],
-    "defaultMode": "auto"
+    "defaultMode": "dontAsk",
+    "deny": [
+      "Read(//Users/alien/.config/sops/age/keys.txt)",
+      "Read(//Users/alien/.config/secrets/**)",
+      "Read(**/.env)",
+      "Read(**/.env.*)"
+    ]
   },
   "skillOverrides": {
     "keybindings-help": "user-invocable-only",
@@ -169,6 +175,10 @@
           {
             "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/pretool-modal-run-guard.sh"
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/pretool-timeout-modal-guard.sh"
           },
           {
             "type": "command",
@@ -351,6 +361,10 @@
           {
             "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/posttool-session-touched-log.sh"
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/posttool-hook-syntax-guard.sh"
           }
         ]
       },
