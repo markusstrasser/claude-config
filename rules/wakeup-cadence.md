@@ -46,6 +46,13 @@ A tick that only re-arms a timer with zero work done is the anti-pattern. The ac
 An idle fallback wake-up is valid ONLY as a hang-survival net BEHIND event-driven completion
 (long delay 1200s+), never as the loop's purpose.
 
+**Tick-open self-check (added 2026-07-04, from MIDDLE_MANAGER pattern):** before dispatching,
+check the LAST 2 ticks against this contract — was there a heretic pass on what landed? a dreamer
+pass before converging? or serial grind only? Drift you catch yourself is free; drift the operator
+catches costs a session flag (happened 3×: 2026-06-17, 2026-06-19 ×2). Pre-registered kill rule:
+one more operator drift-flag within 30d (by ~2026-08-03) → this instruction failed, revert it and
+escalate to a structural fix (tick-counter the loop surface renders).
+
 Evidence: 2026-06-17 anim-workbench — agent set a bare 1800s idle fallback while two grind
 subagents ran; operator (#f+#g): "scheudle yourself better /loops then (like meta/heretic/subagent
 runs/dreamer etc)". The fix is portfolio rotation, institutionalized here (global), not one session.
