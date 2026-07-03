@@ -16,6 +16,13 @@
 - **Mechanism split:** `Bash run_in_background` when there's a live Bash channel to dispatch
   on; `ScheduleWakeup` only when there isn't (autonomous loops, post-compaction handoffs).
   They are not substitutes.
+- **`run_in_background` jobs get REAPED — chunk anything with unbounded wall time (added
+  2026-07-04).** Observed: a 9-game CRN screen dispatched with no `timeout` was killed by the
+  harness at ~57 min (`task-notification status: killed`, arc-agi session f4fecc9a 21:25→22:22Z)
+  — the exact ceiling is undocumented, so treat any single background dispatch expected to run
+  >~40 min as a smell. Split multi-unit work (per-game, per-seed, per-file) into separate
+  background dispatches so a reap loses one unit, not the whole run; a genuinely monolithic
+  long job belongs in `nohup`/launchd with a log file, not `run_in_background`.
 
 ## Self-imposed dates are reminders, not timers (added 2026-06-16)
 A "promote/cut ~DATE", "revisit by DATE", or "review on DATE" written in a finding, shadow,
