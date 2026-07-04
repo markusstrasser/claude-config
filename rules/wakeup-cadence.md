@@ -47,7 +47,13 @@ fronts at different cadences, ROTATING across ticks:
   repro that cheats the technique — catch it now.)
 - **dreamer/evolver** — run the verifier-gated program search where one EXISTS and is in-scope
   (don't run a paused loop, don't fabricate a search).
-- **meta/observe** — RSI: what process/tooling/hook/rule the session keeps asking for.
+- **meta/observe** — RSI: what process/tooling/hook/rule the session keeps asking for. EXPLICITLY
+  INCLUDES the TRAINER'S OWN COCKPIT (#g 2026-07-04): the agent's input representations, UX/DX —
+  "is there a better representation for MY understanding of this domain, not only the system's?"
+  Evidence: a week of grid-work read as hex dumps while a 30-line renderer + multimodal Read
+  existed; the operator, not the loop, caught it ("why didn't you invent this yourself?"). The
+  model-side instruments were obsessive, the trainer-side ones nonexistent — self-instrumentation
+  is part of the meta front, and "no loud failure" is not evidence the representation is adequate.
 A tick that only re-arms a timer with zero work done is the anti-pattern. The account ceiling
 (≤~15 routines/24h) still binds — "better loops" = each tick does REAL work, NOT more timers.
 An idle fallback wake-up is valid ONLY as a hang-survival net BEHIND event-driven completion
