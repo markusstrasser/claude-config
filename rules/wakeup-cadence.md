@@ -101,3 +101,35 @@ left, it writes and keeps going:
 Source: Deli AutoResearch SKILL.md (DeepSeek, 2026-06; convergent-validation note in agent-infra
 decisions/2026-06-13-rsi-outer-loop-skill.md). The mechanisms we already had; this institutionalizes
 the two sharp deltas (non-blocking file escalation + structure-not-tactics pivot) globally.
+
+## Monitor arming for long local jobs (added 2026-07-04, arc-agi goal run)
+A Monitor armed at JOB LAUNCH burns its timeout window on the silent early phase: tonight a 1h
+watch on a >1h TIER run expired BEFORE the event (needed re-arm), and two completed monitors fired
+stale timeout notifications afterwards. Rules of thumb:
+- Arm the watch when remaining-ETA < timeout (e.g. after a mid-run liveness check), not at launch;
+  or set timeout ≥ 1.5× the job's FULL expected wall.
+- A monitor whose event already fired still emits a timeout notification later — treat "[Monitor
+  timed out]" for an already-processed event as noise, never re-arm reflexively.
+- Prefer making the JOB observable (per-item progress lines to stderr) over compensating with
+  wider watches — a silent hour-long log is the root cause (fixed in holdout_eval 7a63ea5).
+
+## Hindsight metaloop — grade every external find "could we have derived it?" (added 2026-07-04, #g)
+Scouting that only IMPORTS the frontier hides the more valuable signal: whether your own loop
+SHOULD have produced the find. On every substantive external find (paper, system, SOTA result)
+the scout/scholar front also grades, with a real search over your own artifacts (levers, memos,
+measured walls — rg, not recall):
+- **NOVEL** — needed data/results we didn't hold → no fault, normal intake.
+- **HAD-PARTS** — components existed but nothing composed/prioritized them → selection/composition miss.
+- **HAD-LEVER** — the idea itself sat in our library/memos → consumption miss (worst grade).
+Every HAD-* verdict obligates an ARCHITECTURE fix (which contract/gate/render let it slip), not
+just intake of the item. Grades are append-only calibration; HAD-LEVER rate → 0 is the metric of
+the selection architecture. For MAJOR finds, run the blind-replay variant BEFORE deep-reading:
+quarantine the artifact, pre-register pass bands outside the repo, dispatch context-free blind
+ticks against a pre-find worktree, grade, then land. Reference implementation: arc-agi
+`loop/HINDSIGHT.md` + `loop/idea_backlog.py` (consume-or-justify obligation ledger — kills and
+obligations get EQUAL in-context standing; skips resurface after 14d).
+
+Evidence: 2026-07-04 arc-agi — OPINE-World took ARC-AGI-3 SOTA composed of mechanisms that sat
+in our own lever library for 2 weeks (L-WM-004 extracted 06-20, status "proposed", fitness null;
+437 levers, ZERO fitness values). Operator #g: "a metaloop that functions like this very
+session — find clear misses, then fix the architecture so we could've discovered it ourselves."
