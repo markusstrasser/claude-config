@@ -124,8 +124,11 @@ measured walls — rg, not recall):
 Every HAD-* verdict obligates an ARCHITECTURE fix (which contract/gate/render let it slip), not
 just intake of the item. Grades are append-only calibration; HAD-LEVER rate → 0 is the metric of
 the selection architecture. For MAJOR finds, run the blind-replay variant BEFORE deep-reading:
-quarantine the artifact, pre-register pass bands outside the repo, dispatch context-free blind
-ticks against a pre-find worktree, grade, then land. Reference implementation: arc-agi
+quarantine the artifact, pre-register pass bands outside the repo, dispatch blind ticks as FRESH HEADLESS
+PROCESSES against a pre-find worktree — never same-session subagents, which inherit the
+parent's project-context snapshot incl. pre-redaction MEMORY.md (confirmed leak, arc-agi
+2026-07-04: offline arm quoted the redacted block verbatim); grep arm outputs for
+quarantine-unique strings before grading. Then grade and land. Reference implementation: arc-agi
 `loop/HINDSIGHT.md` + `loop/idea_backlog.py` (consume-or-justify obligation ledger — kills and
 obligations get EQUAL in-context standing; skips resurface after 14d).
 
