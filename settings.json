@@ -50,6 +50,7 @@
     ],
     "defaultMode": "dontAsk"
   },
+  "model": "claude-fable-5[1m]",
   "skillOverrides": {
     "keybindings-help": "user-invocable-only",
     "fewer-permission-prompts": "name-only",
@@ -391,6 +392,10 @@
           {
             "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/posttool-bash-poll.sh"
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/posttool-background-portfolio.sh"
           }
         ]
       },
