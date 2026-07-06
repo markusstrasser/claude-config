@@ -23,6 +23,14 @@
   >~40 min as a smell. Split multi-unit work (per-game, per-seed, per-file) into separate
   background dispatches so a reap loses one unit, not the whole run; a genuinely monolithic
   long job belongs in `nohup`/launchd with a log file, not `run_in_background`.
+  **2026-07-05 second exhibit — kills are NOT only time-based:** 4 background game-runs were
+  externally stopped at ~2-4 min (two simultaneous pairs, status "was stopped", zero output,
+  memory healthy) while the operator was away; the SAME commands under `nohup`+`disown` ran to
+  completion. After ~2 same-shape kills of harness-tracked background work, switch to nohup
+  with a status file — don't burn a third attempt diagnosing an unobservable killer. Companion
+  footgun: NEVER pipe a background command through `| tail -N` — tail buffers until EOF, so a
+  kill swallows ALL output (two runs died undiagnosable); redirect to a log file with
+  `PYTHONUNBUFFERED=1` instead.
 
 ## Self-imposed dates are reminders, not timers (added 2026-06-16)
 A "promote/cut ~DATE", "revisit by DATE", or "review on DATE" written in a finding, shadow,
@@ -50,10 +58,14 @@ fronts at different cadences, ROTATING across ticks:
 - **meta/observe** — RSI: what process/tooling/hook/rule the session keeps asking for. EXPLICITLY
   INCLUDES the TRAINER'S OWN COCKPIT (#g 2026-07-04): the agent's input representations, UX/DX —
   "is there a better representation for MY understanding of this domain, not only the system's?"
+  **The named tool for this check is `/interface-thinking`** (Victor/Norman lenses on any
+  representation/cockpit/instrument/feedback loop) — invoke it on the front, don't freestyle it.
   Evidence: a week of grid-work read as hex dumps while a 30-line renderer + multimodal Read
   existed; the operator, not the loop, caught it ("why didn't you invent this yourself?"). The
   model-side instruments were obsessive, the trainer-side ones nonexistent — self-instrumentation
   is part of the meta front, and "no loud failure" is not evidence the representation is adequate.
+  (That miss is also the /interface-thinking routing failure: the skill existed 16 days, verbatim
+  trigger, zero fires — audit 2026-07-06; wiring it here is the fix.)
 A tick that only re-arms a timer with zero work done is the anti-pattern. The account ceiling
 (≤~15 routines/24h) still binds — "better loops" = each tick does REAL work, NOT more timers.
 An idle fallback wake-up is valid ONLY as a hang-survival net BEHIND event-driven completion
@@ -72,6 +84,17 @@ still defines the fronts; the hook is the enforcement.
 Evidence: 2026-06-17 anim-workbench — agent set a bare 1800s idle fallback while two grind
 subagents ran; operator (#f+#g): "scheudle yourself better /loops then (like meta/heretic/subagent
 runs/dreamer etc)". The fix is portfolio rotation, institutionalized here (global), not one session.
+
+**A dependency gates MEASUREMENT interpretation, not BUILDING in isolation (added 2026-07-04, #g, 5th flag).**
+The 5th idle-flag's mechanism was new: agent parked the prereg-NAMED next lever ("dep: close row X
+first") while only a 15-min smoke stood between it and X's close — reading "X first" as build-blocking.
+Wrong altitude: a dep like that pins when a MEASUREMENT counts, not when construction may start. While
+any gate resolves, the named next levers get BUILT in worktree-isolated dispatches (merge-after-gate);
+heretic/scholar fronts on the just-landed verdict launch the same turn it lands. A watcher-only turn
+with unblocked buildable levers on the board is the same anti-pattern as the bare idle tick.
+Evidence: 2026-07-04 arc-agi — counter-guarded-experts (named next lever) + ILP probe (head-by-default
+FIRED) both sat undispatched behind a formality smoke; operator: "anything you're doing in parallel?
+Why idle? #g … dispatch/parallize?"
 
 **APPLIES TO EVERY AUTONOMOUS RUN — not just `/loop` idle-ticks (added 2026-06-19, #g+#f, flagged 3×).**
 A `/goal` run, a pasted overnight-driver prompt, or any self-directed session is EQUALLY subject to this —
@@ -145,3 +168,26 @@ Evidence: 2026-07-04 arc-agi — OPINE-World took ARC-AGI-3 SOTA composed of mec
 in our own lever library for 2 weeks (L-WM-004 extracted 06-20, status "proposed", fitness null;
 437 levers, ZERO fitness values). Operator #g: "a metaloop that functions like this very
 session — find clear misses, then fix the architecture so we could've discovered it ourselves."
+
+**6th flag (2026-07-05, arc-agi): row-closure SWALLOWS successors — the mechanical leak behind
+"why do I need to prompt you for this."** The named-next-lever discipline fails not only by
+parking builds behind gates but by CLOSING a row whose OUTPUT is build-candidates (a mining row
+"measured" → its O1-O7→tools successor never queued; operator had to ask "what about a better
+toolbelt?" hours after the loop mined, named, and shelved exactly that). Structural fix (repo
+where it recurred): `loop/idea_backlog.py done` refuses candidate-emitting closures without
+`--spawns <successor>` or an explicit `--no-successor "<reason>"` (commit 1ab5545). Portable
+form of the rule: **a closure that names candidates is a HANDOFF, not an ending — file the
+successor in the same act or refuse in writing.** Same-day siblings of the class: sub-level
+instruments, split design, prompt economy — each sat derivable-in-repo until the operator asked;
+when a free build lane exists, sweep recent memos/rows for named-but-unqueued levers BEFORE
+filling the lane with hygiene.
+
+**7th flag (2026-07-06, arc-agi): over-gating the operator boundary — "Why do you need me to
+sign off for most of those? why not do?"** After a fully-autonomous verdict night, the morning
+brief parked 3 self-servable items (game substitution, a farm within granted budget, a code
+build already GO'd) behind operator asks — one explicit sign-off had been inverted into an
+ask-each-time ritual. Portable rule: a sign-off covers the ACTIVITY and BUDGET; parameter
+choices inside it are the agent's. The real gates are codified money thresholds, held-out
+reserves, outward-facing/irreversible actions, and operator-only accounts. HUMAN.md is for
+those — not a parking lot for decisions the agent can make. (arc-agi memory:
+feedback_overgating_real_gates.md)
