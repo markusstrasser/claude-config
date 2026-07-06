@@ -66,6 +66,14 @@ fronts at different cadences, ROTATING across ticks:
   is part of the meta front, and "no loud failure" is not evidence the representation is adequate.
   (That miss is also the /interface-thinking routing failure: the skill existed 16 days, verbatim
   trigger, zero fires — audit 2026-07-06; wiring it here is the fix.)
+  **Second half of the cockpit (#g 2026-07-06, arc-agi): FULL-SPECTRUM TELEMETRY ON THE SYSTEM
+  UNDER STUDY.** A headline scalar is never adequate instrumentation — every measurement surface
+  owes the full suite of ~$0-derivable analytics (per-item/per-action panels, zero-vs-nonzero
+  decompositions, coverage curves, dispersion, waste taxonomies), built PROACTIVELY; the operator
+  should never have to ask "do we have telemetry for X" ("you should've figured that out a long
+  time ago"). A ratchet metric and a debugging suite are different instruments — owing both is
+  the default. Exhibit: RHAE 0.141 stood for weeks before a 5-line decomposition showed 26/36
+  exact-zeros — the diagnosis-flipping analytics were always $0.
 A tick that only re-arms a timer with zero work done is the anti-pattern. The account ceiling
 (≤~15 routines/24h) still binds — "better loops" = each tick does REAL work, NOT more timers.
 An idle fallback wake-up is valid ONLY as a hang-survival net BEHIND event-driven completion
@@ -144,6 +152,16 @@ stale timeout notifications afterwards. Rules of thumb:
   timed out]" for an already-processed event as noise, never re-arm reflexively.
 - Prefer making the JOB observable (per-item progress lines to stderr) over compensating with
   wider watches — a silent hour-long log is the root cause (fixed in holdout_eval 7a63ea5).
+- **Positive-control every watcher filter AT ARM TIME (added 2026-07-06, 3 dead watchers in one
+  day).** A watcher pattern written from MEMORY of the log format is presumed wrong: run the exact
+  grep against the existing log (event class already occurred → must match >0) or against a
+  synthetic echo of the expected line BEFORE arming; refuse to arm on zero matches. The three
+  same-day exhibits, all silently unable to fire: `grep train_qlora` vs `modal container list`
+  showing the APP name; case-sensitive `*complete*` vs `KernelWorkerStatus.COMPLETE`; grep
+  `"COMPLETE exit"` vs log lines saying `DONE … exit=0` (40 events missed). Same family as
+  eval-conventions "a detector's acceptance test needs positive controls" — a watcher IS a
+  detector. Poll-loop watchers owe the same check on their status-command parse (run the command
+  once, verify the field you grep exists in its REAL output).
 
 ## Hindsight metaloop — grade every external find "could we have derived it?" (added 2026-07-04, #g)
 Scouting that only IMPORTS the frontier hides the more valuable signal: whether your own loop
