@@ -500,6 +500,20 @@
             "async": true
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/stop-goal-wrapup.py",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/stop-context-wrapup.py",
+            "timeout": 10
+          }
+        ]
       }
     ],
     "PreCompact": [
@@ -514,6 +528,21 @@
             "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/session-stability-log.sh precompact",
             "async": true
+          },
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/precompact-skill-arcs.py",
+            "timeout": 8
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/precompact-goal-guard.py",
+            "timeout": 10
           }
         ]
       }
@@ -524,6 +553,16 @@
           {
             "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/postcompact-verify.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/postcompact-goal-rearm.sh",
+            "timeout": 5
           }
         ]
       }
@@ -719,13 +758,13 @@
     "exa@claude-plugins-official": false,
     "typescript-lsp@claude-plugins-official": false
   },
-  "effortLevel": "high",
+  "effortLevel": "medium",
   "tui": "default",
   "autoDreamEnabled": false,
   "skipDangerousModePermissionPrompt": true,
   "theme": "dark",
   "editorMode": "vim",
-  "verbose": false,
+  "verbose": true,
   "showMessageTimestamps": true,
   "remoteControlAtStartup": true,
   "agentPushNotifEnabled": true,
