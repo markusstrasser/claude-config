@@ -312,6 +312,15 @@
             "command": "/Users/alien/Projects/skills/hooks/prewrite-frontmatter-inject.sh"
           }
         ]
+      },
+      {
+        "matcher": "AskUserQuestion",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /Users/alien/Projects/skills/hooks/pretool-askuserquestion-autonomous-warn.py"
+          }
+        ]
       }
     ],
     "PostToolUse": [
