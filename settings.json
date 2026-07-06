@@ -119,6 +119,10 @@
           },
           {
             "type": "command",
+            "command": "python3 /Users/alien/Projects/skills/hooks/pretool-bg-dispatch-footgun.py"
+          },
+          {
+            "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/pretool-heavy-load-guard.sh"
           },
           {
