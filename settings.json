@@ -10,6 +10,7 @@
     "SMART_JUDGE_ENFORCE_VECTORS": "verify_before_claim,over_caution"
   },
   "includeGitInstructions": false,
+  "disableWorkflows": true,
   "permissions": {
     "allow": [
       "Edit(//Users/alien/.claude/**)",
@@ -50,7 +51,7 @@
     ],
     "defaultMode": "dontAsk"
   },
-  "model": "claude-fable-5[1m]",
+  "model": "opus[1m]",
   "skillOverrides": {
     "keybindings-help": "user-invocable-only",
     "fewer-permission-prompts": "name-only",
@@ -781,7 +782,7 @@
   "skipDangerousModePermissionPrompt": true,
   "theme": "dark",
   "editorMode": "vim",
-  "verbose": true,
+  "verbose": false,
   "showMessageTimestamps": true,
   "remoteControlAtStartup": true,
   "agentPushNotifEnabled": true,
