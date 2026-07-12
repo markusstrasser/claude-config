@@ -224,3 +224,11 @@ shared infrastructure: (1) `pgrep -fl <pattern>` FIRST and read every match; (2)
 pattern to a unique token (full dataset path, exact out-dir, launch-recorded PID); (3) prefer
 killing by the PID recorded at launch over pattern matching. A kill is a state-changing
 action — the pgrep preview is its probe-before-action.
+
+## Session-limit kills carry their own reset clock (added 2026-07-12, arc-agi)
+When harness-tracked subagents die with failureReason "You've hit your session limit · resets
+H:MMpm (TZ)", the reset time is IN THE STRING — parse it and self-arm ONE ScheduleWakeup at
+reset+2-5min to resume/redispatch the dead lane. Never ask the operator for a clock the harness
+already prints, and never poll before the parsed reset. Evidence: 2026-07-12 arc-agi — operator
+had to say "set cron: in 34 minutes the budget limit resets"; 12 minutes later three agents died
+with the exact reset time verbatim in their failure strings (session 41f9b649).
