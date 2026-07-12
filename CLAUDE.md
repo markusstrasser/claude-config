@@ -80,6 +80,8 @@ Before building a feature, answer these out loud if non-obvious:
 21. **A reported defect is a symptom — zoom out before patching.** When the user points at one instance of a problem, do NOT just fix that instance and wait for the next. In the same turn: (a) sweep the whole artifact for the CLASS (every sibling with the same defect — all option-sets, all duplicated assets, all asymmetric scales, not only the one shown), and (b) step back to the surrounding DESIGN and ask whether the local patch is even the right altitude (a per-item asset shown N times is a section-level concern; a coarse option-set is a granularity decision; a missing scale rung is an exhaustiveness decision). Reactive one-instance patching that makes the user hand-walk you to each next instance is the failure. Not hookable (altitude is semantic judgment), so it lives here. Evidence: 2026-06-17 synthoria intake — user had to separately point out card↔option mismatch (one trait at a time), a duplicated hair reference image, and a missing "milder" scale rung, each a class I should have swept on the first signal.
 22. **Fix broken tooling at the root; never let the same error recur (#g 2026-07-01).** When a tool / MCP / script / hook misbehaves, FIX IT — root cause + a fail-loud guard + a test — never just work around it silently and move on. Where a project keeps an error-pattern memo/catalog (e.g. genomics `docs/ops/*failure-pattern-catalog*.md`): ADD each new error + its fix, CHECK OFF what's verified-working, and flag what's still open — that catalog exists so the same error never costs time twice. A recurrence of a cataloged error is a process failure, not bad luck; a silent workaround that leaves the tool broken for the next agent is the anti-pattern. Evidence: 2026-07-01 — the modal-triage MCP silently lied about job liveness a SECOND time (all-null records read as `is_running=true`, nearly causing a wrongful kill); the durable fix was fail-loud + a test + a catalog entry, not another workaround.
 
+23. **Global prose-config edits are self-serve WITH an Evidence trailer (operator ruling O1, 2026-07-12).** Agents may edit this file and `~/.claude/rules/*.md` directly during any-repo work when the fix is evidenced and beneficial — the commit MUST carry an `Evidence:` trailer naming the incident/audit. Telos-level changes still surface to the operator first. (Hooks were already self-serve under the standing metafix; this closes the prose half of the F9 prose-vs-enforcement axis. Companion ruling O2, same date: advisory guards ENFORCE during autonomous runs — goal-run launchers drop `.claude/loop-enforce-no-question-stop`, autonomous close gates run lints strict; interactive sessions stay advisory. A guard with >50% force-rate gets retuned, not obeyed-around.)
+
 Applies to: architecture, abstractions, schema design, over-engineering, speculative features, unintegrated code.
 Does NOT apply to: style preferences, naming, minor implementation choices, things that are genuinely subjective.
 </technical_pushback>
@@ -208,11 +210,24 @@ If a repo has `extensions.worktreeConfig=true` and `zoekt-git-index` fails with 
   zoekt-git-index -index ~/.zoekt .)
 ```
 
+**Semantic search over corpora: `emb`** (installed CLI, `~/Projects/emb`; README = usage SSOT).
+Dense+BM25 hybrid, rerank, `pairs` (dup/interference detection), `read` (locate-then-read for
+long-context QA). `emb embed input.jsonl -o idx/` → `emb search idx/ "query" --hybrid -k 20`.
+Use for: memo/backlog/notes retrieval beyond token overlap (arc-agi `just answer` consumes it),
+dedup sweeps, any "find by MEANING" need. Shell out; never import.
+
 Escalation rules:
 - `rg` — exact local probe, final verification, negative-evidence logs.
 - `zoekt` — indexed discovery over large repos / cross-repo search.
+- `emb` — semantic/hybrid retrieval over document corpora (meaning, not literals).
 - `ast-grep` — structural syntax search/rewrite; do not force regex for AST-shaped changes.
 - repo maps / outlines — routing context only; read source before claims.
+
+**The operator's OWN toolshed is discovery scope (added 2026-07-10, HAD-LEVER exhibit).**
+Pre-build check #1 ("does this already exist?") includes `ls ~/Projects` + a zoekt/`emb`-README
+sweep of sibling repos BEFORE proposing to build any tool-shaped capability — `~/Projects/emb`
+sat installed while an agent filed a build-semantic-search row. A capability the operator
+already built is the cheapest dependency there is.
 
 **Session history (past discussions, any repo):** `agentlogs search --project <repo> "query"` (quote queries — FTS5 reads `-` as an operator) · `agentlogs recent` — global tool over the cross-vendor session store; reach for it to recover prior context before re-deriving.
 

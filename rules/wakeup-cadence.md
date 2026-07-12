@@ -162,6 +162,12 @@ stale timeout notifications afterwards. Rules of thumb:
   eval-conventions "a detector's acceptance test needs positive controls" — a watcher IS a
   detector. Poll-loop watchers owe the same check on their status-command parse (run the command
   once, verify the field you grep exists in its REAL output).
+  **Promoted to a PAIR (arc-agi peer F12, promoted on O1 ruling 2026-07-12):** the arm-time
+  check is TWO halves — synthetic POSITIVE (pattern must match the expected event line) AND
+  current-log ZERO-MATCH (a future event's pattern must match 0 lines in the log AS IT STANDS;
+  >0 ⇒ the pattern cannot discriminate your event). A pattern that passed its synthetic
+  positive still no-op'd for 19 min because the OTHER ARM had already written identical lines —
+  multi-arm logs sharing a line format are the standing hazard class.
 
 ## Hindsight metaloop — grade every external find "could we have derived it?" (added 2026-07-04, #g)
 Scouting that only IMPORTS the frontier hides the more valuable signal: whether your own loop
@@ -209,3 +215,12 @@ choices inside it are the agent's. The real gates are codified money thresholds,
 reserves, outward-facing/irreversible actions, and operator-only accounts. HUMAN.md is for
 those — not a parking lot for decisions the agent can make. (arc-agi memory:
 feedback_overgating_real_gates.md)
+
+## pkill discipline for job trees (added 2026-07-12, two same-day incidents)
+Never `pkill -f` with a SUBSTRING pattern against multi-job process trees: `*forkDC*` matched
+`forkDCH` (killed a healthy train client 5 steps before final save, ~$1.3); an earlier
+`duck_lite.py run --game` pkill matched a CONCURRENT canary's episodes. Before any pkill on
+shared infrastructure: (1) `pgrep -fl <pattern>` FIRST and read every match; (2) anchor the
+pattern to a unique token (full dataset path, exact out-dir, launch-recorded PID); (3) prefer
+killing by the PID recorded at launch over pattern matching. A kill is a state-changing
+action — the pgrep preview is its probe-before-action.
