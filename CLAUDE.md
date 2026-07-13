@@ -179,6 +179,16 @@ Instruction-level guidance; hooks enforce provenance tags. These shape HOW resea
 Default search remains `rg`: exact, local, gitignore-aware, no stale index. Use it first for small/medium repos, precise literals, negative-evidence proofs, and final verification of indexed hits.
 
 **A regex/grep hit OR miss is NEVER load-bearing evidence for an important call — it LOCATES, it does not DECIDE (#g 2026-06-26).** High false-POSITIVE rate (substring matches: `annotat` matches `import annotations`; a literal hits a comment, string, or unrelated symbol) AND high false-NEGATIVE rate (the real signal hides behind an import, alias, indirection, alternate spelling, or a generated/gitignored file). For any decision that matters — "does X consume Y", "is Z dead/referenced", "did this run", a count that gates an action — never let the match or its absence BE the answer: grep to find candidate sites, then **READ the source**; use `ast-grep` for structural/symbol questions; use the authoritative declaration / actual data / an empirical test for facts. A clean grep means "look here," never "proven." (Evidence: 2026-06-26 — concluded 3 pipeline stages "don't consume ClinVar" from a grep whose only hit was `import annotations`; right by luck, unsound by method. Operator #g: "never trust REGEX — lots of false positives for important calls.")
+**GENERALIZED to ALL similarity/match signals (2026-07-13, four same-day instances):** embedding
+cosine, fuzzy/token overlap, substring recurrence, hit-count screens — every one LOCATES
+candidates; a SEMANTIC judgment (read it, or a mechanism-level check like "would the same
+falsifier kill both?") DECIDES. The same failure wears four coats in one day: emb-cosine dedup
+would have merged 7 distinct mechanisms into 1 cluster (arc-agi brainstorm pilot — operator
+caught it at design time, measured 1-vs-7); an "any dropped token recurs" proxy inflated a
+non-contractivity headline (AGM recode §4); a collision annotator flagging 7/7 ideas at ~35
+uniform hits discriminated nothing; and watcher grep patterns false-fired on timestamps.
+Pipelines may use similarity to FLAG pairs/candidates; the merge/verdict step must be a
+mechanism-level or read-the-source judgment, logged per decision.
 
 **`rg`'s gitignore-awareness is a SILENT FALSE-ZERO trap on DATA/derived trees** (same class as `--no-ext-diff` on rg, now hook-guarded): a repo's gitignored content — corpus parses (`corpus/<slug>/parsed.*/page.md`), `indexed/` caches, build output, vendored DBs — is INVISIBLE to default `rg`, so a search over it returns `0` for content that plainly exists. Any `rg` whose target tree is gitignored data MUST pass `--no-ignore` (or `-uu`); a surprising `0` from a negative-evidence/work-list grep over such a tree is the tell — verify with `--no-ignore` (or `find`/direct read) before reasoning from the zero. (Evidence: 2026-06-22 — `rg` reported 0 Cloudflare-blocked corpus parses because the parses are gitignored; `--no-ignore` showed the real picture.)
 
