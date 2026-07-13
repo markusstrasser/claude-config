@@ -7,10 +7,10 @@
     "ENABLE_PROMPT_CACHING_1H": "1",
     "SLASH_COMMAND_TOOL_CHAR_BUDGET": "32000",
     "SMART_JUDGE_MODE": "enforce",
-    "SMART_JUDGE_ENFORCE_VECTORS": "verify_before_claim,over_caution"
+    "SMART_JUDGE_ENFORCE_VECTORS": "verify_before_claim",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "claude-sonnet-5"
   },
   "includeGitInstructions": false,
-  "disableWorkflows": true,
   "permissions": {
     "allow": [
       "Edit(//Users/alien/.claude/**)",
@@ -51,7 +51,7 @@
     ],
     "defaultMode": "dontAsk"
   },
-  "model": "opus[1m]",
+  "model": "claude-fable-5[1m]",
   "skillOverrides": {
     "keybindings-help": "user-invocable-only",
     "fewer-permission-prompts": "name-only",
@@ -94,115 +94,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/pretool-git-noext-inject.sh",
-            "if": "Bash(git*)"
-          },
-          {
-            "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/pretool-pyunbuffered-inject.sh"
-          },
-          {
-            "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/pretool-git-add-all-guard.sh",
-            "if": "Bash(git*)"
-          },
-          {
-            "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/pretool-bash-loop-guard.sh"
-          },
-          {
-            "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/pretool-noext-nongit-guard.sh"
-          },
-          {
-            "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/pretool-bash-background-ampersand.py"
-          },
-          {
-            "type": "command",
-            "command": "python3 /Users/alien/Projects/skills/hooks/pretool-bg-dispatch-footgun.py"
-          },
-          {
-            "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/pretool-heavy-load-guard.sh"
-          },
-          {
-            "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/pretool-no-background-commit.sh",
-            "if": "Bash(git*)"
-          },
-          {
-            "type": "command",
-            "command": "python3 /Users/alien/Projects/skills/hooks/pretool-uv-python-guard.py"
-          },
-          {
-            "type": "command",
-            "command": "python3 /Users/alien/Projects/skills/hooks/pretool-genomics-pythonpath-guard.py"
-          },
-          {
-            "type": "command",
-            "command": "python3 /Users/alien/Projects/skills/hooks/pretool-bare-modal-guard.py"
-          },
-          {
-            "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/pretool-duckdb-quote-guard.sh"
-          },
-          {
-            "type": "command",
-            "command": "/Users/alien/.claude/hooks/pretool-modal-cost-guard.sh"
-          },
-          {
-            "type": "command",
-            "command": "/Users/alien/.claude/hooks/pretool-modal-script-audit.sh"
-          },
-          {
-            "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/pretool-cost-guard.sh"
-          },
-          {
-            "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/pretool-cost-awareness.sh"
-          },
-          {
-            "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/pretool-ast-precommit.sh",
-            "if": "Bash(git commit*)"
-          },
-          {
-            "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/pretool-commit-check.sh",
-            "if": "Bash(git commit*)"
-          },
-          {
-            "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/pretool-multiagent-commit-guard.sh",
-            "if": "Bash(git*)"
-          },
-          {
-            "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/pretool-modal-run-guard.sh"
-          },
-          {
-            "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/pretool-timeout-modal-guard.sh"
-          },
-          {
-            "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/pretool-destructive-git-ref.sh",
-            "if": "Bash(git*)"
-          },
-          {
-            "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/precommit-plan-completion-guard.sh",
-            "if": "Bash(git commit*)"
-          },
-          {
-            "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/pretool-plan-protect.sh"
-          },
-          {
-            "type": "command",
-            "command": "python3 /Users/alien/Projects/skills/hooks/pretool-cursor-model-guard.py"
+            "command": "python3 /Users/alien/Projects/skills/hooks/pretool-bash-dispatch.py"
           }
         ]
       },
@@ -245,11 +137,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/Users/alien/.claude/hooks/tool-tracker.sh"
-          },
-          {
-            "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/pretool-companion-remind.sh"
+            "command": "python3 /Users/alien/Projects/skills/hooks/pretool-universal-dispatch.py"
           }
         ]
       },
@@ -320,6 +208,15 @@
           {
             "type": "command",
             "command": "python3 /Users/alien/Projects/skills/hooks/pretool-askuserquestion-autonomous-warn.py"
+          }
+        ]
+      },
+      {
+        "matcher": "Monitor",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /Users/alien/Projects/skills/hooks/pretool-monitor-pattern-guard.py"
           }
         ]
       }
@@ -632,6 +529,10 @@
           },
           {
             "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/sessionstart-daemon-twin-warn.sh"
+          },
+          {
+            "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/sessionstart-worktree-freshness.sh"
           },
           {
@@ -762,6 +663,7 @@
   "worktree": {
     "baseRef": "head"
   },
+  "disableWorkflows": true,
   "statusLine": {
     "type": "command",
     "command": "~/.claude/statusline.sh",
@@ -776,7 +678,7 @@
     "exa@claude-plugins-official": false,
     "typescript-lsp@claude-plugins-official": false
   },
-  "effortLevel": "medium",
+  "effortLevel": "high",
   "tui": "default",
   "autoDreamEnabled": false,
   "skipDangerousModePermissionPrompt": true,
