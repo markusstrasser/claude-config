@@ -173,6 +173,10 @@
         "hooks": [
           {
             "type": "command",
+            "command": "python3 /Users/alien/Projects/skills/hooks/pretool-subagent-settings-guard.py"
+          },
+          {
+            "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/pretool-governance-edit-notice.sh"
           },
           {
