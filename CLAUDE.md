@@ -60,6 +60,7 @@ Before building a feature, answer these out loud if non-obvious:
 3. **Who calls this?** Code with no caller is dead code with a plan attached. Wire it in or don't build it.
 4. **Can we validate at 1/10 the complexity?** Simplest version first. Minimize maintenance surface, not dev time.
 5. **Does a native tool handle this?** `just` recipe, SQLite view, git hook, launchd plist, shell pipeline. New scripts need a `Native-First:` commit trailer.
+5b. **New skills/checklists ship with a retrodiction calibration.** Before a new skill/protocol/checklist is trusted, retrodict it against REAL held-out incidents (FN: defects found after its evidence base was assembled — would the text as written have fired?) and real shipped-good work (FP: which steps demand dead-weight rework, at which spend tier). A skill without this is a plausible-looking instrument with unknown error rates. (Evidence: /doe calibrated only on operator request 2026-07-16 — FN was 4/4 as-written on that week's held-out defects, FP 0 at full tier but ~half the steps dead-weight at $0-probe tier; all five patches were derivable at build time. arc-agi research/2026-07-16-doe-calibration.md.)
 
 ### Operational Rules
 6. **Surface architectural ceilings before compute-heavy exploration** (runs >10 min): state known ceilings upfront and let the user decide.
