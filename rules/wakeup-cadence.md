@@ -126,3 +126,19 @@ Subagents dying with failureReason "You've hit your session limit · resets H:MM
 the reset time IN THE STRING — parse it, self-arm ONE ScheduleWakeup at reset+2-5min to
 redispatch the dead lane. Never ask the operator for a clock the harness prints; never poll
 before the parsed reset. (arc-agi 41f9b649.)
+
+**Monthly-SPEND-limit kills print NO reset clock (2026-07-17)** ("hit your monthly spend limit ·
+raise it at claude.ai/settings/usage") — the unblock is an operator account action at an unknown
+time. Do NOT sit dead until the operator types "go on": arm ONE periodic ScheduleWakeup
+(1800-3600s) whose tick sends a single cheap resume-probe to one dead lane; on success, resume
+the fleet and report. Meanwhile the PARENT session (still alive) grades on-disk artifacts and
+takes over closes inline — an account-dead fleet is not an idle parent. (arc-agi 2026-07-17:
+fleet dead 3h until operator prompt; every completed-but-ungraded artifact was closeable inline
+the whole time.)
+
+**Liveness verdicts: a staleness signal LOCATES, exact-PID DECIDES (2026-07-17).** A quiet log +
+empty pgrep is grounds to CHECK, never to declare a job reaped: log-write patterns are
+runner-specific (flush-once-at-completion runners have silent logs mid-run by design), and
+substring pgrep drowns in peer noise. The deciding check is `ps -p <exact recorded PID>` on the
+launch-recorded PID + child tree. (arc-agi false-reap alarm 2026-07-17: parent declared a live
+23-min episode dead from log staleness; agent's exact-PID check refuted it.)
