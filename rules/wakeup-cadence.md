@@ -87,6 +87,12 @@ real progress AND continuing wastes resources — write the ask, then stop.
 
 - Arm the watch when remaining-ETA < timeout (e.g. after a mid-run liveness check), not at
   launch; or set timeout ≥ 1.5× full expected wall.
+- **Monitor hard-caps at 60 min/call and does NOT auto-chain (2026-07-18).** For any job with
+  remaining-ETA > 60 min, "timeout ≥ 1.5× expected wall" is UNSATISFIABLE in one arm — a
+  silently-expired Monitor looks identical to a quiet wait. Either schedule re-arms explicitly
+  (per-60-min chunks, count them at arm time) or watch the job's own status-file artifact via a
+  nohup'd poller and treat Monitor as the notify layer only. (arc-agi 2026-07-18: parity-cell
+  watcher died at the cap unnoticed; found only by a parent status ping.)
 - A monitor whose event already fired still emits a later timeout notification — noise; never
   re-arm reflexively.
 - Prefer making the JOB observable (per-item progress lines) over wider watches.
