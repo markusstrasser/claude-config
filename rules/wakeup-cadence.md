@@ -87,6 +87,10 @@ real progress AND continuing wastes resources — write the ask, then stop.
 
 - Arm the watch when remaining-ETA < timeout (e.g. after a mid-run liveness check), not at
   launch; or set timeout ≥ 1.5× full expected wall.
+- **Teammate agents have NO ScheduleWakeup — self-wake is orchestrator-only (2026-07-18).** A
+  teammate's long wait therefore needs an artifact-writing detached poller (ground truth
+  survives any watcher death) plus a PARENT-side structural backstop (e.g. another lane's
+  completion report triggers the nudge) — never a bare Monitor, which caps at 60 min (below).
 - **Monitor hard-caps at 60 min/call and does NOT auto-chain (2026-07-18).** For any job with
   remaining-ETA > 60 min, "timeout ≥ 1.5× expected wall" is UNSATISFIABLE in one arm — a
   silently-expired Monitor looks identical to a quiet wait. Either schedule re-arms explicitly
