@@ -508,6 +508,10 @@
           {
             "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/userprompt-clock.sh"
+          },
+          {
+            "type": "command",
+            "command": "python3 /Users/alien/Projects/skills/hooks/userprompt-session-limit-guard.py"
           }
         ]
       }
