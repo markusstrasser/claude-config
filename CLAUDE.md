@@ -101,6 +101,8 @@ Hook-enforced (text = the why): no `git add -A`/`.` (sweeps scratch files — st
 
 **Concurrent peer sessions on one repo → launch with `claude --worktree`.** Peers on one checkout clobber shared `.claude/` state; isolate-per-agent + merge via git (CAID: worktree beats soft isolation 7.8pp). A SessionStart hook warns on detection.
 
+**A dry-run PASS is never live authorization (2026-07-18).** Staged destructive or outward-facing shared-state actions (history rewrite, force-push-equivalent, mass delete, spend commit) that were deferred to or gated on the operator need a FRESH `AUTHORIZED-LIVE <date>` from the gate's owner, dated AFTER the dry-run — the rehearsal's own success is evidence the procedure works, not license to run it. Executing on the dry-run and seeking ratification afterward inverts the gate. (Incident: origin/main history rewrite executed 2026-07-16 citing its same-day dry-run PASS as rationale after "operator deferred"; ratified only 2026-07-18, authorization gap ~2 days. Execution quality was fine — the sequencing was the defect.)
+
 **Derived artifacts are gitignored — track the GENERATOR + SOURCE, never the OUTPUT (#g 2026-06-18).** Generator/cron/render output (index caches, state markers, rendered PNG from tracked `.mmd`) belongs in `.gitignore`: tracked generated files churn history and drift from their generator. Gitignore IS the enforcement — when you add a generator, add its output glob in the SAME commit, and watch near-miss glob patterns.
 
 ## Commit Message Format
