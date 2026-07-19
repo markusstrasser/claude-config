@@ -74,10 +74,17 @@ An autonomous loop doesn't yield on a question it could resolve, or block waitin
 route the ask to a file and progress other fronts (this is the measured `over_caution` cluster).
 Stopping is CORRECT only when the blocker is genuinely unresolvable AND no other front makes
 real progress AND continuing wastes resources — write the ask, then stop.
-- Append to loop-root `HUMAN.md` (a FEEDER into the existing question-VIEW, not a 5th queue —
+- Append to loop-root `HUMAN.md` (a FEEDER into the existing question-VIEW — wired live
+  2026-07-19, agent-infra questions_view.py, depth ≤2 under ~/Projects; not a 5th queue —
   ADR 2026-06-16-agent-question-convergence); repos with an escalation store keep it. Human
   answers async. Per-loop "don't stop on resolvable asks" enforcement = operator-set
   `.claude/loop-enforce-no-question-stop` marker.
+- **Answer pickup leaves a receipt (2026-07-19).** When you act on (or deliberately defer)
+  an operator-answered `[answered: …]` ask, append one line inside the block:
+  `consumed: YYYY-MM-DD <session-or-commit ref> — <what was done / deferred: why>`.
+  Answered blocks without it surface as "Answers waiting on agents" in the control plane
+  (asks dated ≥2026-07-19). New asks SHOULD carry a `session: <id>` line when known
+  (enables future blocked-run attribution). Advisory convention — a claim, not proof.
 - **Escalate STRUCTURE, not tactics.** stale_count≥2 → change a structural constraint (frame/
   environment), not tactical params. stale_count≥4 → append to `HUMAN.md`. Tuning harder inside
   a stuck frame IS the cognitive loop.
