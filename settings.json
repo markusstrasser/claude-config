@@ -525,10 +525,6 @@
           },
           {
             "type": "command",
-            "command": "/Users/alien/Projects/phenome/scripts/check-index-freshness.sh"
-          },
-          {
-            "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/session-stability-log.sh sessionstart"
           },
           {
