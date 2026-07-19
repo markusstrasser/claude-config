@@ -14,27 +14,16 @@
   "permissions": {
     "allow": [
       "Edit(//Users/alien/.claude/**)",
-      "Write(//Users/alien/.claude/**)",
       "Edit(//Users/alien/Projects/skills/**)",
-      "Write(//Users/alien/Projects/skills/**)",
       "Edit(**/.claude/settings*.json)",
-      "Write(**/.claude/settings*.json)",
       "Edit(**/.claude/hooks/**)",
-      "Write(**/.claude/hooks/**)",
       "Edit(**/.claude/skills/**)",
-      "Write(**/.claude/skills/**)",
       "Edit(**/.claude/rules/**)",
-      "Write(**/.claude/rules/**)",
       "Edit(**/.claude/agents/**)",
-      "Write(**/.claude/agents/**)",
       "Edit(**/.claude/commands/**)",
-      "Write(**/.claude/commands/**)",
       "Edit(**/.claude/plans/**)",
-      "Write(**/.claude/plans/**)",
       "Edit(**/.claude/checkpoint.md)",
-      "Write(**/.claude/checkpoint.md)",
       "Edit(**/CLAUDE.md)",
-      "Write(**/CLAUDE.md)",
       "mcp__fmp__get_company_profile",
       "mcp__fmp__get_insider_trading",
       "mcp__fmp__get_price_target",
@@ -49,7 +38,7 @@
       "Read(**/.env)",
       "Read(**/.env.*)"
     ],
-    "defaultMode": "dontAsk"
+    "defaultMode": "auto"
   },
   "model": "claude-fable-5[1m]",
   "skillOverrides": {
@@ -59,7 +48,7 @@
     "init": "user-invocable-only",
     "playground:playground": "name-only",
     "frontend-design:frontend-design": "name-only",
-    "scientific-drawing": "name-only",
+    "scientific-drawing": "off",
     "gpt-image-2": "name-only",
     "claude-md-management:claude-md-improver": "name-only",
     "claude-md-management:revise-claude-md": "name-only",
@@ -67,7 +56,21 @@
     "skill-authoring": "name-only",
     "schedule": "name-only",
     "security-review": "name-only",
-    "x-api": "name-only"
+    "x-api": "name-only",
+    "census-data": "off",
+    "corpus": "off",
+    "diagnose": "off",
+    "manim-animations": "off",
+    "oura-ring": "off",
+    "review-animations": "off",
+    "ttcw-rubric-evaluator": "off",
+    "neurokit2": "off",
+    "research-ops": "off",
+    "verify-before": "off",
+    "dataset-register": "off",
+    "youtube-transcript": "off",
+    "interview-prompt": "off",
+    "google-workspace": "off"
   },
   "hooks": {
     "PermissionRequest": [
@@ -583,6 +586,10 @@
           {
             "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/subagent-epistemic-gate.sh"
+          },
+          {
+            "type": "command",
+            "command": "python3 /Users/alien/Projects/skills/hooks/stop-llmx-child-guard.py"
           }
         ]
       }
@@ -680,7 +687,8 @@
     "pyright-lsp@claude-plugins-official": true,
     "skill-creator@claude-plugins-official": false,
     "exa@claude-plugins-official": false,
-    "typescript-lsp@claude-plugins-official": false
+    "typescript-lsp@claude-plugins-official": false,
+    "webwright@webwright": false
   },
   "effortLevel": "high",
   "tui": "default",
