@@ -5,7 +5,16 @@ paths:
 
 # Plan Review Gate
 
-After writing a NEW plan to `.claude/plans/` that is **non-trivial and consequential**, automatically run `/critique model the plan` before offering to execute. Don't ask — just run the review.
+After writing a NEW plan to `.claude/plans/` that is **non-trivial and consequential**, automatically run plan review before offering to execute. Don't ask — just run it.
+
+## Dispatch workflow (plan phase)
+
+1. **VOI scout (one fork)** — if the plan names a load-bearing uncertainty, run deterministic probes `<1min` (grep, read, `git log`) or propose longer actions. See `agent-infra/decisions/2026-06-15-voi-sequenced-review.md`.
+2. **Triage** — `review_gate.py triage` on the plan packet → read `dispatch.json` for preset (do not assume `standard`).
+3. **Adjudicate** — `/critique model` with triage preset, `--extract --verify`, subparts if packet is large.
+4. **Closeout later** — after implementation, `/critique close` reviews **design only**; diff was `/code-review` once. Do not re-review the same diff in critique.
+
+Operational detail lives in `skills/critique/SKILL.md`. Preset promotion: `evals/critique_replay/ROUTING_VERDICT.md`.
 
 **Triggers (all must be true):**
 - New plan (not an update applying review findings)

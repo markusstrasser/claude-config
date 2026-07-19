@@ -32,5 +32,6 @@ cleanup.
 ## How to abort
 
 If preflight fails: stop, report `dest=<path> free=<X GB> need=<Y GB>`, and ask
-the user whether to relocate to a larger volume (e.g. `/Volumes/SSK1TB`) or
-free space first. Do not start the download "and see how far it gets."
+the user whether to relocate to a larger volume (`/Volumes/2TBPNY` — the only
+external SSD; SSK1TB was retired 2026-06-24) or free space first. Do not start
+the download "and see how far it gets."
