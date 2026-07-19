@@ -91,6 +91,12 @@ real progress AND continuing wastes resources — write the ask, then stop.
   teammate's long wait therefore needs an artifact-writing detached poller (ground truth
   survives any watcher death) plus a PARENT-side structural backstop (e.g. another lane's
   completion report triggers the nudge) — never a bare Monitor, which caps at 60 min (below).
+  **Extension (2026-07-19, observed 2× same shape): teammate-session MONITOR notifications may
+  BATCH-QUEUE and not resume the teammate until an incoming SendMessage triggers a turn** (a
+  block-watcher's WATCH-DONE surfaced only alongside the parent's nudge, both wave-2 block
+  boundaries). Teammate watchers therefore never rely on Monitor delivery alone: pair with
+  periodic ground-truth status checks, and parents treat a quiet teammate at a known
+  completion boundary as possibly notification-starved, not necessarily idle-by-choice.
 - **Monitor hard-caps at 60 min/call and does NOT auto-chain (2026-07-18).** For any job with
   remaining-ETA > 60 min, "timeout ≥ 1.5× expected wall" is UNSATISFIABLE in one arm — a
   silently-expired Monitor looks identical to a quiet wait. Either schedule re-arms explicitly
