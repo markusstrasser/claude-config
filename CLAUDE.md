@@ -204,6 +204,7 @@ Escalation rules:
 - `emb` — semantic/hybrid retrieval over document corpora.
 - `ast-grep` — structural syntax search/rewrite; don't force regex for AST-shaped changes.
 - repo maps / outlines — routing context only; read source before claims.
+- `agent-browser` — headless browser automation from Bash (Vercel Labs CLI, brew-installed 2026-07-20): `open URL` → `snapshot -i` (@eN refs, ~200-400 tok vs full DOM) → `click @eN`/`fill`/`eval`/`wait`; `--session` isolation, CDP-attach. The scripted/headless lane for subagents, scouts, launchd jobs, and autonomous runs — claude-in-chrome MCP is interactive-session-only and stays the lane for the operator's logged-in Chrome; WebFetch/Firecrawl for static fetches. Bundled-Chrome download can time out; system-Chrome fallback works.
 
 **The operator's OWN toolshed is discovery scope (2026-07-10, HAD-LEVER exhibit).** Pre-build check #1 includes `ls ~/Projects` + a zoekt/`emb`-README sweep of sibling repos BEFORE proposing any tool-shaped capability — `~/Projects/emb` sat installed while an agent filed a build-semantic-search row.
 
