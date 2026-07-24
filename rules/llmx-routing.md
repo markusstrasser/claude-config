@@ -55,7 +55,7 @@ is too low", you hit API-key billing — not subscription auth.
 **Lite mode:** `--subscription` (canonical) or `--lite bare` (legacy alias) for
 no-tools subscription routing; `--lite research` (research MCP only) for paper
 lookups. Subscription-CLI allowlist (as-of 2026-07-10; rederive: trip the error or `llmx info`):
-claude-fable-5, claude-opus-4-8, composer-2.5, gemini-3-flash-preview, gpt-5.6{,-luna,-sol,-terra},
+claude-fable-5, claude-opus-5, composer-2.5, gemini-3-flash-preview, gpt-5.6{,-luna,-sol,-terra},
 grok-4.5. `gpt-5.5` retired — use `gpt-5.6`.
 
 ## Model Selection / Deep Research → moved
