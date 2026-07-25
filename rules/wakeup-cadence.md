@@ -165,3 +165,13 @@ runner-specific (flush-once-at-completion runners have silent logs mid-run by de
 substring pgrep drowns in peer noise. The deciding check is `ps -p <exact recorded PID>` on the
 launch-recorded PID + child tree. (arc-agi false-reap alarm 2026-07-17: parent declared a live
 23-min episode dead from log staleness; agent's exact-PID check refuted it.)
+
+**But exact-PID decides ALIVE, never PROGRESSING — a second axis (2026-07-25).** A green
+`ps -p` is consistent with an agent looping on self-verification and producing nothing. Opus 5
+system card §2.2: a 24h autonomous design campaign where one arm **shipped nothing and went
+silent for its final 8 hours**, stuck in self-verification loops (the same model is 4× SOTA on
+ARC-AGI-3, which scores every action — the discriminator is an in-loop verifier, not capability).
+So long runs owe an **artifact-advance** check alongside the PID check: does the status file /
+output dir / ledger row actually move between polls? Freeze with a live PID = stuck, not working.
+Cheapest form: the run writes per-item progress lines, and the watcher compares mtime+size across
+two polls. (agent-infra `research/2026-07-25-opus5-arc-agi-generalization.md`.)
