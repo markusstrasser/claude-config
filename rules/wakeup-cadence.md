@@ -21,6 +21,9 @@
   `nohup` + status file. NEVER pipe a background command through `| tail -N` (tail buffers
   until EOF — a kill swallows ALL output); redirect to a log with `PYTHONUNBUFFERED=1`.
   (Evidence: arc-agi f4fecc9a 2026-07-04; 2026-07-05 4-run stop.)
+  **Helper: `bgrun <name> -- <cmd...>`** (`~/Projects/skills/bin/bgrun`, on PATH) does all of
+  the above — nohup+disown, unbuffered log, `.done` marker containing the exit code, prints a
+  ready-to-paste watch loop. Pair with a Monitor on the `.done` marker for harness-tracked wake.
 
 ## Self-imposed dates are reminders, not timers (2026-06-16)
 
