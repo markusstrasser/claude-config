@@ -24,6 +24,10 @@
   **Helper: `bgrun <name> -- <cmd...>`** (`~/Projects/skills/bin/bgrun`, on PATH) does all of
   the above — nohup+disown, unbuffered log, `.done` marker containing the exit code, prints a
   ready-to-paste watch loop. Pair with a Monitor on the `.done` marker for harness-tracked wake.
+  Mid-run output sits in `<name>.log.tmp` — `.log` is written only at exit, so live peeks read
+  the `.tmp` (2× empty-tail misreads, arc-agi 2026-08-17). And when a watched FILE can exist
+  before it is meaningful (volume auto-commits, stub-first writers), the watcher predicate must
+  be CONTENT (marker line), not existence — an existence predicate fired on a 0-byte log there.
 
 ## Self-imposed dates are reminders, not timers (2026-06-16)
 
