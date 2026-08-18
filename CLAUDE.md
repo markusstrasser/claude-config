@@ -303,7 +303,7 @@ Subagents are context shields. **Role split (the verifier boundary):** the main 
 
 **Researcher epochs (CORAL):** parent-controlled epochs — dispatch (≤12 turns, output file) → read → re-dispatch refined if gaps → max 3 epochs, then forced synthesis. The epoch boundary is architectural: the parent reviews progress ("stop at 70%" self-instructions failed 5+ times).
 
-**Output convention** (gate-enforced by `pretool-subagent-gate.sh`): plan/research agents write results >~1000 chars to a file (stub-first) and return the path.
+**Output convention** (gate-enforced by `pretool-subagent-gate.sh`): plan/research agents write results >~1000 chars to a file (stub-first) and return the path. **The output FILE opens with a `**Verdict:**` block (≤10 lines) — the message channel is never load-bearing (2026-08-18: 3/3 finishing teammates' final verdict messages were lost to notification batching in one day; bare idle notifications arrived instead; parents recovered only because the artifacts happened to be self-describing). Parents: on a bare idle notification, READ THE FILE first — never re-dispatch or assume failure from a missing message.**
 
 **Manifest convention:** cherry-pick/merge/multi-file-edit subagents return files-included AND files-skipped-with-reason; coordinator diffs against `git show --stat` before accepting. (Subagents have silently dropped test files and reported success.)
 
