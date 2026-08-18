@@ -172,3 +172,18 @@ runner-specific (flush-once-at-completion runners have silent logs mid-run by de
 substring pgrep drowns in peer noise. The deciding check is `ps -p <exact recorded PID>` on the
 launch-recorded PID + child tree. (arc-agi false-reap alarm 2026-07-17: parent declared a live
 23-min episode dead from log staleness; agent's exact-PID check refuted it.)
+
+**Server-incident (529/overload) teammate kills — the third kill class (2026-08-18).** A 529
+"Overloaded" teammate death is an INFRA incident, not an agent failure: (1) after the SECOND
+same-class failure, probe ground truth (`curl status.claude.com/api/v2/status.json` +
+`/incidents/unresolved.json`) BEFORE any further nudges — a confirmed incident means every nudge
+is a wasted spawn attempt; (2) arm ONE batch-resume timer (10-15 min, harness-tracked
+`run_in_background sleep`) and collect failures until it fires — never per-agent retry loops;
+(3) after a third failure on work the parent can do, pull it INLINE — the parent's own lane
+often survives incidents that kill fresh spawns (observed: parent session 100% alive through an
+incident that killed 6/6 teammate turn-attempts); (4) meanwhile convert fleet-dead time into
+non-LLM work (downloads, local compute) — an incident-dead fleet is not an idle parent.
+(Evidence: 2026-08-18 iq-sex-differences ~17:00-19:10 — piaac-dif-audit 4×529 with 2 wasted
+per-agent nudges before the status probe; DIF audit then completed inline in ~10 min; 3-agent
+parallel fleet killed same minute by confirmed "Degraded performance for multiple models"
+incident; OECD prefetch ran through it untouched.)
