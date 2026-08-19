@@ -6,6 +6,16 @@ large monorepo, `huggingface-cli download` of a model — run a free-space check
 on the destination directory and abort if free space is less than **1.5× the
 expected payload**.
 
+**ROUTE check first, then space (2026-08-19):** before moving >10 GB through this
+machine at all, ask whether the CONSUMER can run WHERE THE DATA ALREADY IS. "The CLI
+needs local files" means local-to-wherever-the-CLI-runs — a $0.10 cloud CPU container
+with the volume mounted turns a multi-hour home-bandwidth double-relay into minutes
+(and removes laptop sleep/DNS as failure modes). The laptop is a relay of last resort,
+not a default. (Evidence: arc-agi 2026-08-19 — 54 GB Modal-volume→laptop→Kaggle relay
+planned at ~6 h and DNS-killed mid-download; operator caught it; the Modal-side
+`kaggle datasets create` did the same job in ~6 min/dataset. AP9 class:
+`scripts/modal_kaggle_dataset.py` docstring.)
+
 ```bash
 df -h "$DEST_DIR"            # or: df -BG "$DEST_DIR" for parseable GB
 # free_gb < payload_gb * 1.5  → abort, ask user to relocate or free space
