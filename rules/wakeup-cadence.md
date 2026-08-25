@@ -200,3 +200,14 @@ re-dispatch the dead lanes only after a login is observed — one dispatch first
 faq-training-data-verify all died at spawn within 60 s with that string; the parent's own lane
 stayed alive; operator `/login` ~23:10; re-dispatch of all three at 07:17 next morning succeeded
 first try.)
+
+**Laptop-sleep kills — the fifth kill class (2026-08-25).** failureReason "Your computer went to
+sleep mid-response. The response above may be incomplete." is a LOCAL suspend, not a limit,
+incident, or auth state: the subagent's worktree edits and commits survive, only the in-flight
+turn is lost. Recovery = one `SendMessage` to the same agent name ("resume from your worktree
+state: git status/diff first, then continue"), never a re-dispatch (which would duplicate a
+half-built lane). Prevention while lanes run: `nohup caffeinate -i -t <secs> &` (idle-sleep only,
+self-expiring; lid-close still sleeps). Peers whose notification never arrives after a sleep may
+also be dead — read their report/branch first, then nudge. (Evidence: genomics 2026-08-25 19:48,
+measured-multi-prior lane cut at "Now the CLI." with three files edited uncommitted; resumed in
+place with zero rework.)
