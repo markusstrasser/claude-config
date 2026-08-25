@@ -187,3 +187,16 @@ non-LLM work (downloads, local compute) — an incident-dead fleet is not an idl
 per-agent nudges before the status probe; DIF audit then completed inline in ~10 min; 3-agent
 parallel fleet killed same minute by confirmed "Degraded performance for multiple models"
 incident; OECD prefetch ran through it untouched.)
+
+**Subscription-disabled kills — the fourth kill class (2026-08-24).** failureReason "Your
+organization has disabled Claude subscription access for Claude Code · Use an Anthropic API key
+instead, or ask your admin to enable access" is an ACCOUNT/AUTH state, not a limit and not an
+incident: no reset clock, no status page, and every further spawn fails identically until the
+operator re-authenticates (`/login` in the parent session cleared it). Do NOT nudge, do NOT arm
+a resume timer, do NOT switch to an API key on your own (that is a billing decision). Write the
+ask to `HUMAN.md`/checkpoint, keep the parent lane working inline on landed artifacts, and
+re-dispatch the dead lanes only after a login is observed — one dispatch first as the probe.
+(Evidence: 2026-08-24 iq-sex-differences 21:12-21:13 — memo-sweep-a1, memo-sweep-a2 and
+faq-training-data-verify all died at spawn within 60 s with that string; the parent's own lane
+stayed alive; operator `/login` ~23:10; re-dispatch of all three at 07:17 next morning succeeded
+first try.)
