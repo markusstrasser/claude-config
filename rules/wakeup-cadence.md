@@ -21,6 +21,11 @@
   `nohup` + status file. NEVER pipe a background command through `| tail -N` (tail buffers
   until EOF — a kill swallows ALL output); redirect to a log with `PYTHONUNBUFFERED=1`.
   (Evidence: arc-agi f4fecc9a 2026-07-04; 2026-07-05 4-run stop.)
+  **Worktree-isolated worker lanes: `lane run <name> --repo <path> --brief <file> [--worker codex|claude]`**
+  (`~/Projects/skills/bin/lane`; `lane ls` states RUNNING|DONE:<rc>|STALLED|DEAD by log-age, `lane stop`
+  signals the recorded process group only, `lane resume` re-dispatches with a resume note, `lane reap`
+  is DONE-gated + `--force`). Use it instead of hand-building worktree+brief+nohup+marker (12 hand
+  builds, 2 reaped worktrees and 4 sleep-stalled lanes in one genomics session, 2026-08-27).
   **Helper: `bgrun <name> -- <cmd...>`** (`~/Projects/skills/bin/bgrun`, on PATH) does all of
   the above — nohup+disown, unbuffered log, `.done` marker containing the exit code, prints a
   ready-to-paste watch loop. Pair with a Monitor on the `.done` marker for harness-tracked wake.
