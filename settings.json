@@ -648,6 +648,9 @@
     "webwright@webwright": false
   },
   "effortLevel": "medium",
+  "enabledMcpjsonServers": [
+    "exa"
+  ],
   "autoCompactWindow": 500000,
   "tui": "default",
   "autoDreamEnabled": false,
