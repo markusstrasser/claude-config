@@ -67,8 +67,7 @@
     "verify-before": "off",
     "dataset-register": "off",
     "youtube-transcript": "off",
-    "google-workspace": "off",
-    "sweep": "off"
+    "google-workspace": "off"
   },
   "hooks": {
     "PermissionRequest": [
