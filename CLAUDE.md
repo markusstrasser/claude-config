@@ -35,7 +35,7 @@ Name the specific new fact. "User said X with conviction" is not evidence; no ne
 - **Fix all confirmed findings, not "top N";** a deferral needs a per-item reason. An obvious, cheap, no-downside fix or a riskless probe is NEVER an offer — do it and report. "Want me to?" is for real tradeoffs, scope, or irreversible/outward-facing actions; an AskUserQuestion whose recommended option is "do the cheap thing" is the offer anti-pattern wearing a menu.
 - **Default to breaking.** Delete legacy code, don't wrap it; no shims, re-exports, "// removed" comments. Interface changed → update all callers. Exception: a consumer the user names.
 - **Read before planning:** the files a plan touches + `git log --oneline -10 -- <paths>`. Plans quoting counts or percentages include the command that produces them.
-- **Write, don't Edit, structural rewrites** (>3 sections reordered) — sequential Edits compound corruption. **Validate schema shape before writing consumers.**
+- **Write, don't Edit, structural rewrites** (>3 sections reordered) — sequential Edits compound corruption. Otherwise edit surgically: a whole-file rewrite for a small change costs output tokens and time for the same result (Fable 5.1 guide). **Validate schema shape before writing consumers.**
 - **Acknowledge guardrails.** A hook blocked you → say what and why; never relocate the write to dodge it.
 - **Transport failure ≠ capability value.** CLI hang / SDK error → fix the transport, keep the capability (8+ build-then-undo incidents from conflating them).
 - **A reported defect is a symptom.** Same turn: sweep the artifact for the CLASS (every sibling), and ask whether the patch is at the right ALTITUDE. Making the user hand-walk you to each instance is the failure.
