@@ -191,24 +191,18 @@ Default search remains `rg`: exact, local, gitignore-aware, no stale index. Use 
 
 **`rg`'s gitignore-awareness is a SILENT FALSE-ZERO trap on DATA/derived trees:** gitignored content (corpus parses, `indexed/` caches, build output, vendored DBs) is INVISIBLE to default `rg`. Any `rg` over gitignored data MUST pass `--no-ignore` (or `-uu`); a surprising `0` from a negative-evidence grep over such a tree is the tell — verify before reasoning from the zero. (2026-06-22: 0 "Cloudflare-blocked parses" that plainly existed.)
 
-**Indexed code search for large repos: Zoekt** (installed; index dir `~/.zoekt`; indexed: genomics, intel, phenome, agent-infra, hutter, anim-workbench). Use when `rg` exploration causes broad scans or false leads, especially cross-repo discovery:
-```bash
-zoekt -index_dir ~/.zoekt -r 'repo:genomics MutationGateway'
-zoekt-git-index -index ~/.zoekt /Users/alien/Projects/<repo>   # refresh before relying on it
-```
-Zoekt is a discovery layer, not the principal check — verify hits against the working tree before editing or claiming. `zoekt -jsonl` encodes line content; scripts must decode `Line`. If `zoekt-git-index` fails on `worktreeconfig`, temporarily `git config --local --unset extensions.worktreeConfig` (restore via trap in the same shell).
+**Zoekt (indexed code search) — RETIRED 2026-09-01.** No binary on the machine, `~/.zoekt` frozen 2026-06-18 (843 MB, one shard for a repo no longer in `~/Projects`), 2 calls/30d. `rg` + `emb` carry the lane; reinstall only on a recurring cross-repo need (agent-infra `research/2026-09-01-fable-5.1-tabula-rasa.md` §5).
 
 **Semantic search over corpora: `emb`** (installed CLI, `~/Projects/emb`; README = usage SSOT). Dense+BM25 hybrid, rerank, `pairs` (dup detection), `read` (locate-then-read). `emb embed input.jsonl -o idx/` → `emb search idx/ "query" --hybrid -k 20`. Use for any "find by MEANING" need. Shell out; never import.
 
 Escalation rules:
 - `rg` — exact local probe, final verification, negative-evidence logs.
-- `zoekt` — indexed discovery over large repos / cross-repo search.
 - `emb` — semantic/hybrid retrieval over document corpora.
 - `ast-grep` — structural syntax search/rewrite; don't force regex for AST-shaped changes.
 - repo maps / outlines — routing context only; read source before claims.
 - `agent-browser` — headless browser automation from Bash (Vercel Labs CLI, brew-installed 2026-07-20): `open URL` → `snapshot -i` (@eN refs, ~200-400 tok vs full DOM) → `click @eN`/`fill`/`eval`/`wait`; `--session` isolation, CDP-attach. The scripted/headless lane for subagents, scouts, launchd jobs, and autonomous runs — claude-in-chrome MCP is interactive-session-only and stays the lane for the operator's logged-in Chrome; WebFetch/Firecrawl for static fetches. Bundled-Chrome download can time out; system-Chrome fallback works.
 
-**The operator's OWN toolshed is discovery scope (2026-07-10, HAD-LEVER exhibit).** Pre-build check #1 includes `ls ~/Projects` + a zoekt/`emb`-README sweep of sibling repos BEFORE proposing any tool-shaped capability — `~/Projects/emb` sat installed while an agent filed a build-semantic-search row.
+**The operator's OWN toolshed is discovery scope (2026-07-10, HAD-LEVER exhibit).** Pre-build check #1 includes `ls ~/Projects` + an `rg`/`emb`-README sweep of sibling repos BEFORE proposing any tool-shaped capability — `~/Projects/emb` sat installed while an agent filed a build-semantic-search row.
 
 **Session history (past discussions, any repo):** `agentlogs search --project <repo> "query"` (quote queries — FTS5 reads `-` as an operator) · `agentlogs recent` — reach for it to recover prior context before re-deriving.
 
