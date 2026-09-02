@@ -7,8 +7,7 @@
     "ENABLE_PROMPT_CACHING_1H": "1",
     "SLASH_COMMAND_TOOL_CHAR_BUDGET": "32000",
     "SMART_JUDGE_MODE": "enforce",
-    "SMART_JUDGE_ENFORCE_VECTORS": "verify_before_claim",
-    "CLAUDE_CODE_SUBAGENT_MODEL": "claude-sonnet-5"
+    "SMART_JUDGE_ENFORCE_VECTORS": "verify_before_claim"
   },
   "includeGitInstructions": false,
   "permissions": {
@@ -40,7 +39,7 @@
     ],
     "defaultMode": "auto"
   },
-  "model": "claude-fable-5[1m]",
+  "model": "claude-fable-5-1[1m]",
   "skillOverrides": {
     "keybindings-help": "user-invocable-only",
     "fewer-permission-prompts": "name-only",
@@ -70,7 +69,10 @@
     "dataset-register": "off",
     "youtube-transcript": "off",
     "interview-prompt": "off",
-    "google-workspace": "off"
+    "google-workspace": "off",
+    "goals": "off",
+    "sweep": "off",
+    "coast-cli-skill": "off"
   },
   "hooks": {
     "PermissionRequest": [
@@ -79,14 +81,6 @@
           {
             "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/permission-auto-allow.sh"
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/permission-log.sh"
           }
         ]
       }
@@ -188,10 +182,6 @@
           },
           {
             "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/pretool-goal-drift.sh"
-          },
-          {
-            "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/pretool-research-provenance-warn.sh"
           },
           {
@@ -224,6 +214,15 @@
           {
             "type": "command",
             "command": "python3 /Users/alien/Projects/skills/hooks/pretool-monitor-pattern-guard.py"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/pretool-modal-run-detach-nudge.sh"
           }
         ]
       }
@@ -331,10 +330,6 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/posttool-l3-telemetry.sh"
-          },
-          {
-            "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/posttool-dup-read.sh"
           },
           {
@@ -349,15 +344,6 @@
           {
             "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/posttool-research-reformat.sh"
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 /Users/alien/Projects/skills/hooks/posttool-governance-state.py",
-            "statusMessage": "Logging governance state..."
           }
         ]
       },
@@ -378,19 +364,20 @@
             "command": "/Users/alien/.claude/hooks/posttool-loop-tracker.sh"
           }
         ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/posttool-bgrun-watcher-nudge.sh"
+          }
+        ]
       }
     ],
     "Stop": [
       {
         "hooks": [
-          {
-            "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/stop-subagent-synthesis-gate.sh"
-          },
-          {
-            "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/stop-plan-gate.sh"
-          },
           {
             "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/stop-uncommitted-warn.sh"
@@ -406,11 +393,6 @@
           {
             "type": "command",
             "command": "/Users/alien/.claude/hooks/stop-notify.sh"
-          },
-          {
-            "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/stop-progress-check.sh",
-            "async": true
           },
           {
             "type": "command",
@@ -440,11 +422,6 @@
           {
             "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/precompact-log.sh",
-            "async": true
-          },
-          {
-            "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/session-stability-log.sh precompact",
             "async": true
           },
           {
@@ -525,10 +502,6 @@
           {
             "type": "command",
             "command": "/Users/alien/.claude/hooks/session-init.sh"
-          },
-          {
-            "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/session-stability-log.sh sessionstart"
           },
           {
             "type": "command",
@@ -657,18 +630,6 @@
       }
     ],
     "PermissionDenied": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/permission-denied-retry.sh"
-          },
-          {
-            "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/permission-log.sh"
-          }
-        ]
-      }
     ]
   },
   "worktree": {
@@ -690,7 +651,8 @@
     "typescript-lsp@claude-plugins-official": false,
     "webwright@webwright": false
   },
-  "effortLevel": "high",
+  "effortLevel": "medium",
+  "autoCompactWindow": 500000,
   "tui": "default",
   "autoDreamEnabled": false,
   "skipDangerousModePermissionPrompt": true,
