@@ -1,218 +1,47 @@
 # Wakeup Cadence & Autonomous-Run Discipline — local deltas only
 
-> Slimmed 2026-06-12; re-slimmed 2026-07-13 (rules kept verbatim in meaning; incident
-> narratives live in git history of this file + the cited anchors). The ScheduleWakeup TOOL
-> description ships the full cache-aware interval guidance — don't duplicate it here.
+> Re-slimmed 2026-09-02 (Fable 5.1 tabula rasa): rules kept, incident narratives live in this
+> file's git history and the cited anchors. The ScheduleWakeup TOOL description carries the
+> interval guidance — not duplicated here.
 
-## Cadence deltas (what the harness does NOT say)
+## Cadence deltas
+- ~15 routines / 24h / account across CronCreate + ScheduleWakeup + RemoteTrigger, ALL projects. Prefer a synchronous wait or a launchd job when either can do the job.
+- Job < 270s → synchronous Bash wait. ScheduleWakeup #3 in one session for the same job class → wait synchronously.
+- `Bash run_in_background` when a live Bash channel exists; ScheduleWakeup only when there isn't (autonomous loops, post-compaction handoffs).
+- **Background jobs get reaped** (observed at ~2-4 min and at ~57 min). Split unbounded work per unit; after ~2 same-shape kills use `bgrun <name> -- <cmd>` (`~/Projects/skills/bin/bgrun`: nohup+disown, unbuffered log, `.done` marker with the rc) or `lane run <name> --repo <path> --brief <file>` for worktree-isolated worker lanes (`lane ls|stop|resume|reap`). Never pipe a background command through `| tail` (a kill swallows all output). Live peeks read `<name>.log.tmp`; a watcher on a file that can exist before it is meaningful tests CONTENT, not existence.
 
-- **Account-wide ceiling:** ~15 routines / 24h / account across `CronCreate` +
-  `ScheduleWakeup` + `RemoteTrigger`, ALL projects. Prefer a synchronous wait or a launchd
-  job (local, zero-quota) when either can do the job.
-- **Job < 270s → synchronous Bash wait, no ScheduleWakeup.** Cache break-even is 1.4-2× hits
-  per prefix (zylos.ai 2026-03-27); short-interval wakeups for ~100s jobs burn cache 4-5×.
-- **Diagnostic:** ScheduleWakeup #3 in one session for the same job class → wait synchronously.
-- **Mechanism split:** `Bash run_in_background` when a live Bash channel exists; `ScheduleWakeup`
-  only when there isn't (autonomous loops, post-compaction handoffs). Not substitutes.
-- **`run_in_background` jobs get REAPED — chunk unbounded wall time.** Observed kills at ~57 min
-  AND (not only time-based) at ~2-4 min; the same commands under `nohup`+`disown` completed.
-  Treat any single background dispatch >~40 min expected wall as a smell; split per-unit
-  (per-game/seed/file) so a reap loses one unit. After ~2 same-shape kills, switch to
-  `nohup` + status file. NEVER pipe a background command through `| tail -N` (tail buffers
-  until EOF — a kill swallows ALL output); redirect to a log with `PYTHONUNBUFFERED=1`.
-  (Evidence: arc-agi f4fecc9a 2026-07-04; 2026-07-05 4-run stop.)
-  **Worktree-isolated worker lanes: `lane run <name> --repo <path> --brief <file> [--worker codex|claude]`**
-  (`~/Projects/skills/bin/lane`; `lane ls` states RUNNING|DONE:<rc>|STALLED|DEAD by log-age, `lane stop`
-  signals the recorded process group only, `lane resume` re-dispatches with a resume note, `lane reap`
-  is DONE-gated + `--force`). Use it instead of hand-building worktree+brief+nohup+marker (12 hand
-  builds, 2 reaped worktrees and 4 sleep-stalled lanes in one genomics session, 2026-08-27).
-  **Helper: `bgrun <name> -- <cmd...>`** (`~/Projects/skills/bin/bgrun`, on PATH) does all of
-  the above — nohup+disown, unbuffered log, `.done` marker containing the exit code, prints a
-  ready-to-paste watch loop. Pair with a Monitor on the `.done` marker for harness-tracked wake.
-  Mid-run output sits in `<name>.log.tmp` — `.log` is written only at exit, so live peeks read
-  the `.tmp` (2× empty-tail misreads, arc-agi 2026-08-17). And when a watched FILE can exist
-  before it is meaningful (volume auto-commits, stub-first writers), the watcher predicate must
-  be CONTENT (marker line), not existence — an existence predicate fired on a 0-byte log there.
+## Self-imposed dates are reminders, not timers
+Never schedule against a "revisit by DATE" in a finding, ADR, or proposal — only against external state on a real clock (CI, deploy, vendor window). Promotion or cut is evidence- or operator-triggered.
 
-## Self-imposed dates are reminders, not timers (2026-06-16)
+## Productive portfolio, not idle fallback (hook-enforced: `posttool-background-portfolio.sh`)
+Every autonomous run (`/loop`, `/goal`, pasted overnight driver) advances a PORTFOLIO each turn: build/grind (dispatch, wake on completion — never poll) · heretic (cross-model red-team of what just landed) · dreamer/evolver (verifier-gated search where one exists) · scout (find-what-exists before building) · meta/observe (what tooling the session keeps asking for; the trainer's own cockpit via `/interface-thinking`; full-spectrum ~$0 telemetry on the system under study, not only the ratchet metric). A tick that only re-arms a timer is the anti-pattern; an idle wakeup is a hang-survival net (1200s+) only.
+- A dependency gates MEASUREMENT interpretation, not BUILDING — build the named next levers in worktree-isolated dispatches while a gate resolves.
+- A closure that names candidates is a HANDOFF — file the successor in the same act or refuse in writing.
+- A sign-off covers the ACTIVITY and BUDGET; parameters inside it are the agent's. Real gates: money thresholds, held-out reserves, irreversible or outward-facing actions, operator-only accounts. HUMAN.md is for those only.
 
-A "promote/cut ~DATE" / "revisit by DATE" in a finding, shadow, ADR, or proposal is a REMINDER —
-nothing fires unless an agent acts. Never `ScheduleWakeup`/`/schedule`/`CronCreate` against a
-self-imposed date; schedule only against external state on a real clock (CI, deploy, vendor
-window). Don't cite one as a deadline. Promotion/cut is evidence-or-operator-triggered.
-(Operator: "What happens on June 21st? Nothing. If we don't do it.")
+## Escalation is a file, never a block
+Don't yield on a question you could resolve, or block waiting, while other fronts can progress. Append asks to loop-root `HUMAN.md` (feeds the questions view; add a `session: <id>` line); the human answers async. Acting on an `[answered: …]` block leaves a receipt line: `consumed: YYYY-MM-DD <ref> — <what was done / deferred: why>`. Escalate STRUCTURE, not tactics: stale_count ≥2 → change a frame or environment constraint; ≥4 → HUMAN.md. Stop only when the blocker is unresolvable AND no front progresses AND continuing wastes resources — write the ask, then stop. Enforcement marker: `.claude/loop-enforce-no-question-stop`.
 
-## Productive portfolio, not idle fallback (2026-06-17, #f+#g; 7 operator flags → hook)
-
-An autonomous run's wake-time is for WORK. Each turn advances a PORTFOLIO of fronts, rotating:
-- **build/grind** — dispatch subagent grinds; wake on completion (harness auto-wakes; never poll).
-- **heretic/adversarial** — cross-model red-team of what JUST landed, before it accretes.
-- **dreamer/evolver** — run the verifier-gated program search where one EXISTS and is in-scope.
-- **scout** — find-what-exists (external frontier + own memos) before building.
-- **meta/observe** — RSI: what process/tooling/hook the session keeps asking for. Explicitly
-  includes the TRAINER'S OWN COCKPIT (#g 2026-07-04): input representations, UX/DX — the named
-  tool is **`/interface-thinking`**, invoke it, don't freestyle. AND full-spectrum telemetry on
-  the system under study (#g 2026-07-06): every measurement surface owes the ~$0 analytics suite
-  (per-item panels, zero-vs-nonzero decompositions, coverage, dispersion) PROACTIVELY — a
-  ratchet metric and a debugging suite are different instruments; owe both.
-
-A tick that only re-arms a timer with zero work is the anti-pattern; an idle fallback wake-up is
-valid only as a hang-survival net (1200s+) behind event-driven completion. Enforcement is the
-hook **`~/Projects/skills/hooks/posttool-background-portfolio.sh`** (tick-open self-check
-retired 2026-07-04 — instruction-level fixes failed 4× for this class; pair-rule applied).
-
-Portable rules distilled from the later flags (5th-7th, arc-agi 2026-07-04→06):
-- **A dependency gates MEASUREMENT interpretation, not BUILDING.** While a gate resolves, named
-  next levers get BUILT in worktree-isolated dispatches (merge-after-gate); heretic/scholar on a
-  just-landed verdict launches the same turn. A watcher-only turn with unblocked buildable
-  levers on the board = the bare idle tick.
-- **A closure that names candidates is a HANDOFF, not an ending** — file the successor in the
-  same act or refuse in writing (reference: arc-agi `loop/idea_backlog.py done --spawns`).
-  When a free build lane exists, sweep recent memos/rows for named-but-unqueued levers before
-  filling the lane with hygiene.
-- **A sign-off covers the ACTIVITY and BUDGET; parameter choices inside it are the agent's.**
-  Real gates: codified money thresholds, held-out reserves, outward-facing/irreversible actions,
-  operator-only accounts. HUMAN.md is for those, not a parking lot for agent-decidable calls.
-  (arc-agi memory: feedback_overgating_real_gates.md)
-
-**APPLIES TO EVERY AUTONOMOUS RUN — not just `/loop` ticks (2026-06-19, flagged 3×).** A `/goal`
-run or pasted overnight driver is equally subject. FIRST action of any autonomous run: stand up
-the portfolio `/loop`; never single-threaded serial build→measure. Self-check: about to
-build/measure with no heretic on the last result and no dreamer before converging → drifted.
-
-## Escalation is a file, never a block — the human is the OUTEST loop (2026-06-18, #f)
-
-An autonomous loop doesn't yield on a question it could resolve, or block waiting, when it can
-route the ask to a file and progress other fronts (this is the measured `over_caution` cluster).
-Stopping is CORRECT only when the blocker is genuinely unresolvable AND no other front makes
-real progress AND continuing wastes resources — write the ask, then stop.
-- Append to loop-root `HUMAN.md` (a FEEDER into the existing question-VIEW — wired live
-  2026-07-19, agent-infra questions_view.py, depth ≤2 under ~/Projects; not a 5th queue —
-  ADR 2026-06-16-agent-question-convergence); repos with an escalation store keep it. Human
-  answers async. Per-loop "don't stop on resolvable asks" enforcement = operator-set
-  `.claude/loop-enforce-no-question-stop` marker.
-- **Answer pickup leaves a receipt (2026-07-19).** When you act on (or deliberately defer)
-  an operator-answered `[answered: …]` ask, append one line inside the block:
-  `consumed: YYYY-MM-DD <session-or-commit ref> — <what was done / deferred: why>`.
-  Answered blocks without it surface as "Answers waiting on agents" in the control plane
-  (asks dated ≥2026-07-19). New asks SHOULD carry a `session: <id>` line when known
-  (enables future blocked-run attribution). Advisory convention — a claim, not proof.
-- **Escalate STRUCTURE, not tactics.** stale_count≥2 → change a structural constraint (frame/
-  environment), not tactical params. stale_count≥4 → append to `HUMAN.md`. Tuning harder inside
-  a stuck frame IS the cognitive loop.
-(Source: Deli AutoResearch; convergence note in agent-infra decisions/2026-06-13-rsi-outer-loop-skill.md.)
-
-## Monitor arming for long local jobs (2026-07-04)
-
-- Arm the watch when remaining-ETA < timeout (e.g. after a mid-run liveness check), not at
-  launch; or set timeout ≥ 1.5× full expected wall.
-- **Teammate agents have NO ScheduleWakeup — self-wake is orchestrator-only (2026-07-18).** A
-  teammate's long wait therefore needs an artifact-writing detached poller (ground truth
-  survives any watcher death) plus a PARENT-side structural backstop (e.g. another lane's
-  completion report triggers the nudge) — never a bare Monitor, which caps at 60 min (below).
-  **Extension (2026-07-19, observed 2× same shape): teammate-session MONITOR notifications may
-  BATCH-QUEUE and not resume the teammate until an incoming SendMessage triggers a turn** (a
-  block-watcher's WATCH-DONE surfaced only alongside the parent's nudge, both wave-2 block
-  boundaries). Teammate watchers therefore never rely on Monitor delivery alone: pair with
-  periodic ground-truth status checks, and parents treat a quiet teammate at a known
-  completion boundary as possibly notification-starved, not necessarily idle-by-choice.
-- **Monitor hard-caps at 60 min/call and does NOT auto-chain (2026-07-18).** For any job with
-  remaining-ETA > 60 min, "timeout ≥ 1.5× expected wall" is UNSATISFIABLE in one arm — a
-  silently-expired Monitor looks identical to a quiet wait. Either schedule re-arms explicitly
-  (per-60-min chunks, count them at arm time) or watch the job's own status-file artifact via a
-  nohup'd poller and treat Monitor as the notify layer only. (arc-agi 2026-07-18: parity-cell
-  watcher died at the cap unnoticed; found only by a parent status ping.)
-- A monitor whose event already fired still emits a later timeout notification — noise; never
-  re-arm reflexively.
+## Watching long local jobs
+- Arm a Monitor when remaining-ETA < timeout, or set timeout ≥ 1.5× expected wall. Monitor caps at 60 min and does not chain — for longer jobs re-arm per chunk or watch a status-file artifact via a nohup'd poller with Monitor as the notify layer only. A fired monitor still emits a later timeout notification — noise.
+- Teammates have no ScheduleWakeup, and their Monitor notifications can batch-queue until a SendMessage arrives — pair watchers with ground-truth status checks; a quiet teammate at a completion boundary may be notification-starved.
+- Positive-control every watcher filter at arm time: (1) the pattern matches a synthetic event line; (2) it matches 0 lines of the log as it stands. Refuse to arm otherwise.
 - Prefer making the JOB observable (per-item progress lines) over wider watches.
-- **Positive-control every watcher filter AT ARM TIME — a PAIR (F12, promoted 2026-07-12):**
-  (1) synthetic POSITIVE — the pattern must match the expected event line (echo it, or grep a
-  log where the event class already occurred); (2) current-log ZERO-MATCH — a future event's
-  pattern must match 0 lines in the log AS IT STANDS (>0 ⇒ it cannot discriminate your event;
-  multi-arm logs sharing a line format are the standing hazard). Refuse to arm on failure.
-  Poll-loop watchers owe the same check on their status-command parse. (3 dead watchers in one
-  day 2026-07-06; a synthetic-positive-passing pattern still no-op'd 19 min on a shared format.)
 
-## Hindsight metaloop — grade every external find "could we have derived it?" (2026-07-04, #g)
+## Hindsight metaloop
+Grade every substantive external find with a real `rg` over own memos and levers: NOVEL · HAD-PARTS · HAD-LEVER (worst). Every HAD-* obligates an architecture fix; HAD-LEVER rate → 0 is the metric. Major finds: blind-replay first (quarantine the artifact, pre-register bands outside the repo, fresh headless processes on a pre-find worktree — same-session subagents inherit the parent context). Reference: arc-agi `loop/HINDSIGHT.md`.
 
-On every substantive external find (paper, system, SOTA), the scout/scholar front grades with a
-real search over own artifacts (rg over levers/memos/walls, not recall):
-**NOVEL** (needed data we didn't hold) · **HAD-PARTS** (components existed, nothing composed
-them) · **HAD-LEVER** (idea sat in our library — worst). Every HAD-* verdict obligates an
-ARCHITECTURE fix, not just intake. HAD-LEVER rate → 0 is the metric. For MAJOR finds run the
-blind-replay variant BEFORE deep-reading: quarantine artifact, pre-register bands outside the
-repo, dispatch blind ticks as FRESH HEADLESS PROCESSES on a pre-find worktree (same-session
-subagents inherit the parent context snapshot — confirmed leak 2026-07-04); grep arm outputs
-for quarantine-unique strings. Reference implementation: arc-agi `loop/HINDSIGHT.md` +
-`loop/idea_backlog.py`. (Trigger incident: OPINE-World SOTA composed of levers that sat 2 weeks
-in our library, fitness null.)
+## Killing and liveness
+- Never `pkill -f` a substring on multi-job trees. `pgrep -fl` first and read every match; anchor to a unique token; prefer the launch-recorded PID.
+- Liveness: a quiet log + empty pgrep is grounds to CHECK, never a verdict. `ps -p <recorded PID>` plus its child tree decides.
 
-## pkill discipline for job trees (2026-07-12, two same-day incidents)
+## Subagent death classes (parse the failureReason)
+| String | Class | Do |
+|---|---|---|
+| "hit your session limit · resets H:MMpm" | rate limit | parse the clock; ONE ScheduleWakeup at reset+2-5 min; never ask the operator for it, never poll early |
+| "hit your monthly spend limit" | account limit, no clock | ONE periodic wakeup (1800-3600s) sending a single cheap resume-probe; the parent grades on-disk artifacts and closes inline meanwhile |
+| 529 "Overloaded" | infra incident | after the 2nd, `curl status.claude.com/api/v2/status.json` before any nudge; ONE batch-resume timer (10-15 min); after a 3rd, pull the work inline (the parent lane usually survives); fill dead time with non-LLM work |
+| "organization has disabled Claude subscription access" | auth state | no nudge, no timer, no API-key switch (a billing decision); write the ask, work inline; re-dispatch one probe lane only after a `/login` is observed |
+| "Your computer went to sleep mid-response" | local suspend | worktree edits survive; ONE SendMessage to the same agent ("git status/diff first, then continue"), never a re-dispatch; prevent with `nohup caffeinate -i -t <secs> &` |
 
-Never `pkill -f` a SUBSTRING pattern against multi-job trees (`*forkDC*` matched `forkDCH` —
-killed a healthy train client; an earlier pkill matched a concurrent canary). Before any pkill
-on shared infra: (1) `pgrep -fl <pattern>` FIRST and read every match; (2) anchor the pattern
-to a unique token (full path, exact out-dir); (3) prefer the launch-recorded PID. The pgrep
-preview is the kill's probe-before-action.
-
-## Session-limit kills carry their own reset clock (2026-07-12)
-
-Subagents dying with failureReason "You've hit your session limit · resets H:MMpm (TZ)" print
-the reset time IN THE STRING — parse it, self-arm ONE ScheduleWakeup at reset+2-5min to
-redispatch the dead lane. Never ask the operator for a clock the harness prints; never poll
-before the parsed reset. (arc-agi 41f9b649.)
-
-**Monthly-SPEND-limit kills print NO reset clock (2026-07-17)** ("hit your monthly spend limit ·
-raise it at claude.ai/settings/usage") — the unblock is an operator account action at an unknown
-time. Do NOT sit dead until the operator types "go on": arm ONE periodic ScheduleWakeup
-(1800-3600s) whose tick sends a single cheap resume-probe to one dead lane; on success, resume
-the fleet and report. Meanwhile the PARENT session (still alive) grades on-disk artifacts and
-takes over closes inline — an account-dead fleet is not an idle parent. (arc-agi 2026-07-17:
-fleet dead 3h until operator prompt; every completed-but-ungraded artifact was closeable inline
-the whole time.)
-
-**Liveness verdicts: a staleness signal LOCATES, exact-PID DECIDES (2026-07-17).** A quiet log +
-empty pgrep is grounds to CHECK, never to declare a job reaped: log-write patterns are
-runner-specific (flush-once-at-completion runners have silent logs mid-run by design), and
-substring pgrep drowns in peer noise. The deciding check is `ps -p <exact recorded PID>` on the
-launch-recorded PID + child tree. (arc-agi false-reap alarm 2026-07-17: parent declared a live
-23-min episode dead from log staleness; agent's exact-PID check refuted it.)
-
-**Server-incident (529/overload) teammate kills — the third kill class (2026-08-18).** A 529
-"Overloaded" teammate death is an INFRA incident, not an agent failure: (1) after the SECOND
-same-class failure, probe ground truth (`curl status.claude.com/api/v2/status.json` +
-`/incidents/unresolved.json`) BEFORE any further nudges — a confirmed incident means every nudge
-is a wasted spawn attempt; (2) arm ONE batch-resume timer (10-15 min, harness-tracked
-`run_in_background sleep`) and collect failures until it fires — never per-agent retry loops;
-(3) after a third failure on work the parent can do, pull it INLINE — the parent's own lane
-often survives incidents that kill fresh spawns (observed: parent session 100% alive through an
-incident that killed 6/6 teammate turn-attempts); (4) meanwhile convert fleet-dead time into
-non-LLM work (downloads, local compute) — an incident-dead fleet is not an idle parent.
-(Evidence: 2026-08-18 iq-sex-differences ~17:00-19:10 — piaac-dif-audit 4×529 with 2 wasted
-per-agent nudges before the status probe; DIF audit then completed inline in ~10 min; 3-agent
-parallel fleet killed same minute by confirmed "Degraded performance for multiple models"
-incident; OECD prefetch ran through it untouched.)
-
-**Subscription-disabled kills — the fourth kill class (2026-08-24).** failureReason "Your
-organization has disabled Claude subscription access for Claude Code · Use an Anthropic API key
-instead, or ask your admin to enable access" is an ACCOUNT/AUTH state, not a limit and not an
-incident: no reset clock, no status page, and every further spawn fails identically until the
-operator re-authenticates (`/login` in the parent session cleared it). Do NOT nudge, do NOT arm
-a resume timer, do NOT switch to an API key on your own (that is a billing decision). Write the
-ask to `HUMAN.md`/checkpoint, keep the parent lane working inline on landed artifacts, and
-re-dispatch the dead lanes only after a login is observed — one dispatch first as the probe.
-(Evidence: 2026-08-24 iq-sex-differences 21:12-21:13 — memo-sweep-a1, memo-sweep-a2 and
-faq-training-data-verify all died at spawn within 60 s with that string; the parent's own lane
-stayed alive; operator `/login` ~23:10; re-dispatch of all three at 07:17 next morning succeeded
-first try.)
-
-**Laptop-sleep kills — the fifth kill class (2026-08-25).** failureReason "Your computer went to
-sleep mid-response. The response above may be incomplete." is a LOCAL suspend, not a limit,
-incident, or auth state: the subagent's worktree edits and commits survive, only the in-flight
-turn is lost. Recovery = one `SendMessage` to the same agent name ("resume from your worktree
-state: git status/diff first, then continue"), never a re-dispatch (which would duplicate a
-half-built lane). Prevention while lanes run: `nohup caffeinate -i -t <secs> &` (idle-sleep only,
-self-expiring; lid-close still sleeps). Peers whose notification never arrives after a sleep may
-also be dead — read their report/branch first, then nudge. (Evidence: genomics 2026-08-25 19:48,
-measured-multi-prior lane cut at "Now the CLI." with three files edited uncommitted; resumed in
-place with zero rework.)
+An account-dead or incident-dead fleet is never an idle parent.

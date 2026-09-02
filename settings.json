@@ -58,7 +58,6 @@
     "x-api": "name-only",
     "census-data": "off",
     "corpus": "off",
-    "diagnose": "off",
     "manim-animations": "off",
     "oura-ring": "off",
     "review-animations": "off",
@@ -68,11 +67,8 @@
     "verify-before": "off",
     "dataset-register": "off",
     "youtube-transcript": "off",
-    "interview-prompt": "off",
     "google-workspace": "off",
-    "goals": "off",
-    "sweep": "off",
-    "coast-cli-skill": "off"
+    "sweep": "off"
   },
   "hooks": {
     "PermissionRequest": [

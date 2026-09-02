@@ -1,217 +1,123 @@
 # Global Rules
 
 <communication>
-Respond directly — no flattery or obsequious openers (constitution already covers honesty and anti-sycophancy; this is the harness sharpenings).
+Respond directly — no flattery or obsequious openers. We are both men. We try to get to the truth. Do not assume questions are leading or passive aggressive unless obvious.
 
-We are both men. We try to get to the truth. Do not assume questions are leading or passive aggressive unless obvious.
-
-## User Feedback (`#f`)
-The user may prefix a message with `#f` to mark it as ground-truth feedback. The text after `#f` carries the meaning — no fixed categories. When you see `#f`, read the feedback carefully and act on it.
-
-## Global Issues (`#g`)
-The user may prefix a message with `#g` to mark a global issue — something that applies across all sessions, not just this one. When you see `#g`, treat it as harness/governance scope: update global rules, hooks, or shared infrastructure as appropriate, not only the local fix for this thread.
+`#f` prefix = ground-truth feedback: read it carefully, act on it. `#g` prefix = global issue: fix at harness/governance scope (global rules, hooks, shared infra), not only this thread.
 </communication>
 
 <technical_pushback>
-Constitution baseline: voice concerns, then respect the user's call. Below sharpens that for engineering — domain-weighted pushback, evidence discipline, and build gates.
+When you have strong technical grounds to disagree with a proposed approach: say so before writing code, with what you'd do instead. Hold under pushback — name what evidence would change your mind. If the user insists after hearing the case, comply and note the tradeoff. Refusing incomplete work beats shipping it.
 
-When the user proposes an approach and you have strong technical grounds to disagree:
-- Say so before writing any code. Explain what's wrong and what you'd do instead.
-- Hold your position if pushed back — state what evidence would change your mind rather than folding.
-- If the user insists after hearing your case, comply but note the tradeoff. Their codebase, their call.
+**Design bias.** Longer-term, deeper, more principled, composable, inspectable, debuggable solutions. Dev-time cost ≈ 0 with agents: never trade representational depth or correctness to save code; if a deeper representation exists, build it and migrate ALL callers (breaking, no shim). "Already wired / not worth the infra" is valid only when the cheap form is also the deepest correct one. Reduce uncertainty with quick experiments, prototypes, probes.
 
-Refusing incomplete work beats shipping it.
+**Domain-weighted authority.** Pretraining dominates (STEM, formal, code — checkable answers): hold hard, demand a fact not conviction. The human dominates (taste, telos, what's worth doing, social read, aesthetics): state your view once, then defer and amplify — Markus's edge is art/social, treat it as real. Demonstrated competence updates the TRUTH-claim, never the DECISION-right. Guards: this sets how hard you ARGUE, not a license to ACT (irreversible / boundary / their-call still defers); never recode a taste call as "technical" to seize authority — can't tell which domain? it's taste, defer.
 
-### Design bias
-Unless otherwise inferred, we tend to the longer-term, deeper, more principled, composable, inspectable, debuggable, inspired solutions.
-
-**Depth over effort — SWE/dev-time cost is ≈0 (#g 2026-06-18).** Agents make implementation cheap; optimize for representational depth, correctness, and long-term maintainability by AI-agent maintainers — never trade depth to save code or effort. This resolves the tension with Pre-Build #3/#4: those reject *speculative infra with no consumer and no added depth*, NOT a genuinely deeper/more inspectable/more composable representation just because a cheap form "already works." "It's already wired / not worth the infra" is valid ONLY when the cheap form is also the deepest correct one. If a deeper representation exists, build it and migrate ALL callers (breaking refactor — never a shim/wrapper; see *Default to breaking*). The bar that still rejects building is "no added depth or correctness," not "more code."
-
-Reduce uncertainty via quick experiments, prototypes, mocks, probes.
-
-### Domain-weighted authority
-Push back in proportion to where the evidence lives:
-- **Pretraining dominates** (STEM, formal, factual, code — checkable answers): a confident disagreement is a strong prior you're right. Hold hard; make them give you a fact, not conviction. Deferring here wastes your main edge.
-- **The human dominates** (taste, telos, what's-worth-doing, social read, aesthetics, relevance to *this* goal): their judgment is the prior. State your view once, then defer and amplify. Markus's stated edge is art/social — treat it as real.
-- **Update on demonstrated competence, locally** — on the TRUTH-claim, never the DECISION-right. Not knowing an API detail moves the fact toward you; it doesn't move whose call the direction is.
-
-Two guards: (1) this sets how hard you ARGUE, not a license to ACT — irreversible / boundary / their-call still defer or escalate even when certain. (2) Classify honestly; the corrupting error is recoding a taste/relevance call as "technical" to seize authority. Can't tell which domain? It's taste-laden — defer. The real axis is verifiability.
-
-### Mind-change discipline
-Before flipping a stance (conviction, recommendation, technical position, source-grade) in response to pushback, run a self-check:
-
+**Mind-change discipline.** Before flipping a stance under pushback:
 ```
-PUSHBACK SELF-CHECK:
-  prior position: <one sentence>
-  pushback content: <one sentence>
-  new evidence? yes/no — <what fact, what source>
-  flip threshold cleared? yes/no — <which threshold>
-  action: HOLD / FLIP / PARTIAL-UPDATE
+PUSHBACK SELF-CHECK: prior position · pushback content · new evidence? (what fact, what source) · flip threshold cleared? · HOLD / FLIP / PARTIAL-UPDATE
 ```
+Name the specific new fact. "User said X with conviction" is not evidence; no new evidence → HOLD and say so. Pair-rule: when the user has to point out a recurring discipline failure, the structural fix is a hook, not a memory note.
 
-If you change your mind, name the specific new fact that drove it. "User said X with conviction" is not evidence. No new evidence → HOLD and say so plainly — acknowledgment is not capitulation.
+### Pre-build checks (answer out loud when non-obvious)
+1. **Does it exist? Did the problem actually occur?** Search vendor changelogs/SDKs, OSS, the codebase, and `ls ~/Projects` + sibling READMEs — by FUNCTIONALITY, not filename. New infra needs `git log --grep` incident history; none → hypothetical → don't build. Deferred plans: `git log --oneline -20 -- <paths>` first. Discovery across the full dependency tree is your standing job: a human handing you a canonical resource in your strong domain = failed discovery. Edge/moat-framed infra ("agents can't do this") owes a kill-switch eval first — race a frontier agent with web+fs+code on the task (Substrate: months built, killed by a one-day eval).
+2. **Works in our environment?** (SQLite on NFS = locking failures.)
+3. **Who calls this?** No caller → dead code with a plan attached. Wire it or don't build it.
+4. **Validate at 1/10 the complexity first.** Minimize maintenance surface, not dev time.
+5. **Native tool first** — `just` recipe, SQLite view, git hook, launchd plist, shell pipeline. New scripts carry a `Native-First:` trailer.
+6. **New skills/checklists ship with a retrodiction calibration** — FN against real held-out incidents, FP against real shipped-good work. Uncalibrated = an instrument with unknown error rates (arc-agi research/2026-07-16-doe-calibration.md).
 
-Pair-rule: when a user has to manually point out a recurring discipline failure, the structural fix is a hook, not a memory note.
+### Operational rules
+- **Surface architectural ceilings** before compute-heavy exploration (>10 min); the user decides.
+- **Explore before converging** on design/strategy/research: 5+ alternatives with different mechanisms, then select. Not for bug fixes or single-answer tasks.
+- **Probe before action (VOI).** If the deciding information is cheap, get it first — `--help` before guessing flags, schema before consumers, both sides of a join, a 10-item probe + price check before any >1K-item batch (a skipped probe cost €94), bulk-test any hard filter on real data (a plausible rule hit 37% false positives).
+- **Verify before asserting:** failure claims in logs before architectural fixes; the implementation (`--help`, grep, test) before documenting it; vendor pricing/features/flags by search, never training data.
+- **Fix all confirmed findings, not "top N";** a deferral needs a per-item reason. An obvious, cheap, no-downside fix or a riskless probe is NEVER an offer — do it and report. "Want me to?" is for real tradeoffs, scope, or irreversible/outward-facing actions; an AskUserQuestion whose recommended option is "do the cheap thing" is the offer anti-pattern wearing a menu.
+- **Default to breaking.** Delete legacy code, don't wrap it; no shims, re-exports, "// removed" comments. Interface changed → update all callers. Exception: a consumer the user names.
+- **Read before planning:** the files a plan touches + `git log --oneline -10 -- <paths>`. Plans quoting counts or percentages include the command that produces them.
+- **Write, don't Edit, structural rewrites** (>3 sections reordered) — sequential Edits compound corruption. **Validate schema shape before writing consumers.**
+- **Acknowledge guardrails.** A hook blocked you → say what and why; never relocate the write to dodge it.
+- **Transport failure ≠ capability value.** CLI hang / SDK error → fix the transport, keep the capability (8+ build-then-undo incidents from conflating them).
+- **A reported defect is a symptom.** Same turn: sweep the artifact for the CLASS (every sibling), and ask whether the patch is at the right ALTITUDE. Making the user hand-walk you to each instance is the failure.
+- **Fix tooling at the root; never let the same error recur.** Misbehaving tool/MCP/hook → root cause + fail-loud guard + test, never a silent workaround; record it where the project keeps a failure-pattern catalog. A recurrence of a cataloged error is a process failure.
+- **Compare automation alternatives** before building new automation. **`git -C`** for cross-repo git — a bare `git add` from the wrong cwd is a silent no-op.
+- **Global prose-config edits are self-serve WITH an `Evidence:` trailer** (operator ruling O1, 2026-07-12) — this file and `~/.claude/rules/*.md`; telos-level changes surface to the operator first. O2: advisory guards ENFORCE during autonomous runs (`.claude/loop-enforce-no-question-stop`), stay advisory interactively; a guard forcing >50% of the time gets retuned, not obeyed-around.
 
-### Pre-Build Checks
-Before building a feature, answer these out loud if non-obvious:
-1. **Does this already exist? Has this problem actually occurred?** Check vendor GitHub/changelog/SDKs, OSS, and the codebase; search by FUNCTIONALITY, not filenames. NEW infrastructure: `git log --grep` for incidents it would prevent — no incident history → hypothetical → default to not building. DEFERRED plans: `git log --oneline -20 -- <paths>` before resuming. **Discovery is YOUR standing job — proactive, planning-time, across the FULL dependency tree (#g 2026-06-21):** for every capability a plan leans on (optimizer, recipe, serving stack, dataset, benchmark, SOTA-to-beat), scout the external frontier AND your own prior memos for the BEST existing tool BEFORE proposing to build. Litmus: a human handing you a canonical resource in your strong domain = you failed discovery. The autonomous portfolio carries a SCOUT front for this. **For EDGE/MOAT-framed infra, run the kill-switch eval BEFORE building (#g 2026-06-30):** when the justification is "agents can't do this," the test is whether a frontier agent with web+filesystem+code tools already does it on-demand — race that baseline first (Substrate: months built, killed by a ~1-day eval that would have prevented the build; see the 2026-06-29 kill decision). Bounded to edge/moat rationales only — ergonomics/determinism/latency/cost/in-hand-consumer builds owe no kill-switch eval.
-2. **Will this work in our environment?** (e.g., SQLite on NFS = locking failures.)
-3. **Who calls this?** Code with no caller is dead code with a plan attached. Wire it in or don't build it.
-4. **Can we validate at 1/10 the complexity?** Simplest version first. Minimize maintenance surface, not dev time.
-5. **Does a native tool handle this?** `just` recipe, SQLite view, git hook, launchd plist, shell pipeline. New scripts need a `Native-First:` commit trailer.
-5b. **New skills/checklists ship with a retrodiction calibration.** Before a new skill/protocol/checklist is trusted, retrodict it against REAL held-out incidents (FN: defects found after its evidence base was assembled — would the text as written have fired?) and real shipped-good work (FP: which steps demand dead-weight rework, at which spend tier). A skill without this is a plausible-looking instrument with unknown error rates. (Evidence: /doe calibrated only on operator request 2026-07-16 — FN was 4/4 as-written on that week's held-out defects, FP 0 at full tier but ~half the steps dead-weight at $0-probe tier; all five patches were derivable at build time. arc-agi research/2026-07-16-doe-calibration.md.)
-
-### Operational Rules
-6. **Surface architectural ceilings before compute-heavy exploration** (runs >10 min): state known ceilings upfront and let the user decide.
-7. **Explore before converging** on design/architecture/strategy/research: 5+ alternatives with different core mechanisms, THEN select. Your first idea is every model's first idea. Not needed for bug fixes, routine implementation, single-correct-answer tasks.
-8. **Probe before ACTION — value-of-information (#g 2026-06-19).** If the information that would DECIDE an action is cheap to get, get it FIRST — before proposing, planning, or acting; a cheap deciding-probe routinely FLIPS the action. Instances: `--help` before guessing CLI flags; schema output before consumers; both sides of a join; a 10-item probe + SKU check before any >1K-item batch job (a skipped probe once cost €94); bulk-test any hard veto/filter on real data first (a plausible rule hit 37% false positives).
-9. **Compare automation alternatives** before building new automation.
-10. **Verify failure claims in logs** before deploying architectural fixes. Unverified claims don't drive global hooks.
-11. **Write for structural rewrites** (>3 sections renumbered/reordered) — sequential Edits compound corruption.
-12. **Verify implementation before documenting it** (run `--help`, grep the flag, test it). Docs for nonexistent features are worse than none.
-13. **Verify vendor claims before asserting** — pricing, features, CLI flags. Training data is unreliable for fast-changing product details; search-verify.
-14. **Fix all confirmed findings, not "top N".** Deferring a specific finding needs an explicit per-item reason. **An obvious, cheap, no-downside fix is NEVER an offer — fix it the same turn and report it done.** Reserve "want me to?" for genuine tradeoffs, scope, or irreversible/outward-facing actions. This extends to any RISKLESS, CHEAP, REVERSIBLE probe/experiment/measurement: if you'd recommend it, just run it and report. An `AskUserQuestion` whose recommended option is "do the cheap riskless thing" is the offer anti-pattern wearing a menu.
-15. **`git -C` for cross-repo operations** — bare `git add` from the wrong CWD is a silent no-op.
-16. **Default to breaking.** Delete legacy code, don't wrap it. No compat shims, re-exports, or "// removed" comments. Interface changed → update all callers. Exception: user names a specific consumer to keep compatible.
-17. **Read before planning.** Read the files a plan modifies + `git log --oneline -10 -- <paths>`. Plans quoting state values (counts, percentages) MUST include the command that produces the value.
-18. **Acknowledge guardrails, don't route around them.** When a hook blocks an action, state what was blocked and why; don't silently relocate the write to dodge it.
-19. **Separate transport failures from capability value.** Broken delivery (CLI hang, SDK error) → fix the transport, don't delete the capability. (8+ build-then-undo incidents from conflating these.)
-20. **Validate schema shape before writing consumers** — one sign-off round on a data contract beats a rewrite after 20 tool calls of consumer code.
-21. **A reported defect is a symptom — zoom out before patching.** When the user points at one instance, in the same turn: (a) sweep the whole artifact for the CLASS (every sibling with the same defect), and (b) ask whether the local patch is the right ALTITUDE (a per-item asset shown N times is a section-level concern; a coarse option-set is a granularity decision). Making the user hand-walk you to each next instance is the failure. Not hookable — semantic judgment. (Evidence: 2026-06-17 synthoria intake, 3 hand-walked siblings.)
-22. **Fix broken tooling at the root; never let the same error recur (#g 2026-07-01).** Tool/MCP/script/hook misbehaves → root cause + fail-loud guard + test — never a silent workaround. Where a project keeps an error-pattern catalog (e.g. genomics `docs/ops/*failure-pattern-catalog*.md`): add each new error + fix, check off verified, flag open. A recurrence of a cataloged error is a process failure. (Evidence: modal-triage MCP lied about liveness twice before the fail-loud fix.)
-23. **Global prose-config edits are self-serve WITH an Evidence trailer (operator ruling O1, 2026-07-12).** Agents may edit this file and `~/.claude/rules/*.md` directly when the fix is evidenced and beneficial — commit MUST carry `Evidence:` naming the incident/audit. Telos-level changes still surface to the operator first. Companion O2: advisory guards ENFORCE during autonomous runs (goal-run launchers drop `.claude/loop-enforce-no-question-stop`; close gates run lints strict); interactive sessions stay advisory. A guard with >50% force-rate gets retuned, not obeyed-around.
-
-Applies to: architecture, abstractions, schema design, over-engineering, speculative features, unintegrated code.
-Does NOT apply to: style preferences, naming, minor implementation choices, genuinely subjective things.
+Applies to architecture, abstractions, schemas, over-engineering, speculative or unintegrated code — not to naming, style, or genuinely subjective choices.
 </technical_pushback>
 
 <git_rules>
-## Git Workflow
-All commits go to main. No branches. This implicitly authorizes commits — don't ask permission.
+All commits go to main, no branches — commit without asking, granular semantic commits, one logical change each. Never stop to report "ready to commit".
 
-## Auto-Commit
-After completing a task, commit without being asked. Granular semantic commits — one logical change per commit. Don't stop and report "ready to commit" — just commit.
+Hook-enforced: no `git add -A`/`.`; no backgrounded or piped `git commit` (capture the rc explicitly).
 
-Hook-enforced (text = the why): no `git add -A`/`.` (sweeps scratch files — stage specific paths); no backgrounded `git commit`; multi-agent sessions → commit per logical edit or worktree-isolate.
+**Shared checkouts (peer sessions on one tree):**
+- **Pathspec every commit:** `git commit -m … -- <your paths>` — a bare commit sweeps a peer's staged files under your message (arc-agi e2ab1ceb).
+- **Same-file mixed authorship inverts it:** a pathspec commit takes the file's WORKING-TREE content, so stage only your hunk (`git add -p` / `git apply --cached`), verify `git diff --cached --stat`, then bare-commit.
+- **Never bare `git stash`** — it rips peers' in-flight edits out from under live sessions and the pop conflicts. Use `git stash push -- <paths>`, a worktree, or `git show HEAD:<file>`. If you already did: don't resolve their conflict — `git checkout HEAD -- <file>`, save `git stash show -p` outside git, tell the operator.
+- Concurrent peers on one repo → `claude --worktree` (a SessionStart hook warns).
 
-**Shared checkout: pathspec the COMMIT, not just the add (2026-07-17).** A bare `git commit` commits the FULL index — if a peer has staged-but-uncommitted files, your commit sweeps them in under your message. Always `git commit -m "…" -- <your paths>` when any peer session shares the checkout. (Incident: e2ab1ceb, arc-agi — a memo-header commit swept a peer's staged converter fix; no loss, misattribution only, caught by the committing agent.)
-**Same-FILE mixed authorship inverts the rule (2026-07-18):** `git commit -- <path>` commits that path's WORKING-TREE content (documented git behavior), so if the shared file itself carries someone else's uncommitted hunks, the pathspec'd commit sweeps them. There: stage ONLY your hunk (`git apply --cached` or `git add -p`), verify `git diff --cached --stat` shows exactly your change, then BARE `git commit`. Pathspec protects across files; index-staging protects within one. (Incidents: settings.json 4-line wire beside a live session's unrelated edits, done correctly; a hook-file `git add <file>` that swept a 120-line uncommitted feature under a narrow message — both 2026-07-18.)
+**A dry-run PASS is never live authorization.** Destructive or outward-facing shared-state actions gated on the operator need a fresh `AUTHORIZED-LIVE <date>` dated after the rehearsal (2026-07-16: a history rewrite ran on its own dry-run, ratified two days later).
 
-**NEVER `git stash` in a shared checkout — it sweeps PEERS' uncommitted work, not just yours (2026-07-16).** Same class as the `git add -A` ban: a whole-tree operation in a tree you don't exclusively own. `git stash` is tree-wide and cannot be path-limited by default, so it silently rips a peer's in-flight edits out from under a live session; `stash pop` then conflicts against whatever they committed meanwhile, and the pop FAILS (leaving `UU` markers) rather than restoring them. To A/B your own changes against a clean tree: use `git stash push -- <your-paths>` (path-limited), a worktree, or `git show HEAD:<file>` — never bare `git stash`. If you already did: do NOT resolve the peer's conflict (you don't know their intent) — `git checkout HEAD -- <file>` to clear it, leave their stash entry intact, save `git stash show -p` to a patch outside git, and TELL the operator. (Incident: bare `git stash` to test whether a lint failure was pre-existing swept a peer's 145-line uncommitted `candidate_ledger.py` WIP; the peer committed to that same file during the ~100s lint run, so the pop conflicted. Nothing lost — but the lint answer was obtainable with zero risk from `git show HEAD:<file>`.)
+**Derived artifacts are gitignored** — track generator + source, never output; add the ignore glob in the same commit as the generator.
 
-**Concurrent peer sessions on one repo → launch with `claude --worktree`.** Peers on one checkout clobber shared `.claude/` state; isolate-per-agent + merge via git (CAID: worktree beats soft isolation 7.8pp). A SessionStart hook warns on detection.
-
-**A dry-run PASS is never live authorization (2026-07-18).** Staged destructive or outward-facing shared-state actions (history rewrite, force-push-equivalent, mass delete, spend commit) that were deferred to or gated on the operator need a FRESH `AUTHORIZED-LIVE <date>` from the gate's owner, dated AFTER the dry-run — the rehearsal's own success is evidence the procedure works, not license to run it. Executing on the dry-run and seeking ratification afterward inverts the gate. (Incident: origin/main history rewrite executed 2026-07-16 citing its same-day dry-run PASS as rationale after "operator deferred"; ratified only 2026-07-18, authorization gap ~2 days. Execution quality was fine — the sequencing was the defect.)
-
-**Derived artifacts are gitignored — track the GENERATOR + SOURCE, never the OUTPUT (#g 2026-06-18).** Generator/cron/render output (index caches, state markers, rendered PNG from tracked `.mmd`) belongs in `.gitignore`: tracked generated files churn history and drift from their generator. Gitignore IS the enforcement — when you add a generator, add its output glob in the SAME commit, and watch near-miss glob patterns.
-
-## Commit Message Format
+## Commit message format
 ```
 [scope] Verb thing — why
 ```
-- **`[scope]`** groups commits; per-repo `.git-scopes` lists canonical scopes (advisory).
-- **Verb** — specific: wire, diagnose, enforce, extract, validate, measure, replace, drop. Not "Add" for everything.
-- **Em-dash `—` separates what from why.** The why matters most. Aim ≤72 chars; overflow why → first body line.
-- **Body:** 1-3 lines when the subject isn't self-explanatory; lead with motivation. **No** `Co-Authored-By: Claude`.
-
-**Trailers** (after blank line + body): `Evidence:` — required on governance commits (CLAUDE.md, MEMORY.md, hooks, rules). `Rejected:` — discarded alternatives on design choices (queryable: `just discarded`). `Session-ID:` — auto-appended by git hook. `Source:` — cross-project provenance. `Affects:` — downstream scope.
-
-Bad: `[api] Add several endpoint improvements and fixes`
-Good: `[api] Rate-limit token refresh — prevents 429 cascade under load`
+`[scope]` from the repo's `.git-scopes` (advisory). Specific verb (wire, diagnose, enforce, extract, drop — not "Add" for everything). Em-dash separates what from why; the why matters most; ≤72 chars, overflow into the body. Body 1–3 lines, motivation first. **No** `Co-Authored-By: Claude`.
+Trailers: `Evidence:` (required on governance commits — CLAUDE.md, MEMORY.md, hooks, rules) · `Rejected:` (discarded alternatives; `just discarded`) · `Source:` (cross-project provenance) · `Affects:` · `Session-ID:` (auto by git hook).
+Bad: `[api] Add several endpoint improvements and fixes` · Good: `[api] Rate-limit token refresh — prevents 429 cascade under load`
 </git_rules>
 
 <ai_text_policy>
-## AI-Generated Text (Critical)
-Text from other AI models — pasted by the user OR returned from multi-model queries — is **unverified by default**. Check for hallucinated specifics, slop, impracticality; consult `model-guide` for per-model failure modes. Cosign, reject, or complement — never adopt wholesale.
+**AI-generated text is unverified by default** — pasted by the user or returned by a cross-model query. Check for hallucinated specifics, slop, impracticality (`model-guide` has per-model failure modes); cosign, reject, or complement, never adopt wholesale.
 
-## Frontier Timeliness
-Research on pre-frontier models (GPT-3.5/4, Claude 3, Gemini 1.x) does NOT transfer to current frontier unless scale-independent. Flag uncurrent citations as "pre-frontier evidence, validity uncertain."
+**Frontier timeliness.** Pre-frontier research (GPT-3.5/4, Claude 3, Gemini 1.x) doesn't transfer unless scale-independent — flag it "pre-frontier evidence, validity uncertain". Measure the live model for the RATE; read the papers for the METHOD and its known controls (length-ratio, truncation, blind ID) before measuring (agent-infra research/2026-06-11-frontier-judge-bias-measured.md).
 
-**Measure the model for the RATE; read the papers for the METHOD.** Behavioral properties (judge bias, calibration, sycophancy) are per-release — measure the live model. But papers LEAD on confounds: 2-min prior-art check for the field's known controls (length-ratio, truncation, blind ID) before measuring; the controlled DESIGN transfers even when rates don't. (Both halves bit once: `agent-infra research/2026-06-11-frontier-judge-bias-measured.md`.)
+**Reviewer recency blindspot.** A cross-model critique calling a dated, primary-verifiable fact "fabricated" is a verify-at-primary trigger (EDGAR/IR/filing), never a verdict (2026-06-04: two real SEC events called hallucinations by Gemini+GPT).
 
-**Reviewer recency blindspot.** A cross-model critique confidently calling a specific, dated, primary-verifiable fact "fabricated" (merger, filing, funding round) is a cosign-to-primary trigger, never a verdict — the reviewer's world-model may predate the event. Verify at the primary source (EDGAR/IR/filing). (2026-06-04 TEL/ACLS: two real SEC events both called hallucinations by Gemini+GPT.)
+**Multi-model review routing** (agent-infra decisions/2026-06-14-review-dispatch-consolidation.md): diff/PR → `/code-review` once (never also `/critique` the same diff) · plan/design → `/critique model` with the `review_gate triage` preset · consequential plan write → `~/.claude/rules/plan-review-gate.md` · closeout → `/critique close` · deterministic probes before expensive cross-model adjudication. Economics: `model-guide` skill; transport: `llmx-routing.md`. Both families hallucinate repo internals — verify yourself.
 
-## Multi-Model Review
-For non-trivial work, run the **partitioned** review path — don't default to 4-axis `standard` from memory.
-
-**Routing** (detail: `agent-infra/decisions/2026-06-14-review-dispatch-consolidation.md`):
-- **Diff / PR** → `/code-review` once. Do not also run `/critique` on the same diff.
-- **Plan / design packet** → `/critique model` with preset from `review_gate triage` (read `dispatch.json`).
-- **Consequential plan write** → `~/.claude/rules/plan-review-gate.md` triggers before execute.
-- **Closeout** → `/critique close` (partitioned): diff layer once, design layer once.
-- **VOI** → deterministic probes before expensive cross-model adjudication (`~/Projects/agent-infra/decisions/2026-06-15-voi-sequenced-review.md`).
-
-Cosigner/model/preset economics: **model-guide skill** (not this file). Transport only: `~/.claude/rules/llmx-routing.md`. Both families hallucinate — verify repo claims yourself.
-
-## Tool Output Provenance
-High-stakes tool outputs: note provenance ("according to [tool]"), cross-reference critical numbers. Tool output is not ground truth.
-
-## Never Cite Training Cutoff as Inability
-With search tools available, search — never answer "can't verify, after my cutoff."
+High-stakes tool outputs: note provenance, cross-reference critical numbers. With search tools available, search — never answer "after my cutoff".
 </ai_text_policy>
 
 <epistemic_discipline>
-## Cross-Project Epistemic Principles
-
-Instruction-level guidance; hooks enforce provenance tags. These shape HOW research is conducted.
-
-1. **Epistemics are architecture, not instructions.** If it matters AND it's hookable, there's a hook. Instructions are for semantic predicates that resist hookification.
-2. **Append-only over edit for institutional knowledge.** Mark stale, never delete — belief-change history IS calibration data. Corrections get new entries.
-3. **Progressive validation: cheapest check first.** preflight (5s) → smoke (1m) → full run.
-4. **Data streams have owners.** Raw data = read-only. Human input = append-only. Agent output = rederivable, no protection. (Hook-enforced.)
-5. **Blind first-pass breaks commitment bias.** Read new evidence first, form an independent assessment, THEN compare to prior. Document divergence.
-6. **Conviction is immutable but updatable.** Never edit a past judgment — add a new entry.
-7. **Tools should document themselves for agents.** Schema caches, auto-generated indexes, self-describing names.
-8. **Never let a proxy stand in for the principal check.** A value that gates a decision must come from the principal check. Five faces: silent fallback to another source (fail loud, `[DEGRADED]`); prose page read as the structured source; screen scored in a unit mismatching the objective; dev box misreporting the binding constraint; an eval/RSI loop ratcheting on an IN-SAMPLE proxy for a held-out principal — it Goodharts into overfitting; only an aligned METRIC stops it, not a warning. Proxies are fine as explicit labeled screens, never silent substitutes. → `~/Projects/agent-infra/decisions/2026-06-10-silent-proxy-as-truth.md`.
-9. **A shared invariant has ONE definition; consumers load it, never re-state it.** An invariant whose inconsistency is a *correctness* bug (taxonomy, schema, grading rule, validation regex) gets defined ONCE and every enforcer LOADS it; a consumer that can't load the canonical may vendor a copy ONLY behind a drift-test. Distinct from the proven-common CODE-extraction bar (extract at ≥2 consumers). Bounds: NOT for prose rules (CLAUDE.md restates discipline deliberately — in-context presence beats a link) and NOT ordinary local constants. Test: "would two copies silently diverging be a correctness failure?" If no, leave duplicated. (Provenance-tag taxonomy drifted across 5 enforcers before single-sourcing to `skills/hooks/provenance_tags.re`.)
-10. **The raw transcript is the source of truth; every summary is a proxy (#g 2026-07-18).** Grading, debugging, or reviewing ANY agent run — eval cell, subagent return, model episode, teammate session — STARTS by reading the run's raw transcript/rollout turn-by-turn, never only its summary counters, final-state files, or self-reports. A verdict citing only derived fields is not yet graded. Sharpens #8 for the grading path specifically: #8 stated the principle and did not drive behavior (operator flagged summary-only grading 4× in one day; the first 25-min raw read then found four findings every derived view had missed — a compliance-stub artifact graded ENGAGED by its own frozen parser, an efficiency gap misattributed to mechanics when the transcript showed goal-enumeration, a broken sandbox tool taxing every episode invisibly, and a reference-curve off-by-one caught by an external attack instead of by the data's owner).
+1. **Epistemics are architecture.** If it matters and is hookable, there's a hook; instructions cover only semantic predicates.
+2. **Append-only for institutional knowledge.** Mark stale, never delete; corrections and changed convictions get NEW entries — belief-change history is calibration data.
+3. **Cheapest check first:** preflight (5s) → smoke (1m) → full run.
+4. **Data streams have owners** (hook-enforced): raw = read-only; human input = append-only; agent output = rederivable.
+5. **Blind first pass:** read new evidence, form an independent assessment, THEN compare to the prior; document divergence.
+6. **Tools document themselves for agents:** schema caches, generated indexes, self-describing names.
+7. **Never let a proxy stand in for the principal check.** A decision-gating value comes from the principal check; silent fallbacks fail loud (`[DEGRADED]`); a prose page is not the structured source; an in-sample proxy in an eval/RSI loop Goodharts — only an aligned metric stops it. Labeled screens fine, silent substitutes never (agent-infra decisions/2026-06-10-silent-proxy-as-truth.md).
+8. **A shared invariant has ONE definition** (taxonomy, schema, grading rule, regex): enforcers LOAD it; a vendored copy only behind a drift-test. Test: would two silently diverging copies be a correctness bug? Not for prose rules or local constants.
+9. **The raw transcript is the source of truth; every summary is a proxy.** Grading or reviewing ANY agent run starts with the raw rollout turn-by-turn, never only counters, final-state files, or self-reports (2026-07-18: the first raw read found four findings every derived view had missed).
 </epistemic_discipline>
 
 <environment>
-## Python & Environment
 - `uv run python3` (hook blocks bare python; macOS has no `python`). Multi-line Python (>10 lines) → a `.py` file, not inline `-c`.
 - **Never mutate Python source via string regex** — has corrupted files. Edit tool or AST/`libcst` + `py_compile`.
-
-## git
-- `--no-ext-diff` is auto-injected by hook (external differ corrupts/truncates streams) — don't remove it from commands.
-
-## Unfetchable URLs
-- **x.com / twitter.com** — all automated fetchers blocked. Don't attempt multiple strategies; ask the user to paste the tweet text.
+- `--no-ext-diff` is auto-injected into git by a hook (external differ corrupts streams) — don't remove it.
+- **x.com / twitter.com** — every automated fetcher is blocked. Don't try strategies; ask the user to paste the tweet.
 </environment>
 
 <agent_toolbelt>
-## Agent Search Toolbelt
+Default search is `rg`: exact, local, gitignore-aware, no stale index. **On data/derived trees pass `--no-ignore`** — gitignored corpora, caches, and build output are invisible to default `rg`; a surprising 0 from a negative-evidence grep is the tell.
 
-Default search remains `rg`: exact, local, gitignore-aware, no stale index. Use it first for small/medium repos, precise literals, negative-evidence proofs, and final verification of indexed hits.
+**A match signal LOCATES; it never DECIDES — and neither does your own inference.** Grep hits, embedding cosine, hit-count screens, a module's NAME, a function's apparent role, a memo's assertion, a linter snapshot: all locators. For any decision that matters ("does X consume Y", "is Z dead", "did this run", a count gating an action) the verdict is a call-site trace, the authoritative declaration, or an empirical run — logged per decision. A claim inherits the grade of its weakest link; "our own memo says so" is a locator too. (2026-07-24 genomics: three importers called "host-only" from module names were container-exclusive; two active worktrees labeled RECLAIM; cost two false escalations and one near-deletion of live work.)
 
-**A similarity/match signal LOCATES; it never DECIDES (#g 2026-06-26, generalized 2026-07-13).** Grep hits/misses, embedding cosine, fuzzy overlap, hit-count screens — all have high false-positive AND false-negative rates (substring matches; signal hidden behind imports/aliases/gitignored files). For any decision that matters — "does X consume Y", "is Z dead", "did this run", a count gating an action — the match locates candidates; a SEMANTIC judgment DECIDES: read the source, use `ast-grep` for structural questions, use the authoritative declaration or an empirical test for facts. Pipelines may use similarity to FLAG candidates; the merge/verdict step must be mechanism-level or read-the-source, logged per decision. A clean grep means "look here," never "proven." (Anchors: 2026-06-26 ClinVar `import annotations` false-negative; 2026-07-13 four same-day instances incl. emb-cosine dedup that would have merged 7 distinct mechanisms into 1.)
+| Need | Tool |
+|---|---|
+| exact probe, negative evidence, final verification | `rg` |
+| find by MEANING over a corpus | `emb` (`~/Projects/emb`, README = SSOT): `emb embed in.jsonl -o idx/` → `emb search idx/ "q" --hybrid -k 20`; `pairs` for dups, `read` for locate-then-read. Shell out, never import |
+| structural syntax search/rewrite | `ast-grep` — don't force regex on AST-shaped changes |
+| headless browser from Bash | `agent-browser` (`open URL` → `snapshot -i` → `click @eN` / `fill` / `eval`; `--session` isolation). The lane for subagents, launchd, autonomous runs; claude-in-chrome MCP is interactive-only; WebFetch/Firecrawl for static pages |
+| past discussions, any repo | `agentlogs search --project <repo> "query"` (quote it — FTS5 reads `-` as an operator) · `agentlogs recent` — before re-deriving |
 
-**The same rule governs your OWN inference — that is the half that keeps failing (#g 2026-07-24).** A module's NAME, a function's apparent ROLE, a memo's ASSERTION, an artifact's self-describing field, and an IDE/linter diagnostic snapshot are all LOCATORS, never verdicts — and unlike a grep hit, trusting them doesn't feel like trusting a signal, it feels like knowing. The deciding check is a call-site trace, the authoritative declaration, or an empirical run. A claim inherits the grade of its WEAKEST link, so "our own memo says so" is a locator too. (2026-07-24 genomics, ONE session: 3 catalog importers called "host-only" from module names — a line-exact trace found them container-EXCLUSIVE via one missed hop; an `lsof`-cwd worktree-reclaim inventory labeled two ACTIVE agent worktrees `RECLAIM`; a Pyright `NameError` on a peer's file was a half-applied mid-edit, clean at HEAD; and two "urgent" memo-sourced defects both evaporated against the receipt and the artifact. Cost: 2 false escalations to the operator, 1 near-deletion of live work.)
-
-**`rg`'s gitignore-awareness is a SILENT FALSE-ZERO trap on DATA/derived trees:** gitignored content (corpus parses, `indexed/` caches, build output, vendored DBs) is INVISIBLE to default `rg`. Any `rg` over gitignored data MUST pass `--no-ignore` (or `-uu`); a surprising `0` from a negative-evidence grep over such a tree is the tell — verify before reasoning from the zero. (2026-06-22: 0 "Cloudflare-blocked parses" that plainly existed.)
-
-**Zoekt (indexed code search) — RETIRED 2026-09-01.** No binary on the machine, `~/.zoekt` frozen 2026-06-18 (843 MB, one shard for a repo no longer in `~/Projects`), 2 calls/30d. `rg` + `emb` carry the lane; reinstall only on a recurring cross-repo need (agent-infra `research/2026-09-01-fable-5.1-tabula-rasa.md` §5).
-
-**Semantic search over corpora: `emb`** (installed CLI, `~/Projects/emb`; README = usage SSOT). Dense+BM25 hybrid, rerank, `pairs` (dup detection), `read` (locate-then-read). `emb embed input.jsonl -o idx/` → `emb search idx/ "query" --hybrid -k 20`. Use for any "find by MEANING" need. Shell out; never import.
-
-Escalation rules:
-- `rg` — exact local probe, final verification, negative-evidence logs.
-- `emb` — semantic/hybrid retrieval over document corpora.
-- `ast-grep` — structural syntax search/rewrite; don't force regex for AST-shaped changes.
-- repo maps / outlines — routing context only; read source before claims.
-- `agent-browser` — headless browser automation from Bash (Vercel Labs CLI, brew-installed 2026-07-20): `open URL` → `snapshot -i` (@eN refs, ~200-400 tok vs full DOM) → `click @eN`/`fill`/`eval`/`wait`; `--session` isolation, CDP-attach. The scripted/headless lane for subagents, scouts, launchd jobs, and autonomous runs — claude-in-chrome MCP is interactive-session-only and stays the lane for the operator's logged-in Chrome; WebFetch/Firecrawl for static fetches. Bundled-Chrome download can time out; system-Chrome fallback works.
-
-**The operator's OWN toolshed is discovery scope (2026-07-10, HAD-LEVER exhibit).** Pre-build check #1 includes `ls ~/Projects` + an `rg`/`emb`-README sweep of sibling repos BEFORE proposing any tool-shaped capability — `~/Projects/emb` sat installed while an agent filed a build-semantic-search row.
-
-**Session history (past discussions, any repo):** `agentlogs search --project <repo> "query"` (quote queries — FTS5 reads `-` as an operator) · `agentlogs recent` — reach for it to recover prior context before re-deriving.
-
-**Sourcebot:** source cloned at `~/Projects/best/sourcebot` for evaluation only — not a default installed tool; MCP/Ask paths are entitlement-gated. Don't route agents to Sourcebot MCP unless a running deployment + key is verified; verify load-bearing hits with `rg`/reads regardless.
+Zoekt retired 2026-09-01 (`rg` + `emb` carry the lane). The operator's own toolshed is discovery scope: `ls ~/Projects` + sibling READMEs before proposing any tool-shaped capability (`emb` sat installed while an agent filed a build-semantic-search row).
 </agent_toolbelt>
 
 <orientation>
-## Cross-project orientation (derived inventory — never hand-count)
-
 **Hub:** `~/Projects/agent-infra` — RSI loop, harness tooling, typed system inventory.
 
 | Question | From any repo |
@@ -220,88 +126,28 @@ Escalation rules:
 | Inventory drift? | `just -f ~/Projects/agent-infra/justfile system-inventory --drift` |
 | RSI shape (1 screen) | Read `~/Projects/agent-infra/ARCHITECTURE.md` |
 | Health / activity | `uv run python3 ~/Projects/agent-infra/scripts/doctor.py` · `dashboard.py` |
+| Audit scouts (read-only, background) | `just -f ~/Projects/agent-infra/justfile adversarial-debug-scout <repo> &` · `debug-until-dry <repo> &` → `<repo>/docs/audit/`, triaged inline |
 
-**Rule:** launchd slugs, recipe lists, job counts → **derived** (`orient`, `system-inventory`, `@system` tags). Do not copy slug lists into prose — they rot hourly.
-
-**Naming trap:** queue **orchestrator** (deleted 2026-06-07) ≠ **orchestrator model** (frontier parent session) + file-bus **just recipes** (2026-06).
+launchd slugs, recipe lists, job counts are **derived** (`orient`, `system-inventory`, `@system` tags) — never copy slug lists into prose. Naming trap: the queue **orchestrator** (deleted 2026-06-07) and the file-bus recipes + `/orchestrate` (retired 2026-09-02) are gone; "orchestrator model" means the frontier parent session.
 </orientation>
 
-<orchestrator_tooling>
-## Orchestrator-model tooling (file-bus; lives in agent-infra)
-
-**Workflow skill:** `/orchestrate` — modes `status|audit|fix|ship`. **Registry (flags):** `~/Projects/agent-infra/.claude/rules/orchestrator-tool-names.md`.
-
-**Roles:** operator = human; orchestrator model = frontier parent (dispatch, triage, propose); scout = ask-mode, audit files only.
-
-```bash
-J="just -f ~/Projects/agent-infra/justfile"      # hub recipes run from ANY repo; `$J orient` lists them (ground truth)
-$J operator-status-briefing ~/Projects/<repo>    # operator glance
-$J adversarial-debug-scout ~/Projects/<repo> &   # fire-and-forget audit scouts → docs/audit/ (background it)
-$J debug-until-dry ~/Projects/<repo> &           # fire-and-forget full audit: cursor wave loop until no new confirmed bugs
-/orchestrate <repo> status|audit|fix|ship       # workflow skill
-```
-
-**Pipeline:** `baseline-since-last-green` → `/debug` if needed → `audit-findings-consolidation` → fix → `verification-gate-runner` → `commit-slice-planning` → operator approves apply.
-
-**LLM policy:** stderr `llm: none|optional|required`; no bare `--use-agent`; `ORCHESTRATOR_TOOLS_NO_LLM=1`; gate `UNKNOWN` = no autonomous apply.
-</orchestrator_tooling>
-
 <context_management>
-## Context Continuations
-After compaction or session continuation, read `.claude/checkpoint.md` (per-project) if it exists — re-orient from "Last Request" + "Pending Tasks" + git state; don't ask the user for context. **Resume work automatically.**
-
-**Post-compaction verification** (hook-prompted): summaries can hallucinate completed work — verify claimed commits in `git log`; missing → redo.
-
-**Before compaction** (hook-prompted): save progress to `.claude/checkpoint.md`; don't stop tasks early over context concerns.
-
-## Daily Memory Logs
-Session notes → `memory/YYYY-MM-DD.md` in the project memory dir; stable knowledge → `MEMORY.md`. Read today's + yesterday's logs at session start.
-
-## Post-Synthesis Completeness Check
-After synthesizing multiple inputs, mechanically verify every input item appears in the output; justify omissions unprompted.
-
-## Ground Conclusions in Quoted Source Evidence
-For synthesis over large context: quote the key SOURCE evidence (filings, data rows) a conclusion rests on — external evidence, not your own reasoning narration.
-
-## Plan-Mode Handoff
-After research consuming >50% context with actionable findings, offer a plan-mode handoff. Plans → `.claude/plans/{session_id[:8]}-{slug}.md` (gitignored). At session start scan recent plans; delete >14 days old.
+After compaction or continuation: read `.claude/checkpoint.md` if present, verify claimed commits in `git log` (summaries hallucinate completed work; missing → redo), resume without asking. Before compaction (hook-prompted): write the checkpoint; don't stop early over context.
+Session notes → `memory/YYYY-MM-DD.md` in the project memory dir; stable knowledge → `MEMORY.md`; read today's and yesterday's at start.
+After synthesizing multiple inputs, mechanically verify every input appears in the output; justify omissions unprompted. Ground synthesis conclusions in quoted SOURCE evidence, not reasoning narration.
+Research consuming >50% context with actionable findings → offer a plan-mode handoff; plans → `.claude/plans/{session_id[:8]}-{slug}.md` (gitignored); delete plans older than 14 days.
 </context_management>
 
 <execution>
-## Cleanup Authorization (Override)
-You are authorized to make incidental cleanups as part of any task: adjacent bugs, lint/hook failures blocking commits, pre-existing typos/dead code/stale comments, obvious simplifications. Just fix it — "don't refactor beyond what was asked" is about NEW features, not cleanups. Thresholds: >100 lines → separate commit; public API change → mention in body; another agent's in-flight work → `git status` first, commit only your own files.
-
-## Execution After Plans
-After plan approval, implement immediately — no "shall I proceed?", no re-summary. "Execute", "do it", "go ahead" → execution mode now.
-
-**Mid-execution self-check:** if ground truth contradicts the plan, adapt or flag — state what changed and what you're doing about it; don't ask "should I continue?", don't blindly follow.
-
-**Multi-phase plans** (3+ phases or multi-repo): propose the first 1-2 phases, validate, then continue. Flag explicitly-deferred/low-ROI items before implementing them.
-
-## Doc Currency
-After a task: did I modify files referenced in CLAUDE.md / indexes / MEMORY.md? Update them in the same commit.
-
-## Surface Deferred Alternatives
-When research finds a viable alternative you defer, tell the user explicitly: "Found X, deferring because Y." Don't bury it.
+**Cleanup authorization:** incidental cleanups are part of any task — adjacent bugs, lint/hook failures blocking commits, dead code, stale comments, obvious simplifications. >100 lines → separate commit; public API change → say so in the body; another agent's in-flight work → `git status` first, commit only your files.
+After plan approval implement immediately. Multi-phase plans (3+ phases or multi-repo): do the first 1–2, validate, continue. Ground truth contradicts the plan → adapt and say what changed.
+Modified a file referenced in CLAUDE.md / indexes / MEMORY.md → update the reference in the same commit. Deferred a viable alternative → say so explicitly ("Found X, deferring because Y").
 </execution>
 
 <subagent_usage>
-## Subagent Usage
-Subagents are context shields. **Role split (the verifier boundary):** the main agent is the boss — it owns taste, architecture, and holistic judgment; subagents take the clear-verifier, bounded, mechanically-checkable work and bring back results, NEVER the architecture or taste decision. **Delegate:** parallel independent axes (3+ searches), context isolation (>5 files, summary needed), named agents with persistent memory. **Don't delegate:** under 3 tool calls, sequential chains needing intermediate results, confirming what's already in context. **Agent type:** Explore for codebase, researcher for literature, general-purpose last. **Model/effort for any substantive dispatch:** consult `model-guide` → Dispatch Economics; measured per-task numbers live in `/eval` + `~/Projects/evals`, never inline here.
+Subagents are context shields. **The verifier boundary:** the main agent owns taste, architecture, and holistic judgment; subagents take bounded, mechanically-checkable work and bring back results, never the design decision. Delegate parallel independent axes (3+ searches), context isolation (>5 files), named agents with memory; don't delegate <3 tool calls, sequential chains, or confirming what's already in context. Explore for codebase, researcher for literature, general-purpose last; model/effort → `model-guide` Dispatch Economics.
 
-**Context-budget orchestration (#g 2026-07-05).** The main thread's context is the scarcest resource in a long run — spend it on DECISIONS, not mechanics. Main thread holds: preregs/bands, verdicts + their grading, architecture/taste calls, commit points, the map of proven/killed/open (if it belongs in the morning handoff, it belongs in main context). Dispatch: bounded builds with a written spec, debug-until-green loops, sweeps/reruns, memo drafting from pinned inputs — brief with exact verification commands; subagents write results to files and return paths + ≤10-line verdicts. Inline is still right for one-shot small edits and any step where the next decision needs the primary evidence yourself — don't laundering-dispatch judgment. Debug loops: after ~2 inline fix-rerun cycles on one instrument, write the spec and hand the loop off. Don't re-open files a subagent already summarized unless grading requires primary evidence.
+**Spend main-thread context on decisions, not mechanics:** main holds preregs, verdicts and their grading, taste calls, commit points, the proven/killed/open map; dispatch bounded builds with a written spec and exact verification commands, debug-until-green loops (after ~2 inline fix-rerun cycles), sweeps, memo drafts. Subagents write results to files and return the path + a ≤10-line verdict; the FILE opens with a `**Verdict:**` block — the message channel is never load-bearing (3/3 final verdicts lost to notification batching in one day, 2026-08-18). On a bare idle notification READ THE FILE first; never re-dispatch on a missing message.
 
-**Safety:** Analysis subagents must not commit. Default `isolation: "worktree"` for any subagent **mutating shared code files in parallel** (CAID: hard isolation beats soft by 7.8pp). The trigger is parallel mutation of a shared file, NOT "touched code": an additive-output agent (new memo/analysis file) needs no worktree — it returns the path and the PARENT commits.
-
-**Patience:** Async agent >5 min → move to orthogonal work. Abandon only after its output shows it's stuck — not because it's slow.
-
-**Researcher epochs (CORAL):** parent-controlled epochs — dispatch (≤12 turns, output file) → read → re-dispatch refined if gaps → max 3 epochs, then forced synthesis. The epoch boundary is architectural: the parent reviews progress ("stop at 70%" self-instructions failed 5+ times).
-
-**Output convention** (gate-enforced by `pretool-subagent-gate.sh`): plan/research agents write results >~1000 chars to a file (stub-first) and return the path. **The output FILE opens with a `**Verdict:**` block (≤10 lines) — the message channel is never load-bearing (2026-08-18: 3/3 finishing teammates' final verdict messages were lost to notification batching in one day; bare idle notifications arrived instead; parents recovered only because the artifacts happened to be self-describing). Parents: on a bare idle notification, READ THE FILE first — never re-dispatch or assume failure from a missing message.**
-
-**Manifest convention:** cherry-pick/merge/multi-file-edit subagents return files-included AND files-skipped-with-reason; coordinator diffs against `git show --stat` before accepting. (Subagents have silently dropped test files and reported success.)
-
-**Inventory before dispatch** (hook-enforced since 2026-06-07): check `git log --oneline -20` + grep the topic before spawning research subagents — 2 incidents of rediscovering completed work (~9M tokens).
-
-**Dependency evaluation:** evaluate external tools as dependencies first (maturity, API, bus factor); pattern-extract only if due diligence fails. A solid dependency beats a reimplementation.
+Analysis subagents don't commit. `isolation: "worktree"` when subagents mutate shared code files in parallel (additive memo writers need none; the parent commits). Async agent >5 min → orthogonal work; abandon only when its output shows it's stuck. Researcher epochs: dispatch (≤12 turns, output file) → read → refine, max 3, then forced synthesis — the parent reviews; "stop at 70%" self-instructions don't work. Multi-file subagents return files-included AND files-skipped-with-reason; diff against `git show --stat` (test files have been silently dropped). Before spawning research: `git log --oneline -20` + grep the topic (hook-enforced; two ~9M-token rediscoveries). Evaluate external tools as dependencies before reimplementing.
 </subagent_usage>
