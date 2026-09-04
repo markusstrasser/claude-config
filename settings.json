@@ -30,12 +30,7 @@
       "mcp__exa__web_search_exa",
       "mcp__exa__web_search_advanced_exa"
     ],
-    "deny": [
-      "Read(//Users/alien/.config/sops/age/keys.txt)",
-      "Read(//Users/alien/.config/secrets/**)",
-      "Read(**/.env)",
-      "Read(**/.env.*)"
-    ],
+    "deny": [],
     "defaultMode": "auto"
   },
   "model": "claude-fable-5-1[1m]",
@@ -85,6 +80,15 @@
           {
             "type": "command",
             "command": "python3 /Users/alien/Projects/skills/hooks/pretool-bash-dispatch.py"
+          }
+        ]
+      },
+      {
+        "matcher": "Read|Grep|Glob",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /Users/alien/Projects/skills/hooks/pretool-secret-path-read-guard.py"
           }
         ]
       },
