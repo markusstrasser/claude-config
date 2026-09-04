@@ -2,7 +2,6 @@
   "env": {
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
     "CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS": "10000",
-    "CLAUDE_CODE_DISABLE_CRON": "0",
     "CLAUDE_STREAM_IDLE_TIMEOUT_MS": "180000",
     "ENABLE_PROMPT_CACHING_1H": "1",
     "SLASH_COMMAND_TOOL_CHAR_BUDGET": "32000",
@@ -40,18 +39,18 @@
     "defaultMode": "auto"
   },
   "model": "claude-fable-5-1[1m]",
+  "enabledMcpjsonServers": [
+    "exa"
+  ],
   "skillOverrides": {
     "keybindings-help": "user-invocable-only",
     "fewer-permission-prompts": "name-only",
     "update-config": "name-only",
     "init": "user-invocable-only",
-    "playground:playground": "name-only",
-    "frontend-design:frontend-design": "name-only",
     "scientific-drawing": "off",
     "gpt-image-2": "name-only",
     "claude-md-management:claude-md-improver": "name-only",
     "claude-md-management:revise-claude-md": "name-only",
-    "skill-creator:skill-creator": "name-only",
     "skill-authoring": "name-only",
     "schedule": "name-only",
     "security-review": "name-only",
@@ -61,7 +60,6 @@
     "manim-animations": "off",
     "oura-ring": "off",
     "review-animations": "off",
-    "ttcw-rubric-evaluator": "off",
     "neurokit2": "off",
     "research-ops": "off",
     "verify-before": "off",
@@ -623,8 +621,6 @@
           }
         ]
       }
-    ],
-    "PermissionDenied": [
     ]
   },
   "worktree": {
@@ -647,9 +643,6 @@
     "webwright@webwright": false
   },
   "effortLevel": "medium",
-  "enabledMcpjsonServers": [
-    "exa"
-  ],
   "autoCompactWindow": 500000,
   "tui": "default",
   "autoDreamEnabled": false,
