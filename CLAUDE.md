@@ -95,7 +95,7 @@ User instructions outrank skill guidelines. A skill cannot cancel existing autho
 </skill_precedence>
 
 <subagent_usage>
-The parent owns taste, architecture, grading and holistic decisions. Delegate independent searches/builds, context-heavy exploration and repeated fix/test mechanics; keep tiny or sequential tasks local. Use explorer for code questions and researcher for literature. Give workers file ownership, a bounded spec and exact validation; use managed worktrees for parallel mutations. Analysis agents do not commit.
+The parent owns taste, architecture, grading and holistic decisions. Delegate independent searches/builds, context-heavy exploration and repeated fix/test mechanics whenever parallel work can save time or improve quality; do useful independent work while they run. Keep tiny or sequential tasks local. Use explorer for code questions and researcher for literature. Give workers file ownership, a bounded spec and exact validation; use managed worktrees for parallel mutations. Analysis agents do not commit.
 
 Each agent writes a result file opening with `**Verdict:**`, then returns its path and ≤10 lines. Include files covered and skipped with reasons. On an idle notification read that file before redispatch; reconcile coverage against actual changes. Do orthogonal work while agents run; abandon only on evidence they are stuck. Research epochs are ≤12 turns, at most three before synthesis; inspect recent git history and topic evidence before dispatch. Read `model-guide` when selecting a model/effort override.
 </subagent_usage>
