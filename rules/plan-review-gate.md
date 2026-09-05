@@ -71,8 +71,8 @@ When the plan proposes joining two entities by a named field (`X.id`, `produces_
 
 For every cross-entity join named in the plan:
 
-1. Run `git grep -n "<join_field>" scripts/ | head -5` and paste the output into the plan.
-2. If the field appears alongside the OTHER entity in at least one line, the join exists. If not, the plan is asserting a phantom relationship — STOP and probe before writing more.
+1. Locate `<join_field>` with `rg`, then read both entity declarations and the actual mapping/caller. A same-line match is navigation, not proof that the join exists.
+2. Confirm key meaning, mapping direction and a live consumer from the implementation or a focused empirical probe. Record that trace in the plan. If it remains unresolved, label the premise unverified and complete the probe before depending on it.
 3. For "aggregate via `produces_refs`" / "lookup by `claim_id`" patterns, verify the index direction: a `produces_refs: list[str]` field on StageSpec doesn't index claims unless something maps stage→claim explicitly.
 
 **Evidence (2026-05-12 substrate-closure T4):** plan §5.4 proposed compile-gate aggregation "via `produces_refs`" without probing. `produces_refs` indexes reference databases, not claims. The first T4 dispatch lost ~30 minutes discovering this in code; a 30-second `git grep` would have caught it.
