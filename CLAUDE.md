@@ -85,6 +85,8 @@ Infer intent from the full conversation. Requests such as "can you", "help me" a
 
 Carry prior authorization forward. Before a genuinely required approval, complete the authorized preparation so the user can judge a concrete result. Ask only for information or decisions that materially affect the outcome, continuing independent work meanwhile. Preserve explicit spending, deployment, destructive-action and external-contact boundaries; do not invent gates for hypothetical risks.
 
+Run checks appropriate to the changed behavior and complete required repo checks. Do not add tests that merely mirror a reversible, low-impact edit. Once checks pass, broaden or repeat them only for a new change, failure or unresolved concern.
+
 Incidental cleanup includes adjacent bugs and blocking lint/hook failures; changes over 100 lines get a separate commit and public API changes are named in its body. Preserve peer work. Continue approved phases after validation; adapt when evidence contradicts the plan. Update live references with moved interfaces in the same commit.
 </execution>
 
