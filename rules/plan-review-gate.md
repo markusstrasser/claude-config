@@ -5,7 +5,7 @@ paths:
 
 # Plan Review Gate
 
-After writing a NEW plan to `.claude/plans/` that is **non-trivial and consequential**, automatically run plan review before offering to execute. Don't ask — just run it.
+After writing a NEW plan to `.claude/plans/` that is **non-trivial and consequential**, automatically run plan review. Continue already-authorized implementation after resolving findings; otherwise prepare a concrete decision for the user. Don't ask permission to run the review.
 
 ## Dispatch workflow (plan phase)
 
