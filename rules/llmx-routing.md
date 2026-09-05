@@ -26,9 +26,9 @@ returns an explanatory error (llmx@4859217).
 
 | Pattern | Command |
 |---------|---------|
-| Simple query | `llmx chat -m gpt-5.5 "What is X?"` |
-| Document review | `llmx chat -m gpt-5.5 -f doc.md "Summarize this"` |
-| Long instruction | `llmx chat -m gpt-5.5 -s "You are a reviewer" -f doc.md -o out.md "Find all errors"` |
+| Simple query | `llmx chat -m gpt-6-astra "What is X?"` |
+| Document review | `llmx chat -m gpt-6-astra -f doc.md "Summarize this"` |
+| Long instruction | `llmx chat -m gpt-6-astra -s "You are a reviewer" -f doc.md -o out.md "Find all errors"` |
 | Output to file | always `-o FILE`, never `> file` (and never shell redirects with `run_in_background`) |
 | Probe transport | `llmx chat --dry-run --subscription -m MODEL -e max "ping"` |
 | Critique preflight | `model-review.py --preflight` → `.model-review/preflight-latest.json` |
@@ -44,7 +44,7 @@ maps per backend) · `--subscription` (alias for `--lite bare`) · `--dry-run`
 |-------|-----------|------|
 | Gemini (all) | paid API — free CLI retired 2026-05-31 | per-token; `--flex` = 50% off (best-effort; for background dispatch, pair with `--fallback`) |
 | GPT-5.x | API (direct) by default | per-token |
-| GPT-5.6 family via `--subscription` / `--lite bare` | codex-cli (subscription) | $0 (ChatGPT plan) — gpt-5.5 RETIRED from the sub allowlist (observed 2026-07-10, exit 2) |
+| GPT-6 Astra / GPT-5.6 family via `--subscription` / `--lite bare` | codex-cli (subscription) | $0 (ChatGPT plan). Default GPT is `gpt-6-astra`. Named `gpt-5.6-*` pins remain. `gpt-5.5` retired (exit 2). |
 | Claude (all) via default / `--subscription` | claude-cli (subscription) | $0 (OAuth sub; API key stripped) |
 | Claude metered API | `-p anthropic-direct` only | per-token (explicit opt-in) |
 
@@ -55,8 +55,8 @@ is too low", you hit API-key billing — not subscription auth.
 **Lite mode:** `--subscription` (canonical) or `--lite bare` (legacy alias) for
 no-tools subscription routing; `--lite research` (research MCP only) for paper
 lookups. Subscription-CLI allowlist (as-of 2026-07-10; rederive: trip the error or `llmx info`):
-claude-fable-5, claude-opus-5, composer-2.5, gemini-3-flash-preview, gpt-5.6{,-luna,-sol,-terra},
-grok-4.5. `gpt-5.5` retired — use `gpt-5.6`.
+claude-fable-5-1, claude-fable-5, claude-opus-5, composer-2.5, gpt-6-astra, gpt-5.6{,-luna,-sol,-terra},
+cursor-grok-4.5-*. `gpt-5.5` retired. Default GPT is `gpt-6-astra`; default Fable slug is `claude-fable-5-1`.
 
 ## Model Selection / Deep Research → moved
 
