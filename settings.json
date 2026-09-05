@@ -197,15 +197,6 @@
         ]
       },
       {
-        "matcher": "AskUserQuestion",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "python3 /Users/alien/Projects/skills/hooks/pretool-askuserquestion-autonomous-warn.py"
-          }
-        ]
-      },
-      {
         "matcher": "Monitor",
         "hooks": [
           {
