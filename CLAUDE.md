@@ -1,11 +1,11 @@
 # Global Rules
 
 <communication>
-Respond directly — no flattery or obsequious openers. We are both men. We try to get to the truth. Do not assume questions are leading or passive aggressive unless obvious.
+Respond directly — no flattery or obsequious openers. We are both men. We try to get to the truth. Do not assume questions are leading or passive aggressive unless obvious. Short > long responses. 
 
 `#f` prefix = ground-truth feedback: read it carefully, act on it. `#g` prefix = global issue: fix at harness/governance scope (global rules, hooks, shared infra), not only this thread.
 
-Lead with the outcome in concise, plain paragraphs. Use lists or tables when they help compare or sequence information. Include technical detail only when it helps assess the result. Avoid stock transitions, invented labels, filler and unprompted contrastive framing; see `~/.claude/rules/answer-format.md` for the full style guidance. Keep messages to agents legible too.
+Style: `~/.claude/rules/answer-format.md` (always loaded); it applies to messages to agents too.
 </communication>
 
 <technical_pushback>
@@ -32,7 +32,7 @@ Commit on main without asking, one logical change at a time. No branches, `git a
 - A dry-run PASS never authorizes live destructive or outward-facing shared-state action. Operator-gated rehearsals need a fresh `AUTHORIZED-LIVE <date>` after the rehearsal.
 - Ignore derived artifacts; commit generator, source and ignore pattern together.
 
-Format: `[scope] Verb thing — why`, ≤72 characters; overflow motivation into a 1–3-line body. Scope comes from `.git-scopes` (advisory). No `Co-Authored-By: Claude`. Governance commits require `Evidence:`; use `Rejected:`, `Source:`, `Affects:` when relevant. `Session-ID:` is hook-added.
+Format: `[scope] Verb thing — why`, ≤72 characters; overflow motivation into a 1–3-line body. Scope comes from `.git-scopes` (advisory). No co-author trailer of any kind; the harness-supplied `Claude-Session:` link is allowed. Governance commits require `Evidence:`; use `Rejected:`, `Source:`, `Affects:` when relevant. `Session-ID:` is hook-added.
 </git_rules>
 
 <ai_text_policy>
@@ -81,13 +81,9 @@ For multi-input synthesis, account for every input, justify omissions, and groun
 </context_management>
 
 <execution>
-Infer intent from the full conversation. Requests such as "can you", "help me" and "I want to" authorize doing the described work. Make reasonable assumptions for routine gaps and complete the goal through relevant validation and commits; do not stop at a plan or an offer. New input steers the active task; answer side questions and continue unless the user cancels or replaces the objective.
+"Can you", "help me" and "I want to" authorize the described work; finish it through validation and commits, answering side questions without dropping the active task. Carry prior authorization forward: before a genuinely required approval, finish the authorized preparation so the user judges a concrete result. Preserve explicit spending, deployment, destructive-action and external-contact boundaries; do not invent gates for hypothetical risks.
 
-Carry prior authorization forward. Before a genuinely required approval, complete the authorized preparation so the user can judge a concrete result. Ask only for information or decisions that materially affect the outcome, continuing independent work meanwhile. Preserve explicit spending, deployment, destructive-action and external-contact boundaries; do not invent gates for hypothetical risks.
-
-Run checks appropriate to the changed behavior and complete required repo checks. Do not add tests that merely mirror a reversible, low-impact edit. Once checks pass, broaden or repeat them only for a new change, failure or unresolved concern.
-
-Incidental cleanup includes adjacent bugs and blocking lint/hook failures; changes over 100 lines get a separate commit and public API changes are named in its body. Preserve peer work. Continue approved phases after validation; adapt when evidence contradicts the plan. Update live references with moved interfaces in the same commit.
+Run the checks the changed behavior needs plus the repo's required checks; once they pass, repeat them only for a new change or failure. Do not add tests that merely mirror a reversible, low-impact edit. Incidental cleanup includes adjacent bugs and blocking lint/hook failures; changes over 100 lines get a separate commit that names public API changes. Update live references with moved interfaces in the same commit; adapt an approved plan when evidence contradicts it.
 </execution>
 
 <skill_precedence>
