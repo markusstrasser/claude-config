@@ -14,10 +14,7 @@
 Never schedule against a "revisit by DATE" in a finding, ADR, or proposal — only against external state on a real clock (CI, deploy, vendor window). Promotion or cut is evidence- or operator-triggered.
 
 ## Productive portfolio, not idle fallback (hook-enforced: `posttool-background-portfolio.sh`)
-Every autonomous run (`/loop`, `/goal`, pasted overnight driver) advances a PORTFOLIO each turn: build/grind (dispatch, wake on completion — never poll) · heretic (cross-model red-team of what just landed) · dreamer/evolver (verifier-gated search where one exists) · scout (find-what-exists before building) · meta/observe (what tooling the session keeps asking for; the trainer's own cockpit via `/interface-thinking`; full-spectrum ~$0 telemetry on the system under study, not only the ratchet metric). A tick that only re-arms a timer is the anti-pattern; an idle wakeup is a hang-survival net (1200s+) only.
-- A dependency gates MEASUREMENT interpretation, not BUILDING — build the named next levers in worktree-isolated dispatches while a gate resolves.
-- A closure that names candidates is a HANDOFF — file the successor in the same act or refuse in writing.
-- A sign-off covers the ACTIVITY and BUDGET; parameters inside it are the agent's. Real gates: money thresholds, held-out reserves, irreversible or outward-facing actions, operator-only accounts. HUMAN.md is for those only.
+Every autonomous tick advances a portfolio: build/grind (dispatch, wake on completion) · red-team what landed · verifier-gated search · scout what exists · observe the tooling the session keeps asking for. A tick that only re-arms a timer is the anti-pattern; an idle wakeup is a hang-survival net (1200s+) only. A dependency gates measurement, not building. A closure naming candidates is a handoff: file the successor or refuse in writing. Real gates are money, held-out reserves, irreversible or outward-facing actions, operator-only accounts; HUMAN.md is for those only.
 
 ## Escalation is a file, never a block
 Don't yield on a question you could resolve, or block waiting, while other fronts can progress. Append asks to loop-root `HUMAN.md` (feeds the questions view; add a `session: <id>` line); the human answers async. Acting on an `[answered: …]` block leaves a receipt line: `consumed: YYYY-MM-DD <ref> — <what was done / deferred: why>`. Escalate STRUCTURE, not tactics: stale_count ≥2 → change a frame or environment constraint; ≥4 → HUMAN.md. Stop only when the blocker is unresolvable AND no front progresses AND continuing wastes resources — write the ask, then stop. Enforcement marker: `.claude/loop-enforce-no-question-stop`.
@@ -29,7 +26,7 @@ Don't yield on a question you could resolve, or block waiting, while other front
 - Prefer making the JOB observable (per-item progress lines) over wider watches.
 
 ## Hindsight metaloop
-Grade every substantive external find with a real `rg` over own memos and levers: NOVEL · HAD-PARTS · HAD-LEVER (worst). Every HAD-* obligates an architecture fix; HAD-LEVER rate → 0 is the metric. Major finds: blind-replay first (quarantine the artifact, pre-register bands outside the repo, fresh headless processes on a pre-find worktree — same-session subagents inherit the parent context). Reference: arc-agi `loop/HINDSIGHT.md`.
+Grade every substantive external find with a real `rg` over own memos and levers: NOVEL · HAD-PARTS · HAD-LEVER (worst). Every HAD-* obligates an architecture fix; major finds get a blind replay first (arc-agi `loop/HINDSIGHT.md`).
 
 ## Killing and liveness
 - Never `pkill -f` a substring on multi-job trees. `pgrep -fl` first and read every match; anchor to a unique token; prefer the launch-recorded PID.
