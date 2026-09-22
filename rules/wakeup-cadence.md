@@ -41,5 +41,6 @@ Grade every substantive external find with a real `rg` over own memos and levers
 | 529 "Overloaded" | infra incident | after the 2nd, `curl status.claude.com/api/v2/status.json` before any nudge; ONE batch-resume timer (10-15 min); after a 3rd, pull the work inline (the parent lane usually survives); fill dead time with non-LLM work |
 | "organization has disabled Claude subscription access" | auth state | no nudge, no timer, no API-key switch (a billing decision); write the ask, work inline; re-dispatch one probe lane only after a `/login` is observed |
 | "Your computer went to sleep mid-response" | local suspend | worktree edits survive; ONE SendMessage to the same agent ("git status/diff first, then continue"), never a re-dispatch; prevent with `nohup caffeinate -i -t <secs> &` |
+| "safeguards flagged this message … can't respond to this message with Opus 5.5" | content-classifier stop (5.5 adds `bio` and `reasoning_extraction`; the server fallback does not retry `reasoning_extraction`) | never resend the packet; re-dispatch ONCE on `model: sonnet`, briefed around the artifact and never quoting thinking-block text; a second stop → pull the work inline |
 
 An account-dead or incident-dead fleet is never an idle parent.
