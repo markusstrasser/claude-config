@@ -12,6 +12,8 @@ Hook-enforced: no `git add -A`/`.`; no backgrounded or piped `git commit` (captu
 - **Never bare `git stash`** — it rips peers' in-flight edits out from under live sessions and the pop conflicts. Use `git stash push -- <paths>`, a worktree, or `git show HEAD:<file>`. If you already did: don't resolve their conflict — `git checkout HEAD -- <file>`, save `git stash show -p` outside git, tell the operator.
 - Concurrent peers on one repo → `claude --worktree` (a SessionStart hook warns).
 
+**Stale `.git/index.lock` ("Another git process seems to be running"):** a git killed by SIGKILL (`subprocess.run(timeout=)` in a hook, a reaped job) leaves its lock behind, and every later git write prints the same text live contention does, so sleep-and-retry never ends. Stale = `lsof` on the lock is empty AND no `git` process runs in the repo; then remove it. Never judge by lsof alone: `git commit -a/--only` closes index.lock while its hooks run. `skills/hooks/pretool-git-stale-lock.sh` does this on every git command via the Bash dispatcher (every repo since 2026-09-24). Incidents: genomics 2026-09-17 (8 h 25 m blocked), heli 2026-09-24 (~10 min).
+
 **A dry-run PASS is never live authorization.** Destructive or outward-facing shared-state actions gated on the operator need a fresh `AUTHORIZED-LIVE <date>` dated after the rehearsal (2026-07-16: a history rewrite ran on its own dry-run, ratified two days later).
 
 **Derived artifacts are gitignored** — track generator + source, never output; add the ignore glob in the same commit as the generator.
