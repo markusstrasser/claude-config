@@ -25,7 +25,7 @@ Operational detail lives in `skills/critique/SKILL.md`. Preset promotion: `evals
 **Skip if:** Plan is small (<30 lines), single-phase, routine implementation, pure research, touches only one repo with no new deps, or user explicitly says to skip.
 
 **Also trigger, even when a skip condition matches:**
-- A decision that retires or deletes a stage, gate, dataset or interface. Route: `/critique model` with the premise scout.
+- A decision that retires a scientific capability: a stage or dataset whose output someone reads. Route: `/critique model` with the premise scout. Deleting dead code, a redundant gate or a replaced interface during cleanup is not a retirement; it gets the diff review only.
 - The first paid or irreversible launch of a new execution route. Route: one repo-access reviewer (`codex exec` or `llmx --mode agent`) traces the route's code path, and each finding is verified at file:line before launch. Packet critics cannot see the code, so `/critique model` is the wrong tool here.
 
 **Post-review step:** After synthesizing model findings, ask yourself: "The review models had less project context than I do. Do I want to revise the cosigned/deferred/rejected list?" Noop is a valid answer — but make the check explicit. State where you disagree and why, don't just adopt wholesale.
