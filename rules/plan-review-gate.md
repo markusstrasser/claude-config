@@ -5,7 +5,7 @@ paths:
 
 # Plan Review Gate
 
-After writing a NEW plan to `.claude/plans/` that is **non-trivial and consequential**, automatically run plan review. Continue already-authorized implementation after resolving findings; otherwise prepare a concrete decision for the user. Don't ask permission to run the review.
+After writing a NEW plan or design that is **non-trivial and consequential**, automatically run plan review. This file loads only for `.claude/plans/`; the global CLAUDE.md carries the same triggers for designs and decisions written in `docs/`, `decisions/` or elsewhere. Continue already-authorized implementation after resolving findings; otherwise prepare a concrete decision for the user. Don't ask permission to run the review.
 
 ## Dispatch workflow (plan phase)
 
@@ -24,9 +24,15 @@ Operational detail lives in `skills/critique/SKILL.md`. Preset promotion: `evals
 
 **Skip if:** Plan is small (<30 lines), single-phase, routine implementation, pure research, touches only one repo with no new deps, or user explicitly says to skip.
 
+**Also trigger, even when a skip condition matches:**
+- A decision that retires or deletes a stage, gate, dataset or interface. Route: `/critique model` with the premise scout.
+- The first paid or irreversible launch of a new execution route. Route: one repo-access reviewer (`codex exec` or `llmx --mode agent`) traces the route's code path, and each finding is verified at file:line before launch. Packet critics cannot see the code, so `/critique model` is the wrong tool here.
+
 **Post-review step:** After synthesizing model findings, ask yourself: "The review models had less project context than I do. Do I want to revise the cosigned/deferred/rejected list?" Noop is a valid answer — but make the check explicit. State where you disagree and why, don't just adopt wholesale.
 
 **Why:** Cross-model review caught identifier naivety, over-engineering (Neo4j for <100K edges), math errors, and invalid joins in the biomedical KG plan — all invisible to the authoring model. But blind adoption is also wrong — models proposed Kùzu when DuckDB+NetworkX was already working. The value is adversarial pressure, not delegation.
+
+**Evidence for the extra triggers (genomics, 2026-09/10):** the 2026-10-08 critique of a six-stage retirement (two Gemini and two Astra axes plus the premise scout) falsified the `pgx_concordance` premise, because that stage matches CPIC recommendations that no other stage publishes. It also found two other premises unproven, so only three retirements went ahead. The AND-triggers above would not have fired on that decision; the operator asked for the review (`genomics/decisions/2026-10-08-retire-allele-age-phewas-hla-class2.md`). The 2026-09-28 stage-plan review (cross4) produced 15 adopted changes and 5 rejected with evidence from 92 extracted claims (`genomics/docs/audit/2026-09-28-stage-forward-plan.md` §8). Repo-access Sol reviews of new launch routes found 5 fanout defects (2026-09-02, genomics `c73ad1d40`) and 3 confirmed wave-killers (2026-09-04, `genomics/docs/audit/2026-09-04-jw-route-critique/findings.md`) before the first paid runs. Cost: each run extracts 27–95 findings. The anchor check confirms 0–11 of them and leaves most inconclusive. On 09-28 both claims it labeled hallucinated were real. Verify adopted and rejected items at the source.
 
 ## Probe-backed numbers rule (estimates feeding owner decisions)
 
