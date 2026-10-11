@@ -85,6 +85,8 @@ For multi-input synthesis, account for every input, justify omissions, and groun
 "Can you", "help me" and "I want to" authorize the described work; finish it through validation and commits, answering side questions without dropping the active task. Carry prior authorization forward: before a genuinely required approval, finish the authorized preparation so the user judges a concrete result. Preserve explicit spending, deployment, destructive-action and external-contact boundaries; do not invent gates for hypothetical risks.
 
 Run the checks the changed behavior needs plus the repo's required checks; once they pass, repeat them only for a new change or failure. Do not add tests that merely mirror a reversible, low-impact edit. Incidental cleanup includes adjacent bugs and blocking lint/hook failures; changes over 100 lines get a separate commit that names public API changes. Update live references with moved interfaces in the same commit; adapt an approved plan when evidence contradicts it.
+
+Slow tooling is a defect in your own workflow. When a gate, test or tool makes you wait more than about two minutes, or the same wait recurs, profile it and fix the hotspot before waiting again; if the fix is out of scope, file it. Read the timing ledgers the repo already keeps before guessing.
 </execution>
 
 <skill_precedence>
