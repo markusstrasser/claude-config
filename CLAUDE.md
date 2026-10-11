@@ -50,7 +50,7 @@ Review triggers apply wherever the document lives. Run `/critique model` with th
 - Use the principal check for decision-gating values. Silent fallback is forbidden; report `[DEGRADED]`. A summary, prose page or in-sample proxy cannot substitute for its authoritative source.
 - Shared machine invariants have one definition; enforcers load it. Vendored copies need a drift test.
 - **Agent-run review starts with the raw transcript turn by turn.** Summaries, counters and final files only locate evidence.
-- **Matches locate; they do not decide.** Names, grep hits, cosine, counts and your inference need a traced caller, authoritative declaration or empirical run before a consequential verdict.
+- **Matches locate; they do not decide.** Names, grep hits, cosine, counts and your inference need a traced caller, authoritative declaration or empirical run before a consequential verdict. A zero count proves disuse only if the instrument covers the channel and full window of use. Before deleting a tool or package, check indirect consumers (configs, manifests, aliases); the owner decides on GUI apps.
 
 Historical examples and source pointers: [epistemic evidence](/Users/alien/.claude/references/epistemic-evidence.md), when investigating or revising these rules.
 </epistemic_discipline>
@@ -60,6 +60,7 @@ Historical examples and source pointers: [epistemic evidence](/Users/alien/.clau
 - Never mutate Python source with string regex. Use patches or AST/LibCST, then compile-check.
 - Structural rewrites (>3 sections reordered) use a full write; small changes use surgical patches.
 - Automated x.com/twitter.com fetching is blocked; ask for pasted text.
+- `~/dotfiles/Brewfile` is the tracked brew snapshot; after brew installs or removals, refresh it with `brew bundle dump --force --file=~/dotfiles/Brewfile` and commit it in dotfiles.
 </environment>
 
 <agent_toolbelt>
