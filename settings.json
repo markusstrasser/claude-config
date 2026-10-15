@@ -419,7 +419,7 @@
           },
           {
             "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/precompact-skill-arcs.py",
+            "command": "/Users/alien/Projects/skills/hooks/precompact-instructions.py",
             "timeout": 8
           }
         ]
