@@ -30,8 +30,9 @@ Don't yield on a question you could resolve, or block waiting, while other front
 Grade every substantive external find with a real `rg` over own memos and levers: NOVEL · HAD-PARTS · HAD-LEVER (worst). Every HAD-* obligates an architecture fix; major finds get a blind replay first (arc-agi `loop/HINDSIGHT.md`).
 
 ## Killing and liveness
-- Never `pkill -f` a substring on multi-job trees. `pgrep -fl` first and read every match; anchor to a unique token; prefer the launch-recorded PID.
-- Liveness: a quiet log + empty pgrep is grounds to CHECK, never a verdict. `ps -p <recorded PID>` plus its child tree decides.
+- Never `pkill -f` a substring on multi-job trees. `pgrep -fl '<pat>' | redact-env` first and read every match; anchor to a unique token; prefer the launch-recorded PID.
+- Liveness: a quiet log + empty pgrep is grounds to CHECK, never a verdict. `ps -o pid=,etime=,stat=,comm= -p <recorded PID>` plus its child tree (`pgrep -P <PID>`) decides.
+- Full-argument process listings (`pgrep -fl`, `ps aux`/`-ef`/`-p`, `ps -o args`) go through `redact-env`: on 2026-10-16 a raw `pgrep -fl` printed a pytest worker's environment, API keys included, into a transcript. `pretool-secret-output-guard.py` blocks the raw forms.
 
 ## Subagent death classes (parse the failureReason)
 | String | Class | Do |
