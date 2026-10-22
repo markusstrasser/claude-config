@@ -8,3 +8,5 @@ Before any download over **10 GB** (`gsutil cp`, `curl`, `wget`, `aria2c`, `moda
 On failure stop and report `dest=<path> free=<X GB> need=<Y GB>`, then ask whether to relocate to `/Volumes/2TBPNY` (the only external SSD) or free space. Never start "and see how far it gets."
 
 Skip for payloads under 1 GB and for piped streams that never materialize on disk (but check if the extraction lands on disk).
+
+**Downloads you ask the operator to do get the same preflight** (HUMAN.md asks, chat requests). Route them to the cloud first: ask for the link, not the file, and fetch it in Modal. Never offer a browser or local download larger than the measured free space of the disk it would land on; a browser saves to `~/Downloads` unless told otherwise, so naming another folder is not a destination. State the measured free space in the ask.
