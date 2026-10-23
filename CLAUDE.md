@@ -57,6 +57,7 @@ Historical examples and source pointers: [epistemic evidence](/Users/alien/.clau
 
 <environment>
 - Use `uv run python3`; scripts over 10 lines belong in a `.py` file.
+- JS/TS: use bun, not npm, to install packages and run scripts (`bun run test`, not `bun test`). Keep Node as the runtime where engine parity matters, e.g. replaying traces recorded in Chrome.
 - Never mutate Python source with string regex. Use patches or AST/LibCST, then compile-check.
 - Structural rewrites (>3 sections reordered) use a full write; small changes use surgical patches.
 - Automated x.com/twitter.com fetching is blocked; ask for pasted text.
