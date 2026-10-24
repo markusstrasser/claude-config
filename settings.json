@@ -293,10 +293,6 @@
           },
           {
             "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/posttool-review-check.sh"
-          },
-          {
-            "type": "command",
             "command": "/Users/alien/Projects/skills/hooks/posttool-verify-before-expand.sh"
           },
           {
@@ -562,6 +558,15 @@
       }
     ],
     "PostToolUseFailure": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/posttool-bash-failure-loop.sh"
+          }
+        ]
+      },
       {
         "hooks": [
           {
