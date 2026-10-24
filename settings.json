@@ -386,11 +386,6 @@
           {
             "type": "command",
             "command": "/Users/alien/.claude/hooks/stop-notify.sh"
-          },
-          {
-            "type": "command",
-            "command": "/Users/alien/Projects/skills/hooks/stop-loop-ended-on-question.sh",
-            "async": true
           }
         ]
       },
