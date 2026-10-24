@@ -5,11 +5,12 @@ paths:
 
 # Plan Review Gate
 
-After writing a NEW plan or design that is **non-trivial and consequential**, automatically run plan review. This file loads only for `.claude/plans/`; the global CLAUDE.md carries the same triggers for designs and decisions written in `docs/`, `decisions/` or elsewhere. Continue already-authorized implementation after resolving findings; otherwise prepare a concrete decision for the user. Don't ask permission to run the review.
+After writing a NEW plan or design that is **non-trivial and consequential**, settle what probes and quick tests can settle, then run plan review on what remains. This file loads only for `.claude/plans/`; the global CLAUDE.md carries the same triggers for designs and decisions written in `docs/`, `decisions/` or elsewhere. Continue already-authorized implementation after resolving findings; otherwise prepare a concrete decision for the user. Don't ask permission to run the review.
 
 ## Dispatch workflow (plan phase)
 
-1. **VOI scout (one fork)** — if the plan names a load-bearing uncertainty, run deterministic probes `<1min` (grep, read, `git log`) or propose longer actions. See `agent-infra/decisions/2026-06-15-voi-sequenced-review.md`.
+0. **Settle first.** Answer each load-bearing premise with the probe that settles it (grep, a log query, one experiment run), and build and measure any part whose mistake would show within the session because it fails loudly or a test catches it. Write the answers into the plan. Review only what remains: premises no probe settles, a format or interface many parts will depend on, and costly or irreversible steps. If nothing remains, skip the review and record why in one line of the plan.
+1. **VOI scout (one fork)** — if the plan still names a load-bearing uncertainty, run deterministic probes `<1min` (grep, read, `git log`) or propose longer actions. See `agent-infra/decisions/2026-06-15-voi-sequenced-review.md`.
 2. **Triage** — `review_gate.py triage` on the plan packet → read `dispatch.json` for preset (do not assume `standard`).
 3. **Adjudicate** — `/critique model` with triage preset, `--extract --verify`, subparts if packet is large.
 4. **Closeout later** — after implementation, `/critique close` reviews **design only**; diff was `/diff-review` once. Do not re-review the same diff in critique.
@@ -21,8 +22,9 @@ Operational detail lives in `skills/critique/SKILL.md`. Preset promotion: `evals
 - Has 3+ implementation phases or touches 2+ projects
 - Introduces new dependencies, databases, or architectural patterns
 - Would take >1 session to reverse if wrong
+- Something load-bearing remains after step 0: a mistake no probe, test or build-and-measure step within the session would reveal
 
-**Skip if:** Plan is small (<30 lines), single-phase, routine implementation, pure research, touches only one repo with no new deps, or user explicitly says to skip.
+**Skip if:** Plan is small (<30 lines), single-phase, routine implementation, pure research, touches only one repo with no new deps, every remaining mistake would fail loudly within the session, or user explicitly says to skip.
 
 **Also trigger, even when a skip condition matches:**
 - A decision that retires a scientific capability: a stage or dataset whose output someone reads. Route: `/critique model` with the premise scout. Deleting dead code, a redundant gate or a replaced interface during cleanup is not a retirement; it gets the diff review only.
@@ -33,6 +35,8 @@ Operational detail lives in `skills/critique/SKILL.md`. Preset promotion: `evals
 **Why:** Cross-model review caught identifier naivety, over-engineering (Neo4j for <100K edges), math errors, and invalid joins in the biomedical KG plan — all invisible to the authoring model. But blind adoption is also wrong — models proposed Kùzu when DuckDB+NetworkX was already working. The value is adversarial pressure, not delegation.
 
 **Evidence for the extra triggers (genomics, 2026-09/10):** the 2026-10-08 critique of a six-stage retirement (two Gemini and two Astra axes plus the premise scout) falsified the `pgx_concordance` premise, because that stage matches CPIC recommendations that no other stage publishes. It also found two other premises unproven, so only three retirements went ahead. The AND-triggers above would not have fired on that decision; the operator asked for the review (`genomics/decisions/2026-10-08-retire-allele-age-phewas-hla-class2.md`). The 2026-09-28 stage-plan review (cross4) produced 15 adopted changes and 5 rejected with evidence from 92 extracted claims (`genomics/docs/audit/2026-09-28-stage-forward-plan.md` §8). Repo-access Sol reviews of new launch routes found 5 fanout defects (2026-09-02, genomics `c73ad1d40`) and 3 confirmed wave-killers (2026-09-04, `genomics/docs/audit/2026-09-04-jw-route-critique/findings.md`) before the first paid runs. Cost: each run extracts 27–95 findings. The anchor check confirms 0–11 of them and leaves most inconclusive. On 09-28 both claims it labeled hallucinated were real. Verify adopted and rejected items at the source.
+
+**Evidence for step 0 (arena, 2026-10-25):** the differential-oracle plan listed three unchecked premises. One awk over a harness run's log settled the first: after the arena opened, over 90% of the world thread's 8,976 rolls in scenario m7 came from creature code, which the arena has none of (RandomMovementGenerator, SmartScript timers, model choice), so roll records must carry their map. That changed the design, and a packet reviewer could not have seen it. Operator: "if something is easily settleable or testable ... let's get the quick answers before critique or maybe even not need a critique afterwards etc bc it's simple or throws anyway if not".
 
 ## Probe-backed numbers rule (estimates feeding owner decisions)
 
