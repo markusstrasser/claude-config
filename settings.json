@@ -644,7 +644,7 @@
     "webwright@webwright": false
   },
   "effortLevel": "medium",
-  "autoCompactWindow": 320000,
+  "autoCompactWindow": 400000,
   "cleanupPeriodDays": 365,
   "tui": "default",
   "autoDreamEnabled": false,
