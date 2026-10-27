@@ -27,3 +27,13 @@ agent named 'X' is reachable", and `ListAgents` lists no teammates. Send to the 
 prompt. Before reviving, check that each lane's transcript holds the last instruction sent to it (`rg -c` a phrase from
 it). Tell each lane the parent's new name, so its replies reach you. Evidence: genomics 2026-10-26 21:10 JST, six lanes
 revived this way after a weekly-limit stop and a terminal crash.
+
+## A resume that reports success can still never start
+After a session-limit stop, `SendMessage` (or TaskStop, then SendMessage) can answer "resumed it as an in-process
+teammate" while the lane never writes another transcript row. ~60 s after each resume, check that the line count of
+`subagents/agent-<id>.jsonl` grew. If it has not grown after one TaskStop + SendMessage retry, stop the lane and spawn a
+successor on the same worktree. Its brief names the predecessor's result file, plan and last instructions, and says to
+keep the uncommitted edits. Evidence: genomics 2026-10-27 18:33–18:45 JST. Three claude-type lanes (lr-core, lr-dv,
+astra-l72) woke within seconds of a plain SendMessage. The general-purpose-type lane pangenome-dv stayed silent through
+two resumes, 10 min in all (ListAgents showed it "running" with its type label gone), and was replaced by
+pangenome-dv-2.
