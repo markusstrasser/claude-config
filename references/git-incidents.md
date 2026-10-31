@@ -20,8 +20,8 @@ Hook-enforced: no `git add -A`/`.`; no backgrounded or piped `git commit` (captu
 
 ## Commit message format
 ```
-[scope] Verb thing — why
+[scope] Imperative change
 ```
-`[scope]` from the repo's `.git-scopes` (advisory). Specific verb (wire, diagnose, enforce, extract, drop — not "Add" for everything). Em-dash separates what from why; the why matters most; ≤72 chars, overflow into the body. Body 1–3 lines, motivation first. **No** `Co-Authored-By: Claude`.
+`[scope]` from the repo's `.git-scopes` (advisory). Specific verb (wire, diagnose, enforce, extract, drop — not "Add" for everything). ≤72 chars, clear to someone who never saw the session. Add `— why` only if it reads as a complete clause; otherwise the why goes in the body. Body: plain sentences wrapped at 72, covering what failed, the cause, how it was verified and what's left; tool-generated evidence runs as long as it needs. Cite only commit SHAs or tracked files. **No** `Co-Authored-By: Claude`.
 Trailers: `Evidence:` (required on governance commits — CLAUDE.md, MEMORY.md, hooks, rules) · `Rejected:` (discarded alternatives; `just discarded`) · `Source:` (cross-project provenance) · `Affects:` · `Session-ID:` (auto by git hook).
-Bad: `[api] Add several endpoint improvements and fixes` · Good: `[api] Rate-limit token refresh — prevents 429 cascade under load`
+Bad: `[api] Add several endpoint improvements and fixes` · Bad: `[tools] Give a changed signature a body mutant — no revert builds` (the fragment needs the body to decode) · Good: `[api] Rate-limit token refresh — prevents 429 cascade under load`

@@ -32,7 +32,7 @@ Commit on main without asking, one logical change at a time. No branches, `git a
 - A dry-run PASS never authorizes live destructive or outward-facing shared-state action. Operator-gated rehearsals need a fresh `AUTHORIZED-LIVE <date>` after the rehearsal.
 - Ignore derived artifacts; commit generator, source and ignore pattern together.
 
-Format: `[scope] Verb thing — why`, ≤72 characters; overflow motivation into a 1–3-line body. Scope comes from `.git-scopes` (advisory). No co-author trailer of any kind; the harness-supplied `Claude-Session:` link is allowed. Governance commits require `Evidence:`; use `Rejected:`, `Source:`, `Affects:` when relevant. `Session-ID:` is hook-added.
+Format: `[scope] Imperative change`, ≤72 characters, clear to someone who never saw the session. Add `— why` only if it reads as a complete clause; otherwise the why goes in the body. Body: plain sentences wrapped at 72, covering what failed, the cause, how it was verified and what's left; keep tool-generated evidence as long as it needs. Cite only commit SHAs or tracked files. Scope comes from `.git-scopes` (advisory). No co-author trailer of any kind; the harness-supplied `Claude-Session:` link is allowed. Governance commits require `Evidence:`; use `Rejected:`, `Source:`, `Affects:` when relevant. `Session-ID:` is hook-added.
 </git_rules>
 
 <ai_text_policy>
