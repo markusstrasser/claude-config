@@ -366,6 +366,15 @@
             "command": "/Users/alien/Projects/skills/hooks/posttool-bgrun-watcher-nudge.sh"
           }
         ]
+      },
+      {
+        "matcher": "SendMessage",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/alien/Projects/skills/hooks/posttool-sendmessage-idle-lane.sh"
+          }
+        ]
       }
     ],
     "Stop": [
