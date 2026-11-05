@@ -48,7 +48,7 @@
     "update-config": "name-only",
     "init": "user-invocable-only",
     "scientific-drawing": "off",
-    "gpt-image-2": "name-only",
+    "gpt-image-2-6": "name-only",
     "claude-md-management:claude-md-improver": "name-only",
     "claude-md-management:revise-claude-md": "name-only",
     "skill-authoring": "name-only",
