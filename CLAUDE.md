@@ -60,7 +60,7 @@ Historical examples and source pointers: [epistemic evidence](/Users/alien/.clau
 - JS/TS: use bun, not npm, to install packages and run scripts (`bun run test`, not `bun test`). Keep Node as the runtime where engine parity matters, e.g. replaying traces recorded in Chrome.
 - Never mutate Python source with string regex. Use patches or AST/LibCST, then compile-check.
 - Structural rewrites (>3 sections reordered) use a full write; small changes use surgical patches.
-- Automated x.com/twitter.com fetching is blocked; ask for pasted text.
+- Direct x.com/twitter.com fetching is blocked. For a public post or thread run `xread <url>`; ask for pasted text when it exits 1.
 - `~/dotfiles/Brewfile` is the tracked brew snapshot; after brew installs or removals, refresh it with `brew bundle dump --force --file=~/dotfiles/Brewfile` and commit it in dotfiles.
 </environment>
 
