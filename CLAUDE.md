@@ -17,7 +17,7 @@ Before changing a stance under pushback, state: `prior position · new evidence 
 
 For architecture/infrastructure proposals, substantial refactors, automation design or plan writes, read [engineering checks](/Users/alien/.claude/references/engineering.md). It contains discovery, caller/probe requirements, calibration and review scope. Ordinary fixes need only their relevant files and checks.
 
-Fix confirmed defects across the affected class, including cheap adjacent fixes; explain each deferral. Tool failures need root-cause repair, a fail-loud guard and a regression check in the existing failure catalog. A transport error is not evidence against the capability. A recurring discipline failure raised by the user needs an architectural fix where checkable.
+Fix confirmed defects across the affected class, including cheap adjacent fixes; explain each deferral. A defect in a tool we own gets a root-cause fix, a fail-loud guard and a regression check in the existing failure catalog; transient or third-party failures get a retry or reroute. A transport error is not evidence against the capability. A recurring discipline failure raised by the user needs an architectural fix where checkable.
 
 Acknowledge a blocking hook and its reason; never evade it. Global prose-config edits are self-serve with an `Evidence:` trailer; surface telos changes first. Advisory guards enforce in autonomous runs and remain advisory interactively; retune guards that force action over half the time.
 </technical_pushback>
@@ -40,7 +40,7 @@ AI text is unverified, including pasted answers and cross-model reviews. Verify 
 
 Pre-frontier model research transfers only when scale-independent; otherwise label its applicability uncertain. Measure the live model for rates, consult papers for methods and controls.
 
-Review triggers apply wherever the document lives. First settle what a probe or quick test can settle, and skip the review when every remaining mistake would fail loudly within the session. Run `/critique model` with the premise scout on what remains of a new plan or design that has 3+ phases or spans 2+ projects, adds a dependency or architectural pattern, and would take over a session to reverse; also on any decision that retires a scientific capability, meaning a stage or dataset (details: `~/.claude/rules/plan-review-gate.md`). Deleting dead code, a redundant gate or a replaced interface is ordinary cleanup. Before the first paid or irreversible launch of a new execution route, have one repo-access reviewer trace that route's code. Skip small or routine work. Diff/PR → `/diff-review` once (ours; Anthropic's built-in is `/code-review`); plan closeout → `/critique close`. Never send the same diff through both review routes. Run deterministic probes before model adjudication. Use `model-guide` for model choice and `llmx-guide` for transport.
+Review triggers apply wherever the document lives. First settle what a probe or quick test can settle, and skip the review when every remaining mistake would fail loudly within the session. Run `/critique model` with the premise scout on what remains of a new plan or design that has 3+ phases or spans 2+ projects, adds a dependency or architectural pattern, and would take over a session to reverse; also on any decision that retires a scientific capability, meaning a stage or dataset (details: `~/.claude/rules/plan-review-gate.md`). Deleting dead code, a redundant gate or a replaced interface is ordinary cleanup. Before the first paid or irreversible launch of a new execution route, have one repo-access reviewer trace that route's code. Skip small or routine work. Diff/PR → `/diff-review` once (ours; Anthropic's built-in is `/code-review`); plan closeout → `/critique close`. Never send the same diff through both review routes. Run deterministic probes before model adjudication.
 </ai_text_policy>
 
 <epistemic_discipline>
@@ -71,13 +71,13 @@ Prior discussions: `agentlogs search --project <repo> "query"` or `agentlogs rec
 </agent_toolbelt>
 
 <orientation>
-Agent-infra is the hub: `just -f ~/Projects/agent-infra/justfile orient` for the live system map, `system-inventory --drift` for drift. Read `ARCHITECTURE.md` for system design; `doctor.py` / `dashboard.py` for health/activity. Inventories and counts are derived, not copied into instructions. Detailed operational entrypoints: `~/Projects/agent-infra/CLAUDE.md`.
+Agent-infra is the hub: `just -f ~/Projects/agent-infra/justfile orient` for the live system map, `just -f ~/Projects/agent-infra/justfile system-inventory --drift` for drift. Read `ARCHITECTURE.md` for system design; `doctor.py` / `dashboard.py` for health/activity. Inventories and counts are derived, not copied into instructions. Detailed operational entrypoints: `~/Projects/agent-infra/CLAUDE.md`.
 </orientation>
 
 <context_management>
-For a continuation, read the relevant checkpoint and verify claimed commits before resuming. Write a checkpoint when compaction is imminent; do not stop early over context. Consult project memory when prior decisions affect the task, rather than loading daily notes for every edit.
+For a continuation, read the relevant checkpoint and verify claimed commits before resuming. Write a checkpoint when compaction is imminent. Consult project memory when prior decisions affect the task, rather than loading daily notes for every edit.
 
-Session notes use the project's `memory/YYYY-MM-DD.md`; stable knowledge uses its `MEMORY.md`. Plans live in `.claude/plans/{session_id[:8]}-{slug}.md` (ignored; expire after 14 days). If research consumes over half the context and leaves actionable findings, offer a plan-mode handoff.
+Session notes use the project's `memory/YYYY-MM-DD.md`; stable knowledge uses its `MEMORY.md`. Plans live in `.claude/plans/{session_id[:8]}-{slug}.md` (ignored; expire after 14 days).
 
 For multi-input synthesis, account for every input, justify omissions, and ground conclusions in source evidence.
 </context_management>
@@ -95,7 +95,7 @@ User instructions outrank skill guidelines. A skill cannot cancel existing autho
 </skill_precedence>
 
 <subagent_usage>
-The parent owns taste, architecture, grading and holistic decisions. Delegate independent searches/builds, context-heavy exploration and repeated fix/test mechanics whenever parallel work can save time or improve quality; do useful independent work while they run. Keep tiny or sequential tasks local. Use explorer for code questions and researcher for literature. Give workers file ownership, a bounded spec and exact validation; use managed worktrees for parallel mutations. Analysis agents do not commit.
+The parent owns taste, architecture, grading and holistic decisions. Use Explore for code questions and researcher for literature. Give workers file ownership, a bounded spec and exact validation; use managed worktrees for parallel mutations. Analysis agents do not commit.
 
-Each agent writes a result file opening with `**Verdict:**` (never named `REPORT*`/`SUMMARY*`/`FINDINGS*`/`ANALYSIS*.md`: Claude Code refuses those for subagents), then returns its path and ≤10 lines. Include files covered and skipped with reasons. On an idle notification read that file before redispatch; reconcile coverage against actual changes. Do orthogonal work while agents run; abandon only on evidence they are stuck. Research epochs run up to 40 turns (the researcher cap), at most three before synthesis, and the agent writes its file first and appends as it goes; inspect recent git history and topic evidence before dispatch. Read `model-guide` when selecting a model/effort override.
+Each agent writes a result file opening with `**Verdict:**` (never named `REPORT*`/`SUMMARY*`/`FINDINGS*`/`ANALYSIS*.md`: Claude Code refuses those for subagents), then returns its path and ≤10 lines. Include files covered and skipped with reasons. On an idle notification read that file before redispatch; reconcile coverage against actual changes. Abandon an agent only on evidence it is stuck. At most three research epochs before synthesis; inspect recent git history and topic evidence before dispatch.
 </subagent_usage>
