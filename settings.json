@@ -1,17 +1,22 @@
 {
+  "cleanupPeriodDays": 365,
   "syncClaudeAiSkills": false,
-  "attribution": {
-    "commit": "",
-    "pr": ""
-  },
+  "syncClaudeAiPlugins": false,
   "env": {
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
     "CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS": "10000",
     "CLAUDE_STREAM_IDLE_TIMEOUT_MS": "180000",
     "ENABLE_PROMPT_CACHING_1H": "1",
     "SLASH_COMMAND_TOOL_CHAR_BUDGET": "32000",
-    "SMART_JUDGE_MODE": "enforce",
-    "SMART_JUDGE_ENFORCE_VECTORS": "verify_before_claim"
+    "CLAUDE_CODE_ENABLE_TELEMETRY": "1",
+    "OTEL_LOGS_EXPORTER": "otlp",
+    "OTEL_METRICS_EXPORTER": "none",
+    "OTEL_EXPORTER_OTLP_PROTOCOL": "http/json",
+    "OTEL_EXPORTER_OTLP_ENDPOINT": "http://127.0.0.1:4318"
+  },
+  "attribution": {
+    "commit": "",
+    "pr": ""
   },
   "includeGitInstructions": false,
   "permissions": {
@@ -38,7 +43,7 @@
     "deny": [],
     "defaultMode": "auto"
   },
-  "model": "claude-fable-5-1[1m]",
+  "model": "opus",
   "enabledMcpjsonServers": [
     "exa"
   ],
@@ -65,7 +70,24 @@
     "verify-before": "off",
     "dataset-register": "off",
     "youtube-transcript": "off",
-    "google-workspace": "off"
+    "google-workspace": "off",
+    "decide": "off",
+    "execute": "off",
+    "eval": "name-only",
+    "debug": "off",
+    "cursor-agent": "off",
+    "person-into-scene": "off",
+    "docx": "off",
+    "docs": "off",
+    "pptx": "off",
+    "xlsx": "off",
+    "pdf": "off",
+    "morning": "off",
+    "skill-creator": "off",
+    "import-memory": "off",
+    "trending-scout": "off",
+    "interface-thinking": "off",
+    "bio-verify": "off"
   },
   "hooks": {
     "PermissionRequest": [
@@ -535,6 +557,15 @@
             "command": "/Users/alien/Projects/skills/hooks/sessionstart-compact-resume.sh"
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/bin/sh -c 'rex __internal session-start --agent claude 2>/dev/null || true'",
+            "timeout": 5
+          }
+        ]
       }
     ],
     "SubagentStart": [
@@ -650,17 +681,25 @@
     "skill-creator@claude-plugins-official": false,
     "exa@claude-plugins-official": false,
     "typescript-lsp@claude-plugins-official": false,
-    "webwright@webwright": false
+    "cc-plugin-you-should-know@builtin": true
   },
   "effortLevel": "medium",
+  "modelSettings": {
+    "claude-fable-5-2": {
+      "effortLevel": "high"
+    },
+    "claude-opus-5-5": {
+      "effortLevel": "high"
+    }
+  },
   "autoCompactWindow": 400000,
-  "cleanupPeriodDays": 365,
   "tui": "default",
   "autoDreamEnabled": false,
   "skipDangerousModePermissionPrompt": true,
   "theme": "dark",
   "editorMode": "vim",
   "verbose": false,
+  "switchModelsOnFlag": false,
   "showMessageTimestamps": true,
   "remoteControlAtStartup": true,
   "agentPushNotifEnabled": true,
