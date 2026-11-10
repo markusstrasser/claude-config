@@ -6,7 +6,7 @@
 
 ## Cadence deltas
 - ~15 routines / 24h / account across CronCreate + ScheduleWakeup + RemoteTrigger, ALL projects. Prefer a synchronous wait or a launchd job when either can do the job.
-- Job < 270s → one synchronous call: `until <done-test>; do sleep 5; done` (never a bare leading `sleep`; the harness blocks it) or a Monitor. ScheduleWakeup #3 in one session for the same job class → wait synchronously.
+- Job < 270s → one synchronous call: `until <done-test>; do sleep 5; done` or a Monitor. ScheduleWakeup #3 in one session for the same job class → wait synchronously.
 - `Bash run_in_background` when a live Bash channel exists; ScheduleWakeup only when there isn't (autonomous loops, post-compaction handoffs).
 - **Background jobs get reaped** (observed at ~2-4 min and at ~57 min). Split unbounded work per unit; after ~2 same-shape kills use `bgrun <name> -- <cmd>` (`~/Projects/skills/bin/bgrun`: nohup+disown, unbuffered log, `.done` marker with the rc) or `lane run <name> --repo <path> --brief <file>` for worktree-isolated worker lanes (`lane ls|stop|resume|reap`). Quitting the terminal app kills its whole process lineage, `setsid`/`nohup` included (Rex, 2026-10-26 20:33: three bgrun supervisors and a lane worker); a job that must outlive the terminal runs as `bgrun --launchd <name> -- <cmd>` (gui-domain launchd agent, same `.done`/`.log`; `lane run` workers stay exposed). In unattended lanes (`-p`, SDK, CI, cloud) background Bash stops at its `timeout` (default 30 min, max 2 h, CC ≥2.1.288): pass `timeout` up to 7200000 there; `bgrun` for longer. Never pipe a background command through `| tail` (a kill swallows all output). Live peeks read `<name>.log.tmp`; a watcher on a file that can exist before it is meaningful tests CONTENT, not existence.
 
