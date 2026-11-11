@@ -43,7 +43,7 @@
     "deny": [],
     "defaultMode": "auto"
   },
-  "model": "opus",
+  "model": "fable",
   "enabledMcpjsonServers": [
     "exa"
   ],
