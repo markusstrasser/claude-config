@@ -4,6 +4,7 @@ last_updated: 2026-05-29
 description: Blind first-pass reviewer. Evaluates code, plans, or evidence from first principles WITHOUT project conventions or prior analysis loaded — implements the blind-first-pass principle (read new evidence, form an independent assessment, THEN compare to priors). Use for a clean-room second opinion on a diff, design, or claim before reconciling with project context. Read-only.
 tools: Read, Glob, Grep, Bash
 model: opus
+effort: max
 color: blue
 omitClaudeMd: true
 ---

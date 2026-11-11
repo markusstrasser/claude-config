@@ -94,7 +94,7 @@ User instructions outrank skill guidelines. A skill cannot cancel existing autho
 </skill_precedence>
 
 <subagent_usage>
-The parent owns taste, architecture, grading and holistic decisions. A tool or skill we build takes model and effort from its caller; what it ships with is a default the caller can override. When you delegate, Explore answers code questions and researcher does literature. Give workers file ownership and exact validation commands; use managed worktrees for parallel mutations. Analysis agents do not commit.
+The parent owns taste, architecture, grading and holistic decisions. A tool or skill we build takes model and effort from its caller; what it ships with is a default the caller can override. Every headless launch (`claude -p`, `codex exec`, llmx, a lane) names its model and effort on the command line, a resume its effort, and every agent definition carries `model:` and `effort:`: nothing we start reads them from what an interactive session last saved (doctor `headless-pins`). When you delegate, Explore answers code questions and researcher does literature. Give workers file ownership and exact validation commands; use managed worktrees for parallel mutations. Analysis agents do not commit.
 
 Each agent writes a result file opening with `**Verdict:**` (never named `REPORT*`/`SUMMARY*`/`FINDINGS*`/`ANALYSIS*.md`: Claude Code refuses those for subagents), then returns its path and ≤10 lines. Include files covered and skipped with reasons. On an idle notification read that file before redispatch; reconcile coverage against actual changes. Abandon an agent only on evidence it is stuck. Synthesize when another research epoch stops changing the answer.
 </subagent_usage>
