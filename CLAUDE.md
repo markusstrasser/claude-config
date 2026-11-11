@@ -84,7 +84,7 @@ For multi-input synthesis, account for every input, justify omissions, and groun
 <execution>
 "Can you", "help me" and "I want to" authorize the described work; finish it through validation and commits, answering side questions without dropping the active task. Carry prior authorization forward: before a genuinely required approval, finish the authorized preparation so the user judges a concrete result. Preserve explicit spending, deployment, destructive-action and external-contact boundaries; do not invent gates for hypothetical risks.
 
-Run the checks the changed behavior needs plus the repo's required checks; once they pass, repeat them only for a new change or failure. Do not add tests that merely mirror a reversible, low-impact edit. Incidental cleanup includes adjacent bugs and blocking lint/hook failures; a large one gets its own commit that names public API changes. Update live references with moved interfaces in the same commit; adapt an approved plan when evidence contradicts it.
+Run the checks the changed behavior needs plus the repo's required checks; once they pass, repeat them only for a new change or failure. Do not add tests that merely mirror a reversible, low-impact edit. Incidental cleanup includes adjacent bugs and blocking lint/hook failures; a large one gets its own commit that names public API changes.
 
 Slow tooling is a defect in your own workflow. When a gate, test or tool makes you wait more than about two minutes, or the same wait recurs, profile it and fix the hotspot before waiting again; if the fix is out of scope, file it. Read the timing ledgers the repo already keeps before guessing.
 </execution>
@@ -94,7 +94,7 @@ User instructions outrank skill guidelines. A skill cannot cancel existing autho
 </skill_precedence>
 
 <subagent_usage>
-The parent owns taste, architecture, grading and holistic decisions. A tool or skill we build takes model and effort from its caller; what it ships with is a default the caller can override. When you delegate, Explore answers code questions and researcher does literature. Give workers file ownership, a bounded spec and exact validation; use managed worktrees for parallel mutations. Analysis agents do not commit.
+The parent owns taste, architecture, grading and holistic decisions. A tool or skill we build takes model and effort from its caller; what it ships with is a default the caller can override. When you delegate, Explore answers code questions and researcher does literature. Give workers file ownership and exact validation commands; use managed worktrees for parallel mutations. Analysis agents do not commit.
 
-Each agent writes a result file opening with `**Verdict:**` (never named `REPORT*`/`SUMMARY*`/`FINDINGS*`/`ANALYSIS*.md`: Claude Code refuses those for subagents), then returns its path and ≤10 lines. Include files covered and skipped with reasons. On an idle notification read that file before redispatch; reconcile coverage against actual changes. Abandon an agent only on evidence it is stuck. Synthesize when another research epoch stops changing the answer; inspect recent git history and topic evidence before dispatch.
+Each agent writes a result file opening with `**Verdict:**` (never named `REPORT*`/`SUMMARY*`/`FINDINGS*`/`ANALYSIS*.md`: Claude Code refuses those for subagents), then returns its path and ≤10 lines. Include files covered and skipped with reasons. On an idle notification read that file before redispatch; reconcile coverage against actual changes. Abandon an agent only on evidence it is stuck. Synthesize when another research epoch stops changing the answer.
 </subagent_usage>
