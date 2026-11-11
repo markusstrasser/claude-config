@@ -28,9 +28,6 @@ Don't yield on a question you could resolve, or block waiting, while other front
 - Positive-control every watcher filter at arm time: (1) the pattern matches a synthetic event line; (2) it matches 0 lines of the log as it stands. Refuse to arm otherwise.
 - Prefer making the JOB observable (per-item progress lines) over wider watches.
 
-## Hindsight metaloop
-Grade every substantive external find with a real `rg` over own memos and levers: NOVEL · HAD-PARTS · HAD-LEVER (worst). Every HAD-* obligates an architecture fix; major finds get a blind replay first (arc-agi `loop/HINDSIGHT.md`).
-
 ## Killing and liveness
 - Never `pkill -f` a substring on multi-job trees. `pgrep -fl '<pat>' | redact-env` first and read every match; anchor to a unique token; prefer the launch-recorded PID.
 - Liveness: a quiet log + empty pgrep is grounds to CHECK, never a verdict. `ps -o pid=,etime=,stat=,comm= -p <recorded PID>` plus its child tree (`pgrep -P <PID>`) decides.
