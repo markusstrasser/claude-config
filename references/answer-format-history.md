@@ -34,3 +34,11 @@ Tables/ASCII over prose. Link evidence by `path:line`; don't inline the proof un
 
 Enforcement: instruction-level (semantic predicate); advisory length Stop hook stays
 measure-before-enforce — never a hard block.
+
+## Provenance paragraphs moved out of the rule on 2026-11-11
+
+These two paragraphs closed `rules/answer-format.md` until 2026-11-11. They say where the rule came from and how it is enforced, which a reader of the rule does not need on every turn.
+
+The operator's concise/minimal/simple preference remains the source of this rule. The 2026-09-05 instruction to apply Astra guidance replaces the old mandatory skeleton and tables-over-prose rule. Earlier wording and provenance are retained in [answer-format history](../references/answer-format-history.md).
+
+Enforcement remains semantic guidance. Evaluate observed outcomes before adding a mechanical guard.

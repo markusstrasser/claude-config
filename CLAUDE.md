@@ -95,7 +95,7 @@ User instructions outrank skill guidelines. A skill cannot cancel existing autho
 </skill_precedence>
 
 <subagent_usage>
-The parent owns taste, architecture, grading and holistic decisions. Use Explore for code questions and researcher for literature. Give workers file ownership, a bounded spec and exact validation; use managed worktrees for parallel mutations. Analysis agents do not commit.
+The parent owns taste, architecture, grading and holistic decisions. When you delegate, Explore answers code questions and researcher does literature. Give workers file ownership, a bounded spec and exact validation; use managed worktrees for parallel mutations. Analysis agents do not commit.
 
 Each agent writes a result file opening with `**Verdict:**` (never named `REPORT*`/`SUMMARY*`/`FINDINGS*`/`ANALYSIS*.md`: Claude Code refuses those for subagents), then returns its path and ≤10 lines. Include files covered and skipped with reasons. On an idle notification read that file before redispatch; reconcile coverage against actual changes. Abandon an agent only on evidence it is stuck. At most three research epochs before synthesis; inspect recent git history and topic evidence before dispatch.
 </subagent_usage>
