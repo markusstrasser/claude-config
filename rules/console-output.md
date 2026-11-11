@@ -29,5 +29,4 @@ agent-infra has `scripts/common/console.py` (`con.header/ok/warn/fail/kv/table`,
 
 When running Python under `nohup`, pipes, or `> file` redirection:
 - Always set `PYTHONUNBUFFERED=1` — `uv run` does NOT unbuffer Python's stdout
-- Pattern: `PYTHONUNBUFFERED=1 nohup uv run python3 script.py > log 2>&1 &`
 - Or add `os.environ.setdefault("PYTHONUNBUFFERED", "1")` near the top of long-running scripts

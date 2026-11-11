@@ -16,7 +16,6 @@ Operational limits of external tools we can't fix. Our own MCP gotchas are in th
 - **Exa broad queries return massive, noisy results** — always set `contextMaxCharacters: 3000` on broad sweeps. Full text only for narrow queries. Oversized results can't be parsed.
 - **Exa `crawling_exa` with multiple URLs may return only one** — check all URLs were returned.
 - **Perplexity needs specific trial names for clinical data** — broad queries lack exact numbers. Two rounds: broad first, then narrow with exact trial/journal names.
-- **Brave 429s on parallel use** — use serially, or as single-call fallback after Exa.
 - **Perplexity batch ceiling: N ≤ 10 safe; N ≥ 25 risky** (rubber-stamps user-supplied numerical specifics at scale).
 
 For the full 2026-05-19 N=60 failure-mode catalogue (museum-URL fetch failures, pretool burst-hook ceiling, spatial-orientation prose inversion, composer/responsory disambiguation, stylized-vs-literal interpretive claims): see `~/Projects/skills/research/references/tool-history.md` §Failure modes worth knowing (moved there from tool-routing.md on 2026-09-05).

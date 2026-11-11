@@ -23,7 +23,7 @@ Acknowledge a blocking hook and its reason; never evade it. Global prose-config 
 </technical_pushback>
 
 <git_rules>
-Commit on main without asking, one logical change at a time. No branches, `git add -A`/`.`, or backgrounded/piped commits; capture the return code. Use `git -C` across repos and `--no-ext-diff` for readable diffs.
+Commit on main without asking, one logical change at a time. No branches, `git add -A`/`.`, or backgrounded/piped commits; capture the return code. Use `git -C` across repos.
 
 - Check status and preserve peer work. Use managed worktrees for concurrent edits.
 - Commit explicit paths: `git commit -m … -- <your paths>`.
@@ -59,7 +59,6 @@ Historical examples and source pointers: [epistemic evidence](/Users/alien/.clau
 - Use `uv run python3`; scripts over 10 lines belong in a `.py` file.
 - JS/TS: use bun, not npm, to install packages and run scripts (`bun run test`, not `bun test`). Keep Node as the runtime where engine parity matters, e.g. replaying traces recorded in Chrome.
 - Never mutate Python source with string regex. Use patches or AST/LibCST, then compile-check.
-- Structural rewrites (>3 sections reordered) use a full write; small changes use surgical patches.
 - Direct x.com/twitter.com fetching is blocked. For a public post or thread run `xread <url>`; ask for pasted text when it exits 1.
 - `~/dotfiles/Brewfile` is the tracked brew snapshot; after brew installs or removals, refresh it with `brew bundle dump --force --file=~/dotfiles/Brewfile` and commit it in dotfiles.
 </environment>
@@ -85,7 +84,7 @@ For multi-input synthesis, account for every input, justify omissions, and groun
 <execution>
 "Can you", "help me" and "I want to" authorize the described work; finish it through validation and commits, answering side questions without dropping the active task. Carry prior authorization forward: before a genuinely required approval, finish the authorized preparation so the user judges a concrete result. Preserve explicit spending, deployment, destructive-action and external-contact boundaries; do not invent gates for hypothetical risks.
 
-Run the checks the changed behavior needs plus the repo's required checks; once they pass, repeat them only for a new change or failure. Do not add tests that merely mirror a reversible, low-impact edit. Incidental cleanup includes adjacent bugs and blocking lint/hook failures; changes over 100 lines get a separate commit that names public API changes. Update live references with moved interfaces in the same commit; adapt an approved plan when evidence contradicts it.
+Run the checks the changed behavior needs plus the repo's required checks; once they pass, repeat them only for a new change or failure. Do not add tests that merely mirror a reversible, low-impact edit. Incidental cleanup includes adjacent bugs and blocking lint/hook failures; a large one gets its own commit that names public API changes. Update live references with moved interfaces in the same commit; adapt an approved plan when evidence contradicts it.
 
 Slow tooling is a defect in your own workflow. When a gate, test or tool makes you wait more than about two minutes, or the same wait recurs, profile it and fix the hotspot before waiting again; if the fix is out of scope, file it. Read the timing ledgers the repo already keeps before guessing.
 </execution>
@@ -97,5 +96,5 @@ User instructions outrank skill guidelines. A skill cannot cancel existing autho
 <subagent_usage>
 The parent owns taste, architecture, grading and holistic decisions. A tool or skill we build takes model and effort from its caller; what it ships with is a default the caller can override. When you delegate, Explore answers code questions and researcher does literature. Give workers file ownership, a bounded spec and exact validation; use managed worktrees for parallel mutations. Analysis agents do not commit.
 
-Each agent writes a result file opening with `**Verdict:**` (never named `REPORT*`/`SUMMARY*`/`FINDINGS*`/`ANALYSIS*.md`: Claude Code refuses those for subagents), then returns its path and ≤10 lines. Include files covered and skipped with reasons. On an idle notification read that file before redispatch; reconcile coverage against actual changes. Abandon an agent only on evidence it is stuck. At most three research epochs before synthesis; inspect recent git history and topic evidence before dispatch.
+Each agent writes a result file opening with `**Verdict:**` (never named `REPORT*`/`SUMMARY*`/`FINDINGS*`/`ANALYSIS*.md`: Claude Code refuses those for subagents), then returns its path and ≤10 lines. Include files covered and skipped with reasons. On an idle notification read that file before redispatch; reconcile coverage against actual changes. Abandon an agent only on evidence it is stuck. Synthesize when another research epoch stops changing the answer; inspect recent git history and topic evidence before dispatch.
 </subagent_usage>
