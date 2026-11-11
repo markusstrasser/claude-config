@@ -9,3 +9,5 @@
 !rules/*.md
 !references/
 !references/*.md
+!agents/
+!agents/*.md

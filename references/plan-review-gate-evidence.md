@@ -22,3 +22,14 @@ on dead code that a 30-second grep would have killed. The same plan
 cited "EDIT-KILL-EOL-01" — `grep -ci kill LOGSEQ_BEHAVIOR_TRIADS.md` → 0.
 
 **Evidence (2026-05-12 substrate-closure T4):** plan §5.4 proposed compile-gate aggregation "via `produces_refs`" without probing. `produces_refs` indexes reference databases, not claims. The first T4 dispatch lost ~30 minutes discovering this in code; a 30-second `git grep` would have caught it.
+
+## Probe-backed numbers rule (original text and calibration, moved 2026-11-11)
+
+Any LOC/count/size estimate that an owner will approve work against must
+either carry its inline derivation probe or be labeled `unprobed —
+expect ~2x error`. Within-session calibration (evo 2026-06-11, n=5):
+the two items with inline greps in the memo hit their numbers (scripts
+263, spec_viewer 1,554); all three without ran ~2x hot or worse
+(view_state 330→123, devtools 470→294, defhandler 400→0 — premise
+falsified at pilot). Classification-on-contact is the real number;
+file-level probes only bound what they directly count.

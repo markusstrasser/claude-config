@@ -34,14 +34,9 @@ Operational detail lives in `skills/critique/SKILL.md`. Preset promotion: `evals
 
 ## Probe-backed numbers rule (estimates feeding owner decisions)
 
-Any LOC/count/size estimate that an owner will approve work against must
-either carry its inline derivation probe or be labeled `unprobed —
-expect ~2x error`. Within-session calibration (evo 2026-06-11, n=5):
-the two items with inline greps in the memo hit their numbers (scripts
-263, spec_viewer 1,554); all three without ran ~2x hot or worse
-(view_state 330→123, devtools 470→294, defhandler 400→0 — premise
-falsified at pilot). Classification-on-contact is the real number;
-file-level probes only bound what they directly count.
+An estimate an owner will approve work against (lines, counts, sizes) carries
+the probe that produced it, or says it is unprobed. File-level probes only bound
+what they directly count.
 
 ## Liveness-probe rule
 
