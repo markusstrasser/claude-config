@@ -28,7 +28,7 @@ Commit on main without asking, one logical change at a time. No branches, `git a
 - Check status and preserve peer work. Use managed worktrees for concurrent edits.
 - Commit explicit paths: `git commit -m … -- <your paths>`.
 - **Mixed authorship in one file:** pathspec commits take working-tree content. Stage only your hunks, inspect the entire cached diff, then bare-commit only that isolated index.
-- Never bare `git stash`; use path-scoped stash, a worktree or `git show HEAD:<file>`. If a bare stash already disrupted peers, do not resolve their conflicts: follow the recovery in [git incident notes](/Users/alien/.claude/references/git-incidents.md).
+- Never bare `git stash`, and never a bare `git stash pop`: the stash stack is shared across a repo's worktrees and `pop` takes the top entry, whoever made it. Prefer a worktree, a copy-aside file or `git show HEAD:<file>`; if you do stash, path-scope the push, confirm it created an entry and pop that entry by ref. If a bare stash already disrupted peers, do not resolve their conflicts: follow the recovery in [git incident notes](/Users/alien/.claude/references/git-incidents.md).
 - A dry-run PASS never authorizes live destructive or outward-facing shared-state action. Operator-gated rehearsals need a fresh `AUTHORIZED-LIVE <date>` after the rehearsal.
 - Ignore derived artifacts; commit generator, source and ignore pattern together.
 
